@@ -1,0 +1,15 @@
+C:\PTIT\Đồ án\code\back-end\LearningManagementSystem\LMS.Core\bin\Debug\net8.0\LMS.Core.deps.json
+C:\PTIT\Đồ án\code\back-end\LearningManagementSystem\LMS.Core\bin\Debug\net8.0\LMS.Core.dll
+C:\PTIT\Đồ án\code\back-end\LearningManagementSystem\LMS.Core\bin\Debug\net8.0\LMS.Core.pdb
+C:\PTIT\Đồ án\code\back-end\LearningManagementSystem\LMS.Core\obj\Debug\net8.0\LMS.Core.csproj.AssemblyReference.cache
+C:\PTIT\Đồ án\code\back-end\LearningManagementSystem\LMS.Core\obj\Debug\net8.0\LMS.Core.GeneratedMSBuildEditorConfig.editorconfig
+C:\PTIT\Đồ án\code\back-end\LearningManagementSystem\LMS.Core\obj\Debug\net8.0\LMS.Core.AssemblyInfoInputs.cache
+C:\PTIT\Đồ án\code\back-end\LearningManagementSystem\LMS.Core\obj\Debug\net8.0\LMS.Core.AssemblyInfo.cs
+C:\PTIT\Đồ án\code\back-end\LearningManagementSystem\LMS.Core\obj\Debug\net8.0\LMS.Core.csproj.CoreCompileInputs.cache
+C:\PTIT\Đồ án\code\back-end\LearningManagementSystem\LMS.Core\obj\Debug\net8.0\LMS.Core.sourcelink.json
+C:\PTIT\Đồ án\code\back-end\LearningManagementSystem\LMS.Core\obj\Debug\net8.0\LMS.Core.dll
+C:\PTIT\Đồ án\code\back-end\LearningManagementSystem\LMS.Core\obj\Debug\net8.0\refint\LMS.Core.dll
+C:\PTIT\Đồ án\code\back-end\LearningManagementSystem\LMS.Core\obj\Debug\net8.0\LMS.Core.pdb
+C:\PTIT\Đồ án\code\back-end\LearningManagementSystem\LMS.Core\obj\Debug\net8.0\ref\LMS.Core.dll
+C:\PTIT\Đồ án\code\back-end\LearningManagementSystem\LMS.Core\bin\Debug\net8.0\LMS.Core.runtimeconfig.json
+C:\PTIT\Đồ án\code\back-end\LearningManagementSystem\LMS.Core\obj\Debug\net8.0\LMS.Core.genruntimeconfig.cache
