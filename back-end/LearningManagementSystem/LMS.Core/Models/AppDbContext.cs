@@ -45,6 +45,11 @@ namespace LMS.Core.Models
 
             base.OnModelCreating(modelBuilder);
 
+            foreach (var entity in modelBuilder.Model.GetEntityTypes())
+            {
+                entity.SetTableName(entity.DisplayName());
+            }
+
             modelBuilder.Entity<Admin>()
                .HasOne(a => a.User)
                .WithOne()

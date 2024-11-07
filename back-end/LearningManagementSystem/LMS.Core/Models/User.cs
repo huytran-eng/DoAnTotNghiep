@@ -14,16 +14,17 @@ namespace LMS.Core.Models
         [Required]
         public string Username { get; set; }
         [Required]
-        public string Password { get; set; }
+        public byte[] PasswordHash { get; set; }
+        [Required]
+        public byte[] PasswordSalt { get; set; }
         [Required]
         public string Name { get; set; }
         public DateTime? BirthDate { get; set; }
         [Required]
         public string Email { get; set; }
-        [Required]
         public string Address { get; set; }
         public string Phone { get; set; }
-        public string Note { get; set; }
+        public string? Note { get; set; }
         public string Position { get; set; }
     }
 }
