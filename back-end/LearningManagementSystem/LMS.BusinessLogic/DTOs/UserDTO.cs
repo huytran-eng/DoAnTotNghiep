@@ -9,15 +9,16 @@ namespace LMS.BusinessLogic.DTOs
 {
     public class UserDTO
     {
-        public string Username { get; set; }
-        public string Password { get; set; }
-        public string PasswordHash { get; set; }
-        public string Name { get; set; }
+        public Guid Id { get; set; }
+        public string? Username { get; set; }
+        public string? Password { get; set; }
+        public string? Name { get; set; }
         public DateTime? BirthDate { get; set; }
         public string? Email { get; set; }
         public string? Address { get; set; }
         public string? Phone { get; set; }
         public string? Note { get; set; }
         public string? Position { get; set; }
+        public string? Token { get; set;}
     }
 }

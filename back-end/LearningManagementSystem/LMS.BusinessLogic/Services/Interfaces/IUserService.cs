@@ -1,4 +1,5 @@
 ﻿using LMS.BusinessLogic.DTOs;
+using LMS.Core;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,9 +10,6 @@ namespace LMS.BusinessLogic.Services.Interfaces
 {
     public interface IUserService
     {
-        Task<UserDTO> LoginAsync(string username, string password);
-        Task<UserDTO> RegisterAsync(UserDTO userDTO);
-
-
+        Task<CommonResult<UserDTO>> LoginAsync(UserDTO userDTO);
     }
 }
