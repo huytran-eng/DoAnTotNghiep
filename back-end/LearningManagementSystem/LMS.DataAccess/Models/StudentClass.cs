@@ -10,11 +10,11 @@ namespace LMS.DataAccess.Models
     public class StudentClass
     {
         public Guid Id { get; set; }
-        public string status {  get; set; }
-        public int StudentId { get; set; }
+        public string Status {  get; set; }
+        public Guid StudentId { get; set; }
         [ForeignKey("StudentId")]
         public Student Student { get; set; }
-        public int ClassId { get; set; }
+        public Guid ClassId { get; set; }
         [ForeignKey("ClassId")]
         public Class Class { get; set; }
     }

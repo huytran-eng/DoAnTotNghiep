@@ -11,10 +11,10 @@ namespace LMS.DataAccess.Models
     {
         public Guid Id { get; set; }
         public DateTime OpenDate { get;set; }
-        public int ClassId { get; set; }
+        public Guid ClassId { get; set; }
         [ForeignKey("ClassId")]
         public Class Class  { get; set; }
-        public int StudyMaterialId { get; set; }
+        public Guid StudyMaterialId { get; set; }
         [ForeignKey("StudyMaterialId")]
         public StudyMaterial StudyMaterial { get; set; }
     }

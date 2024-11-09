@@ -14,5 +14,7 @@ namespace LMS.DataAccess.Models
         public Guid Id { get; set; }
         public string StudentId { get; set; }   
         public virtual User User { get; set; }
+
+        public virtual ICollection<StudentClass> StudentClasses { get; set; }
     }
 }

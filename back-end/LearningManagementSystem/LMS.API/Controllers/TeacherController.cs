@@ -24,9 +24,14 @@ namespace LMS.API.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var createdTeacher = await _teacherService.CreateAsync(teacherDTO);
+            var result = await _teacherService.CreateAsync(teacherDTO);
 
-            return CreatedAtAction(nameof(CreateTeacher), new { id = createdTeacher.Id }, createdTeacher);
+            if (!result.IsSuccess)
+            {
+                return StatusCode(500, result.Message);
+            }
+            
+            return Ok(result);
         }
     }
 }

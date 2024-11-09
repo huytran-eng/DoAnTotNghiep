@@ -8,11 +8,14 @@ namespace LMS.DataAccess.Models
         [Key]
         public Guid Id { get; set; } 
 
-        public int? UpdatedById { get; set; }
+        public Guid? UpdatedById { get; set; }
+        public DateTime? UpdatedAt { get; set; }
 
         [ForeignKey(nameof(UpdatedById))]
         public virtual User? UpdatedBy { get; set; }
-        public int CreatedById { get; set; }
+        public Guid CreatedById { get; set; }
+        public DateTime CreatedAt { get; set; }
+
 
         [ForeignKey(nameof(CreatedById))]
         public virtual User CreatedBy { get; set; }

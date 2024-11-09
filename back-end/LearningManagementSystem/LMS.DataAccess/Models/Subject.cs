@@ -13,7 +13,7 @@ namespace LMS.DataAccess.Models
         public int Credit { get; set; }
         public string Description { get; set; }
 
-        public int DepartmentId { get; set; }
+        public Guid DepartmentId { get; set; }
 
         [ForeignKey("DepartmentId")]
         public virtual Department Department { get; set; }

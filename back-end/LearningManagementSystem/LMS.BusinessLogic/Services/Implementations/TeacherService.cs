@@ -60,6 +60,7 @@ namespace LMS.BusinessLogic.Services.Implementations
                     Position = teacher.User.Position
                 };
 
+                await _teacherRepository.SaveAsync();
                 // Return success result.
                 return new CommonResult<TeacherDTO>
                 {
@@ -75,6 +76,7 @@ namespace LMS.BusinessLogic.Services.Implementations
                 return new CommonResult<TeacherDTO>
                 {
                     IsSuccess = false,
+                    Code = 500,
                     Message = $"An error occurred while creating the teacher: {ex.Message}",
                 };
             }

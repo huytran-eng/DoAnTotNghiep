@@ -12,7 +12,7 @@ namespace LMS.DataAccess.Models
         public string Title { get; set; }
         public string MaterialLink { get; set; }
 
-        public int SubjectId { get; set; }
+        public Guid SubjectId { get; set; }
         [ForeignKey("SubjectId")]  
         public Subject Subject { get; set; }
         

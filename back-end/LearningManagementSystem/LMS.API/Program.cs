@@ -1,3 +1,4 @@
+using LMS.API;
 using LMS.BusinessLogic.Services.Implementations;
 using LMS.BusinessLogic.Services.Interfaces;
 using LMS.Core.Enums;
@@ -11,14 +12,10 @@ using System.Text;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// add DI for Repository and Services
-builder.Services.AddScoped<IUserRepository, UserRepository>();
-builder.Services.AddScoped<IUserService, UserService>();
-builder.Services.AddScoped<ITokenService, TokenService>();
+builder.Services.AddApplicationServices();
 
 // add jwt authentication
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -55,17 +52,6 @@ app.UseCors(builder =>
 app.UseHttpsRedirection();
 
 app.UseAuthentication();
-services.AddAuthorization(options =>
-{
-    options.AddPolicy("Admin", policy =>
-        policy.RequireClaim("Position", PositionEnum.Admin.ToString));
-
-    options.AddPolicy("TeacherOnly", policy =>
-        policy.RequireClaim("Position", PositionEnum.Teacher.ToString));
-
-    options.AddPolicy("StudentOnly", policy =>
-        policy.RequireClaim("Position", PositionEnum.Student.To));
-});
 
 app.MapControllers();
 

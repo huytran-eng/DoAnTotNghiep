@@ -13,10 +13,10 @@ namespace LMS.DataAccess.Models
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
         public DateTime CreatedDate { get; set; }
-        public int ClassId { get; set; }
+        public Guid ClassId { get; set; }
         [ForeignKey("ClassId")]
         public virtual Class Class { get; set; }
-        public int TopicId { get; set; }
+        public Guid TopicId { get; set; }
         [ForeignKey("TopicId")]
         public virtual Topic Topic { get; set; }
     }

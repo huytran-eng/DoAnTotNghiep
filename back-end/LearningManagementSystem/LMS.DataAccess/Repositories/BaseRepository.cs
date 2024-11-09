@@ -25,7 +25,7 @@ namespace LMS.DataAccess.Repositories
             return await Task.FromResult(_dbSet);
         }
 
-        public virtual async Task<T> GetByIdAsync(int id)
+        public virtual async Task<T> GetByIdAsync(Guid id)
         {
             return await _dbSet.FindAsync(id); 
         }

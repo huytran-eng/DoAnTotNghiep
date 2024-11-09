@@ -23,7 +23,9 @@ namespace LMS.DataAccess.Models
         public DateTime? BirthDate { get; set; }
         [Required]
         public string Email { get; set; }
+        [Required]
         public string Address { get; set; }
+        [Required]
         public string Phone { get; set; }
         public string? Note { get; set; }
         public PositionEnum Position { get; set; }

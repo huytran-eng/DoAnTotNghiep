@@ -11,11 +11,13 @@ namespace LMS.DataAccess.Models
     {
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
-        public int TeacherId { get; set; }
+        public Guid TeacherId { get; set; }
         [ForeignKey("TeacherId")]
         public virtual Teacher Teacher { get; set; }
-        public int SubjectId { get; set; }
+        public Guid SubjectId { get; set; }
         [ForeignKey("SubjectId")]
         public virtual Subject Subject { get; set; }
+
+        public virtual ICollection<StudentClass> StudentClasses { get; set; }
     }
 }

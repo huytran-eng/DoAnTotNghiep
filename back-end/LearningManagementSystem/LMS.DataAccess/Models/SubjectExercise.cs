@@ -10,10 +10,10 @@ namespace LMS.DataAccess.Models
     public class SubjectExercise
     {
         public Guid Id { get; set; }
-        public int SubjectId { get; set; }
+        public Guid SubjectId { get; set; }
         [ForeignKey("SubjectId")]
         public virtual Subject Subject { get; set; }
-        public int ExerciseId { get; set; }
+        public Guid ExerciseId { get; set; }
         [ForeignKey("ExerciseId")]
         public virtual Exercise Exercise { get; set; }
         public DateTime AddedDate { get; set; }

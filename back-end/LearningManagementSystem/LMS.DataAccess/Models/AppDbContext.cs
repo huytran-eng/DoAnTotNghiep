@@ -44,12 +44,12 @@ namespace LMS.DataAccess.Models
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-            
+
             // seed admin user data
             using var hmac = new HMACSHA512();
             var adminUser = new User
             {
-                Id = Guid.NewGuid(),
+                Id = Guid.Parse("cc851dbd-0819-45f6-9031-5bbfe1eb99f3"),
                 Username = "admin",
                 Name = "Admin User",
                 Email = "k.huytr4n@gmail.com",
@@ -61,6 +61,217 @@ namespace LMS.DataAccess.Models
                 BirthDate = new DateTime(1990, 7, 26)
             };
             modelBuilder.Entity<User>().HasData(adminUser);
+
+            // Seed teacher user data
+            var teachers = new List<User>();
+            using var hmac2 = new HMACSHA512();
+
+            teachers.Add(new User
+            {
+                Id = Guid.NewGuid(),
+                Username = "teacher1",
+                Name = "Nguyen Van A",
+                Email = "nguyenvana@university.edu",
+                Address = "100 Le Loi St",
+                Phone = "0123456789",
+                Position = PositionEnum.Teacher,
+                PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes("password1")),
+                PasswordSalt = hmac.Key,
+                BirthDate = new DateTime(1985, 1, 15)
+            });
+            teachers.Add(new User
+            {
+                Id = Guid.NewGuid(),
+                Username = "teacher2",
+                Name = "Tran Thi B",
+                Email = "tranthib@university.edu",
+                Address = "200 Tran Hung Dao St",
+                Phone = "0987654321",
+                Position = PositionEnum.Teacher,
+                PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes("password2")),
+                PasswordSalt = hmac.Key,
+                BirthDate = new DateTime(1980, 5, 10)
+            });
+            teachers.Add(new User
+            {
+                Id = Guid.NewGuid(),
+                Username = "teacher3",
+                Name = "Pham Van C",
+                Email = "phamvanc@university.edu",
+                Address = "300 Nguyen Hue St",
+                Phone = "0912345678",
+                Position = PositionEnum.Teacher,
+                PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes("password3")),
+                PasswordSalt = hmac.Key,
+                BirthDate = new DateTime(1979, 7, 24)
+            });
+            teachers.Add(new User
+            {
+                Id = Guid.NewGuid(),
+                Username = "teacher4",
+                Name = "Le Thi D",
+                Email = "lethid@university.edu",
+                Address = "400 Hai Ba Trung St",
+                Phone = "0943216789",
+                Position = PositionEnum.Teacher,
+                PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes("password4")),
+                PasswordSalt = hmac.Key,
+                BirthDate = new DateTime(1987, 9, 5)
+            });
+            teachers.Add(new User
+            {
+                Id = Guid.NewGuid(),
+                Username = "teacher5",
+                Name = "Bui Van E",
+                Email = "buivane@university.edu",
+                Address = "500 Ba Trieu St",
+                Phone = "0934567891",
+                Position = PositionEnum.Teacher,
+                PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes("password5")),
+                PasswordSalt = hmac.Key,
+                BirthDate = new DateTime(1983, 12, 12)
+            });
+            teachers.Add(new User
+            {
+                Id = Guid.NewGuid(),
+                Username = "teacher6",
+                Name = "Hoang Thi F",
+                Email = "hoangthif@university.edu",
+                Address = "600 Vo Thi Sau St",
+                Phone = "0923456782",
+                Position = PositionEnum.Teacher,
+                PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes("password6")),
+                PasswordSalt = hmac.Key,
+                BirthDate = new DateTime(1990, 3, 3)
+            });
+            teachers.Add(new User
+            {
+                Id = Guid.NewGuid(),
+                Username = "teacher7",
+                Name = "Vo Van G",
+                Email = "vovang@university.edu",
+                Address = "700 Ly Thuong Kiet St",
+                Phone = "0916782345",
+                Position = PositionEnum.Teacher,
+                PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes("password7")),
+                PasswordSalt = hmac.Key,
+                BirthDate = new DateTime(1986, 8, 20)
+            });
+
+            modelBuilder.Entity<User>().HasData(teachers);
+
+            // Seed teacher data in Teacher table using the same IDs
+            var teacherEntities = teachers.Select(user => new Teacher
+            {
+                Id = user.Id
+            }).ToList();
+
+            modelBuilder.Entity<Teacher>().HasData(teacherEntities);
+
+            // seed data for university
+            modelBuilder.Entity<University>().HasData(
+               new University
+               {
+                   Id = Guid.Parse("1fc050f9-7cdf-464d-965e-22ea8b9d956c"),
+                   Name = "Học viện Công nghệ Bưu Chính Viễn Thông",
+                   Address = "96A Đường Trần Phú",
+                   Phone = "024 3756 2186",
+                   Description = "Học viện là một trong 7 trường Đại học đào tạo nguồn nhân lực An toàn thông tin trọng điểm Quốc gia.",
+                   CreatedById = Guid.Parse("cc851dbd-0819-45f6-9031-5bbfe1eb99f3"),
+                   CreatedAt = DateTime.UtcNow
+               });
+
+            // Seed data for Department
+            var departmentIds = new[]
+            {
+                Guid.NewGuid(),
+                Guid.NewGuid(),
+                Guid.NewGuid(),
+            };
+
+            modelBuilder.Entity<Department>().HasData(
+                new Department
+                {
+                    Id = departmentIds[0],
+                    Name = "Khoa học Máy tính",
+                    Description = "Nghiên cứu lý thuyết tính toán, giải thuật, và trí tuệ nhân tạo.",
+                    UniversityId = Guid.Parse("1fc050f9-7cdf-464d-965e-22ea8b9d956c"),
+                    CreatedById = Guid.Parse("cc851dbd-0819-45f6-9031-5bbfe1eb99f3"),
+                    CreatedAt = DateTime.UtcNow
+                },
+                new Department
+                {
+                    Id = departmentIds[1],
+                    Name = "Kỹ thuật Phần mềm",
+                    Description = "Tập trung vào phát triển phần mềm và quản lý dự án.",
+                    UniversityId = Guid.Parse("1fc050f9-7cdf-464d-965e-22ea8b9d956c"),
+                    CreatedById = Guid.Parse("cc851dbd-0819-45f6-9031-5bbfe1eb99f3"),
+                    CreatedAt = DateTime.UtcNow
+                },
+                new Department
+                {
+                    Id = departmentIds[2],
+                    Name = "Hệ thống Thông tin",
+                    Description = "Nghiên cứu các hệ thống quản lý thông tin và cơ sở dữ liệu.",
+                    UniversityId = Guid.Parse("1fc050f9-7cdf-464d-965e-22ea8b9d956c"),
+                    CreatedById = Guid.Parse("cc851dbd-0819-45f6-9031-5bbfe1eb99f3"),
+                    CreatedAt = DateTime.UtcNow
+                }
+            );
+
+            // Seed data for Subject
+            modelBuilder.Entity<Subject>().HasData(
+                   new Subject
+                   {
+                       Id = Guid.NewGuid(),
+                       Name = "Cấu trúc Dữ liệu và Giải thuật",
+                       Credit = 3,
+                       Description = "Học về cấu trúc dữ liệu và các giải thuật cơ bản.",
+                       DepartmentId = departmentIds[0],
+                       CreatedById = Guid.Parse("cc851dbd-0819-45f6-9031-5bbfe1eb99f3"),
+                       CreatedAt = DateTime.UtcNow
+                   },
+                   new Subject
+                   {
+                       Id = Guid.NewGuid(),
+                       Name = "Lập trình Hướng đối tượng",
+                       Credit = 4,
+                       Description = "Các nguyên lý và ứng dụng của lập trình hướng đối tượng.",
+                       DepartmentId = departmentIds[1],
+                       CreatedById = Guid.Parse("cc851dbd-0819-45f6-9031-5bbfe1eb99f3"),
+                       CreatedAt = DateTime.UtcNow
+                   },
+                   new Subject
+                   {
+                       Id = Guid.NewGuid(),
+                       Name = "Cơ sở Dữ liệu",
+                       Credit = 3,
+                       Description = "Nghiên cứu về các hệ quản trị cơ sở dữ liệu và truy vấn.",
+                       DepartmentId = departmentIds[2],
+                       CreatedById = Guid.Parse("cc851dbd-0819-45f6-9031-5bbfe1eb99f3"),
+                       CreatedAt = DateTime.UtcNow
+                   },
+                   new Subject
+                   {
+                       Id = Guid.NewGuid(),
+                       Name = "Lập trình Python",
+                       Credit = 3,
+                       Description = "Học về lập trình Python và các ứng dụng của nó.",
+                       DepartmentId = departmentIds[1], // Assigned to Software Engineering
+                       CreatedById = Guid.Parse("cc851dbd-0819-45f6-9031-5bbfe1eb99f3"),
+                       CreatedAt = DateTime.UtcNow
+                   },
+                   new Subject
+                   {
+                       Id = Guid.NewGuid(),
+                       Name = "Lập trình C++",
+                       Credit = 3,
+                       Description = "Học các nguyên lý cơ bản của lập trình C++.",
+                       DepartmentId = departmentIds[1], // Assigned to Software Engineering
+                       CreatedById = Guid.Parse("cc851dbd-0819-45f6-9031-5bbfe1eb99f3"),
+                       CreatedAt = DateTime.UtcNow
+                   }
+               );
 
             foreach (var entity in modelBuilder.Model.GetEntityTypes())
             {

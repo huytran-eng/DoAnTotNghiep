@@ -7,7 +7,7 @@ namespace LMS.DataAccess.Models
         public string Name { get; set; }
         public string? Description { get; set; }
 
-        public int UniversityId { get; set; }
+        public Guid UniversityId { get; set; }
 
         [ForeignKey("UniversityId")]
         public virtual University University { get; set; }

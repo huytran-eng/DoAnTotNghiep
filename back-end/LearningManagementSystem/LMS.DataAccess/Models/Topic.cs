@@ -6,7 +6,7 @@ namespace LMS.DataAccess.Models
     {
         public string Name { get; set; }    
         public string Description { get; set; }
-        public int SubjectId { get; set; }
+        public Guid SubjectId { get; set; }
         [ForeignKey("SubjectId")]
         public Subject Subject { get; set; }
     }
