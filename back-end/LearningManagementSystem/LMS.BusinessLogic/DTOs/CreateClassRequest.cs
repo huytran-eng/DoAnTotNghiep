@@ -23,6 +23,8 @@ namespace LMS.BusinessLogic.DTOs
 
         [Required]
         public List<Guid> StudentIds { get; set; }
+
+        public Guid CurrentUserId { get; set; }
     }
 
 }

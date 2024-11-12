@@ -28,6 +28,68 @@ namespace LMS.BusinessLogic.Services.Implementations
             _userRepository = userRepository;
         }
 
+        public async Task<CommonResult<IEnumerable<ClassDTO>>> GetClassesForStudent(Guid studentId, string? search, string? sortBy, bool descending)
+        {
+            var classes = await _studentRepository.GetClassesForStudent(studentId);
+
+            if (!string.IsNullOrEmpty(search))
+            {
+                classes = classes.Where(c => c.Subject.Name.Contains(search, StringComparison.OrdinalIgnoreCase));
+            }
+
+            if (!classes.Any())
+            {
+                return new CommonResult<IEnumerable<ClassDTO>>
+                {
+                    IsSuccess = false,
+                    Code = 404,
+                    Message = "No class found"
+                };
+            }
+
+            classes = sortBy switch
+            {
+                "name" => descending ? classes.OrderByDescending(c => c.Subject.Name) : classes.OrderBy(c => c.Subject.Name),
+                "startDate" => descending ? classes.OrderByDescending(c => c.StartDate) : classes.OrderBy(c => c.StartDate),
+                "endDate" => descending ? classes.OrderByDescending(c => c.EndDate) : classes.OrderBy(c => c.EndDate),
+                _ => classes
+            };
+
+            var classDTOs = classes.Select(c => new ClassDTO
+            {
+                Id = c.Id,
+                StartDate = c.StartDate,
+                EndDate = c.EndDate,
+                Teacher = new TeacherDTO
+                {
+                    Name = c.Teacher.User.Name,
+                },
+                Subject = new SubjectDTO
+                {
+                    Id = c.Subject.Id,
+                    Name = c.Subject.Name,
+                    Credit = c.Subject.Credit,
+                    Description = c.Subject.Description
+                }
+            });
+
+            return new CommonResult<IEnumerable<ClassDTO>>
+            {
+                IsSuccess = true,
+                Code = 200,
+                Message = "Classes retrieved successfully",
+                Data = classDTOs
+            };
+
+
+        }
+
+
+        /// <summary>
+        /// Method to imports list of student from an excel file
+        /// </summary>
+        /// <param name="stream">stream of excel file</param>
+        /// <returns></returns>
         public async Task<CommonResult<StudentDTO>> ImportStudents(Stream stream)
         {
             var students = new List<Student>();
@@ -146,7 +208,7 @@ namespace LMS.BusinessLogic.Services.Implementations
 
                         var currentStudent = new Student
                         {
-                            StudentId = studentId,
+                            StudentIdString = studentId,
                             User = currentUser,
                         };
 

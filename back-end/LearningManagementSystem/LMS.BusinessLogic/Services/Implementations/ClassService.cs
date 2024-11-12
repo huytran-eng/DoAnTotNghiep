@@ -19,17 +19,21 @@ namespace LMS.BusinessLogic.Services.Implementations
         private readonly IClassRepository _classRepository;
         private readonly ITeacherRepository _teacherRepository;
         private readonly IUserRepository _userRepository;
+        private readonly ISubjectRepository _subjectRepository;
+
 
         public ClassService(
               IStudentRepository studentRepository,
               IClassRepository classRepository,
               ITeacherRepository teacherRepository,
-              IUserRepository userRepository)
+              IUserRepository userRepository,
+              ISubjectRepository subjectRepository)
         {
             _studentRepository = studentRepository;
             _classRepository = classRepository;
             _teacherRepository = teacherRepository;
             _userRepository = userRepository;
+            _subjectRepository = subjectRepository;
         }
 
         public async Task<CommonResult<object>> CreateClass(CreateClassRequest createClassRequest)
@@ -45,7 +49,7 @@ namespace LMS.BusinessLogic.Services.Implementations
                 };
             }
 
-            var subject = await _teacherRepository.GetByIdAsync(createClassRequest.SubjectId);
+            var subject = await _subjectRepository.GetByIdAsync(createClassRequest.SubjectId);
             if (subject == null)
             {
                 return new CommonResult<object>()
@@ -83,7 +87,9 @@ namespace LMS.BusinessLogic.Services.Implementations
                 EndDate = createClassRequest.EndDate,
                 TeacherId = createClassRequest.TeacherId,
                 SubjectId = createClassRequest.SubjectId,
-                StudentClasses = new List<StudentClass>()
+                StudentClasses = new List<StudentClass>(),
+                CreatedAt = DateTime.Now,
+                CreatedById = createClassRequest.CurrentUserId,
             };
 
             foreach (var student in foundStudents)
@@ -106,5 +112,7 @@ namespace LMS.BusinessLogic.Services.Implementations
                 Message = $"Create class successfull"
             };
         }
+ 
+    
     }
 }

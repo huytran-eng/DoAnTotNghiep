@@ -220,10 +220,16 @@ namespace LMS.DataAccess.Models
             );
 
             // Seed data for Subject
+            var subjectIds = new[]
+            {
+                Guid.NewGuid(),
+                Guid.NewGuid(),
+                Guid.NewGuid(),
+            };
             modelBuilder.Entity<Subject>().HasData(
                    new Subject
                    {
-                       Id = Guid.NewGuid(),
+                       Id = subjectIds[0],
                        Name = "Cấu trúc Dữ liệu và Giải thuật",
                        Credit = 3,
                        Description = "Học về cấu trúc dữ liệu và các giải thuật cơ bản.",
@@ -233,27 +239,7 @@ namespace LMS.DataAccess.Models
                    },
                    new Subject
                    {
-                       Id = Guid.NewGuid(),
-                       Name = "Lập trình Hướng đối tượng",
-                       Credit = 4,
-                       Description = "Các nguyên lý và ứng dụng của lập trình hướng đối tượng.",
-                       DepartmentId = departmentIds[1],
-                       CreatedById = Guid.Parse("cc851dbd-0819-45f6-9031-5bbfe1eb99f3"),
-                       CreatedAt = DateTime.UtcNow
-                   },
-                   new Subject
-                   {
-                       Id = Guid.NewGuid(),
-                       Name = "Cơ sở Dữ liệu",
-                       Credit = 3,
-                       Description = "Nghiên cứu về các hệ quản trị cơ sở dữ liệu và truy vấn.",
-                       DepartmentId = departmentIds[2],
-                       CreatedById = Guid.Parse("cc851dbd-0819-45f6-9031-5bbfe1eb99f3"),
-                       CreatedAt = DateTime.UtcNow
-                   },
-                   new Subject
-                   {
-                       Id = Guid.NewGuid(),
+                       Id = subjectIds[1],
                        Name = "Lập trình Python",
                        Credit = 3,
                        Description = "Học về lập trình Python và các ứng dụng của nó.",
@@ -263,15 +249,117 @@ namespace LMS.DataAccess.Models
                    },
                    new Subject
                    {
-                       Id = Guid.NewGuid(),
+                       Id = subjectIds[2],
                        Name = "Lập trình C++",
                        Credit = 3,
                        Description = "Học các nguyên lý cơ bản của lập trình C++.",
-                       DepartmentId = departmentIds[1], // Assigned to Software Engineering
+                       DepartmentId = departmentIds[1], 
                        CreatedById = Guid.Parse("cc851dbd-0819-45f6-9031-5bbfe1eb99f3"),
                        CreatedAt = DateTime.UtcNow
                    }
                );
+
+            modelBuilder.Entity<Topic>().HasData(
+                new Topic
+                {
+                    Id = Guid.NewGuid(),
+                    Name = "Danh sách liên kết",
+                    Description = "Cấu trúc dữ liệu danh sách liên kết và các phép toán cơ bản.",
+                    SubjectId = subjectIds[0],
+                    CreatedById = Guid.Parse("cc851dbd-0819-45f6-9031-5bbfe1eb99f3"),
+                    CreatedAt = DateTime.UtcNow
+                },
+                new Topic
+                {
+                    Id = Guid.NewGuid(),
+                    Name = "Cây nhị phân",
+                    Description = "Cấu trúc cây nhị phân và các ứng dụng của nó.",
+                    SubjectId = subjectIds[0],
+                    CreatedById = Guid.Parse("cc851dbd-0819-45f6-9031-5bbfe1eb99f3"),
+                    CreatedAt = DateTime.UtcNow
+                },
+                new Topic
+                {
+                    Id = Guid.NewGuid(),
+                    Name = "Tìm kiếm nhị phân",
+                    Description = "Các thuật toán tìm kiếm nhị phân và ứng dụng trong việc tìm kiếm dữ liệu.",
+                    SubjectId = subjectIds[0],
+                    CreatedById = Guid.Parse("cc851dbd-0819-45f6-9031-5bbfe1eb99f3"),
+                    CreatedAt = DateTime.UtcNow
+                },
+                new Topic
+                {
+                    Id = Guid.NewGuid(),
+                    Name = "Con trỏ và mảng",
+                    Description = "Các kiến thức về con trỏ và mảng trong C++.",
+                    SubjectId = subjectIds[2],
+                    CreatedById = Guid.Parse("cc851dbd-0819-45f6-9031-5bbfe1eb99f3"),
+                    CreatedAt = DateTime.UtcNow
+                },
+                new Topic
+                {
+                    Id = Guid.NewGuid(),
+                    Name = "Vào ra trên tệp",
+                    Description = "Kiến thức về vào ra trên tệp trong C++.",
+                    SubjectId = subjectIds[2],
+                    CreatedById = Guid.Parse("cc851dbd-0819-45f6-9031-5bbfe1eb99f3"),
+                    CreatedAt = DateTime.UtcNow
+                },
+                new Topic
+                {
+                    Id = Guid.NewGuid(),
+                    Name = "Lập trình hàm",
+                    Description = "Cách thức lập trình hàm trong C++ và các ứng dụng của nó.",
+                    SubjectId = subjectIds[1],
+                    CreatedById = Guid.Parse("cc851dbd-0819-45f6-9031-5bbfe1eb99f3"),
+                    CreatedAt = DateTime.UtcNow
+                },
+                new Topic
+                {
+                    Id = Guid.NewGuid(),
+                    Name = "Lập trình cơ bản với Python",
+                    Description = "Giới thiệu về ngôn ngữ lập trình Python và các khái niệm cơ bản.",
+                    SubjectId = subjectIds[2],
+                    CreatedById = Guid.Parse("cc851dbd-0819-45f6-9031-5bbfe1eb99f3"),
+                    CreatedAt = DateTime.UtcNow
+                },
+                new Topic
+                {
+                    Id = Guid.NewGuid(),
+                    Name = "Xử lý chuỗi trong Python",
+                    Description = "Các phương pháp xử lý chuỗi và dữ liệu trong Python.",
+                    SubjectId = subjectIds[2],
+                    CreatedById = Guid.Parse("cc851dbd-0819-45f6-9031-5bbfe1eb99f3"),
+                    CreatedAt = DateTime.UtcNow
+                },
+                new Topic
+                {
+                    Id = Guid.NewGuid(),
+                    Name = "Thư viện NumPy",
+                    Description = "Sử dụng thư viện NumPy trong Python để xử lý mảng và tính toán khoa học.",
+                    SubjectId = subjectIds[2],
+                    CreatedById = Guid.Parse("cc851dbd-0819-45f6-9031-5bbfe1eb99f3"),
+                    CreatedAt = DateTime.UtcNow
+                },
+                new Topic
+                {
+                    Id = Guid.NewGuid(),
+                    Name = "Cấu trúc cơ bản trong C++",
+                    Description = "Các kiểu dữ liệu cơ bản và cấu trúc trong C++.",
+                    SubjectId = subjectIds[2],
+                    CreatedById = Guid.Parse("cc851dbd-0819-45f6-9031-5bbfe1eb99f3"),
+                    CreatedAt = DateTime.UtcNow
+                },
+                new Topic
+                {
+                    Id = Guid.NewGuid(),
+                    Name = "Lập trình đa luồng",
+                    Description = "Cách thức lập trình đa luồng trong C++ và ứng dụng của nó.",
+                    SubjectId = subjectIds[2],
+                    CreatedById = Guid.Parse("cc851dbd-0819-45f6-9031-5bbfe1eb99f3"),
+                    CreatedAt = DateTime.UtcNow
+                }
+            );
 
             foreach (var entity in modelBuilder.Model.GetEntityTypes())
             {
@@ -383,14 +471,17 @@ namespace LMS.DataAccess.Models
                 .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<StudentClass>()
-              .HasOne(sc => sc.Student)
-              .WithMany()
-              .HasForeignKey(sc => sc.StudentId)
-              .OnDelete(DeleteBehavior.Restrict);
+                .HasKey(sc => sc.Id);
+
+            modelBuilder.Entity<StudentClass>()
+                .HasOne(sc => sc.Student)
+                .WithMany(s => s.StudentClasses)
+                .HasForeignKey(sc => sc.StudentId)
+                .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<StudentClass>()
                 .HasOne(sc => sc.Class)
-                .WithMany()
+                .WithMany(c => c.StudentClasses)
                 .HasForeignKey(sc => sc.ClassId)
                 .OnDelete(DeleteBehavior.Restrict);
 

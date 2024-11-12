@@ -1,9 +1,11 @@
 ﻿using LMS.BusinessLogic.DTOs;
 using LMS.BusinessLogic.Services.Interfaces;
 using LMS.DataAccess.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace LMS.API.Controllers
 {
@@ -18,47 +20,36 @@ namespace LMS.API.Controllers
             _classService = classService;
         }
 
+        [Authorize]
         [HttpPost("create")]
         public async Task<IActionResult> CreateClass(CreateClassRequest request)
         {
-
-            // Validate teacher and subject
-            var teacher = await _context.Teachers.FindAsync(request.TeacherId);
-            if (teacher == null)
-                return BadRequest("Teacher not found");
-
-            var subject = await _context.Subjects.FindAsync(request.SubjectId);
-            if (subject == null)
-                return BadRequest("Subject not found");
-
-            // Create new class
-            var newClass = new Class
+            var userId = GetCurrentUserId();
+            if (userId == null)
             {
-                StartDate = request.StartDate,
-                EndDate = request.EndDate,
-                TeacherId = request.TeacherId,
-                SubjectId = request.SubjectId,
-                StudentClasses = new List<StudentClass>()
-            };
-
-            // Add students to the class
-            foreach (var studentId in request.StudentIds)
-            {
-                var student = await _context.Students.FindAsync(studentId);
-                if (student == null)
-                    return BadRequest($"Student with ID {studentId} not found");
-
-                newClass.StudentClasses.Add(new StudentClass
-                {
-                    StudentId = studentId
-                });
+                return Unauthorized("UserId not found or invalid.");
             }
+            request.CurrentUserId = userId.Value;
+            var result = await _classService.CreateClass(request);
+           
+            if (result.IsSuccess)
+            {
+                return Ok(result);
+            }
+            else
+            {
+                return result.Code switch
+                {
+                    400 => BadRequest(result.Message),
+                    _ => StatusCode(500, result.Message)
+                };
+            }
+        }
 
-            // Save the new class to the database
-            _context.Classes.Add(newClass);
-            await _context.SaveChangesAsync();
-
-            return Ok("Class created successfully");
+        private Guid? GetCurrentUserId()
+        {
+            var userIdClaim = User.FindFirst("UserId")?.Value;
+            return Guid.TryParse(userIdClaim, out var userId) ? userId : (Guid?)null;
         }
     }
 }

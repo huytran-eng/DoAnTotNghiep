@@ -11,7 +11,7 @@ namespace LMS.DataAccess.Repositories
 {
     public class BaseRepository<T> : IBaseRepository<T> where T : class
     {
-        private readonly AppDbContext _context;
+        protected readonly AppDbContext _context;
         private readonly DbSet<T> _dbSet;
 
         public BaseRepository(AppDbContext context)

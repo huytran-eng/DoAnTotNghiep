@@ -37,7 +37,8 @@ namespace LMS.BusinessLogic.Services.Implementations
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.NameIdentifier, user.Username),
-                new Claim(ClaimTypes.Role, user.Position.ToString())
+                new Claim(ClaimTypes.Role, user.Position.ToString()),
+                new Claim("UserId", user.Id.ToString())
             };
 
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
