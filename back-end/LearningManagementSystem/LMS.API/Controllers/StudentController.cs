@@ -22,17 +22,16 @@ namespace LMS.API.Controllers
         /// <param name="sortBy">sort field</param>
         /// <param name="descending">sort order</param>
         /// <returns></returns>
-        
-        //[HttpGet("{id}/classes")]
-        //public async Task<IActionResult> GetStudentClasses(
-        //        Guid studentId,
-        //        [FromQuery] string? search = null,
-        //        [FromQuery] string? sortBy = null,
-        //        [FromQuery] bool descending = false)
-        //{
-        //    var result = await _studentService.GetClassesForStudent(studentId, search, sortBy, descending);
-            
-        //}
+        [HttpGet("{id}/classes")]
+        public async Task<IActionResult> GetStudentClasses(
+                Guid studentId,
+                [FromQuery] string? search = null,
+                [FromQuery] string? sortBy = null,
+                [FromQuery] bool descending = false)
+        {
+            var result = await _studentService.GetClassesForStudent(studentId, search, sortBy, descending);
+
+        }
 
         [HttpPost("import")]
         public async Task<IActionResult> ImportStudents(IFormFile file)

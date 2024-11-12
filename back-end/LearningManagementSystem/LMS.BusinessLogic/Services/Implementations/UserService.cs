@@ -66,6 +66,52 @@ namespace LMS.BusinessLogic.Services.Implementations
             return result;
         }
 
+        public async Task<CommonResult<UserDTO>> GetUserInformationById(Guid userId)
+        {
+            try
+            {
+                var user = await _userRepository.GetByIdAsync(userId);
+                if (user == null)
+                {
+                    return new CommonResult<UserDTO>
+                    {
+                        IsSuccess = false,
+                        Code = 404,
+                        Message = "User id not found"
+                    };
+                }
+                var userDTO = new UserDTO()
+                {
+                    Id = user.Id,
+                    Username = user.Username,
+                    Name = user.Username,
+                    BirthDate = user.BirthDate,
+                    Email = user.Email,
+                    Address = user.Address,
+                    Phone = user.Phone,
+                    Position = user.Position.ToString(),
+                };
+
+                return new CommonResult<UserDTO>
+                {
+                    IsSuccess = true,
+                    Code = 200,
+                    Message = "success",
+                    Data = userDTO
+                };
+            }
+            catch (Exception ex)
+            {
+                return new CommonResult<UserDTO>
+                {
+                    IsSuccess = true,
+                    Code = 500,
+                    Message = "Error getting user info " + ex.Message
+                };
+            }
+        }
+
+
         //public async Task<CommonResult<UserDTO>> RegisterAsync(UserDTO userDTO)
         //{
         //    var existingUser = await _userRepository.FindAsync(u => u.Username == userDTO.Username);

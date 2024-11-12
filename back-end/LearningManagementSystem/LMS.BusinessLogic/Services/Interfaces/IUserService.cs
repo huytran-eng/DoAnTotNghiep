@@ -11,5 +11,7 @@ namespace LMS.BusinessLogic.Services.Interfaces
     public interface IUserService
     {
         Task<CommonResult<UserDTO>> LoginAsync(UserDTO userDTO);
+
+        Task<CommonResult<UserDTO>> GetUserInformationById(Guid userId);
     }
 }

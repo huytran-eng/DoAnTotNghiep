@@ -11,6 +11,7 @@ namespace LMS.BusinessLogic.Services.Interfaces
 {
     public interface IClassService
     {
+        Task<CommonResult<ClassDTO>> GetAllClasses();
         Task<CommonResult<object>> CreateClass(CreateClassRequest createClassRequest);
     }
 }
