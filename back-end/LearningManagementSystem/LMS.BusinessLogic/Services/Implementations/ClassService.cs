@@ -2,6 +2,7 @@
 using LMS.BusinessLogic.DTOs;
 using LMS.BusinessLogic.Services.Interfaces;
 using LMS.Core;
+using LMS.Core.Enums;
 using LMS.DataAccess.Models;
 using LMS.DataAccess.Repositories;
 using Microsoft.EntityFrameworkCore;
@@ -112,7 +113,80 @@ namespace LMS.BusinessLogic.Services.Implementations
                 Message = $"Create class successfull"
             };
         }
- 
-    
+
+        public async Task<CommonResult<PaginatedResultDTO<ClassDTO>>> GetClassesForUser(ViewClassRequestDTO request)
+        {
+            var currentUserInfo = await _userRepository.GetByIdAsync(request.CurrentUserId);
+            List<Class> classes;
+
+            // Chose classes retreive logic based on user position
+            if (currentUserInfo.Position == PositionEnum.Admin)
+            {
+                classes = await _classRepository.GetAllAsync();
+            }
+            else if (currentUserInfo.Position == PositionEnum.Teacher)
+            {
+                classes = await _classRepository.GetByTeacherIdAsync(request.UserDTO.Id);
+            }
+            else
+            {
+                classes = await _classRepository.GetByStudentIdAsync(request.UserDTO.Id);
+            }
+
+            // Apply filtering
+            if (!string.IsNullOrEmpty(request.Subject))
+            {
+                classes = classes.Where(c => c.Subject.Name.Equals(request.Subject, StringComparison.OrdinalIgnoreCase)).ToList();
+            }
+
+            // Apply sorting
+            classes = request.SortBy.ToLower() switch
+            {
+                "name" => request.IsDescending ? classes.OrderByDescending(c => c.Subject.Name).ToList() : classes.OrderBy(c => c.Subject.Name).ToList(),
+                "date" => request.IsDescending ? classes.OrderByDescending(c => c.StartDate).ToList() : classes.OrderBy(c => c.StartDate).ToList(),
+                _ => classes
+            };
+
+            var classesDTO = classes.Select(c => new ClassDTO
+            {
+                Id = c.Id,
+                StartDate = c.StartDate,
+                EndDate = c.EndDate,
+                TeacherName = c.Teacher.User.Name,
+                SubjectName = c.Subject.Name,
+                NumberOfStudent = c.StudentClasses.Count(),
+            }).ToList();
+
+
+            // Apply pagination
+            int totalRecords = classes.Count();
+            var paginatedClasses = classesDTO.Skip((request.Page - 1) * request.PageSize).Take(request.PageSize).ToList();
+
+            var paginatedResult = new PaginatedResultDTO<ClassDTO>
+            {
+                Items = paginatedClasses,
+                Page = request.Page,
+                PageSize = request.PageSize,
+                TotalRecords = totalRecords
+            };
+
+            return new CommonResult<PaginatedResultDTO<ClassDTO>>
+            {
+                IsSuccess = true,
+                Code = 200,
+                Data = paginatedResult
+            };
+        }
+
+        public async Task<CommonResult<ClassDTO>> GetClassDetailForUser(Guid classId, Guid userId)
+        {
+            return new CommonResult<ClassDTO>
+            {
+                IsSuccess = true,
+                Code = 200,
+                Message = "Success"
+            };
+        }
+
     }
 }

@@ -24,50 +24,41 @@ namespace LMS.API.Controllers
             _userService = userService;
         }
 
-        //[Authorize]
-        //[HttpGet]
-        //public async Task<IActionResult> ViewClasses(string? subject = null,
-        //                                            string? sortBy = "name",
-        //                                            bool isDescending = false,
-        //                                            int page = 1,
-        //                                            int pageSize = 10)
-        //{
-        //    var userId = GetCurrentUserId();
-        //    if (userId == null)
-        //    {
-        //        return Unauthorized("UserId not found or invalid.");
-        //    }
 
-        //    var userResult = await _userService.GetUserInformationById(userId.Value);
+        // TODO change the get user logic to the service, remove the get user info by id method in the controller
+        [Authorize]
+        [HttpGet("list")]
+        public async Task<IActionResult> ViewClasses([FromQuery] ViewClassRequestDTO request)
+        {
+            var userId = GetCurrentUserId();
+            if (userId == null)
+            {
+                return Unauthorized("UserId not found or invalid.");
+            }
 
-        //    if (!userResult.IsSuccess)
-        //    {
-        //        return userResult.Code switch
-        //        {
-        //            404 => NotFound(userResult.Message),
-        //            _ => StatusCode(500, userResult.Message)
-        //        };
-        //    }
+            var classesResult = await _classService.GetClassesForUser(request);
 
-        //    UserDTO userDTO = userResult.Data;
-        //    var classesResult = new CommonResult<ClassDTO>();
+            if (!classesResult.IsSuccess)
+            {
+                return StatusCode(500, classesResult.Message);
+            }
 
-        //    if (userDTO.Position == PositionEnum.Admin.ToString())
-        //    {
-        //        classesResult = _classService.GetAllClasses();
-        //    }
+            return Ok(classesResult.Data);
+        }
 
-        //    else if (userDTO.Position == PositionEnum.Teacher.ToString())
-        //    {
-        //        classesResult = _classService.GetClassesTaughtByTeacher(userId);
-        //    }
+        [Authorize]
+        [HttpGet("detail")]
+        public async Task<IActionResult> GetClassDetail([FromQuery] Guid classId)
+        {
+            var userId = GetCurrentUserId();
+            if (userId == null)
+            {
+                return Unauthorized("UserId not found or invalid.");
+            }
 
-        //    else
-        //    {
-        //        classesResult = _classService.GetClassesForStudent(userId);
-        //    }
-
-        //}
+            var classResult = _classService.GetClassDetail(classId);
+            return Ok();
+        }
 
         [Authorize]
         [HttpPost("create")]

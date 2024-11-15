@@ -11,6 +11,9 @@ namespace LMS.BusinessLogic.DTOs
         public Guid Id { get; set; }           
         public DateTime StartDate { get; set; }   
         public DateTime EndDate { get; set; }    
+        public int NumberOfStudent { get; set; }
+        public string? TeacherName { get; set; }
+        public string? SubjectName { get; set; }
 
         public TeacherDTO Teacher { get; set; }
 
