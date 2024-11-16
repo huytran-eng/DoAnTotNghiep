@@ -1,0 +1,23 @@
+/* src/styles/resourceLinks.css */
+.resource-links {
+    display: flex;             /* Sử dụng flexbox để sắp xếp các phần tử theo hàng ngang */
+    justify-content: center;   /* Căn giữa các phần tử theo chiều ngang */
+    gap: 90px;                 /* Khoảng cách giữa các link */
+    margin-top: 20px;          /* Tạo khoảng cách phía trên */
+  }
+  
+  .resource-links a {
+    text-decoration: none;     /* Loại bỏ gạch chân khỏi link */
+    color: #007bff;            /* Màu sắc của link */
+    font-size: 16px;           /* Kích thước font chữ */
+    font-weight: bold;         /* In đậm các link */
+    font-family: 'Poppins', sans-serif; /* Font chữ đẹp hơn (có thể thay đổi font tùy ý) */
+    transition: color 0.3s ease; /* Thêm hiệu ứng chuyển màu khi hover */
+  }
+  
+  .resource-links a:hover {
+    color: #0056b3;            /* Màu sắc khi hover */
+  }
+  
+  
+  
