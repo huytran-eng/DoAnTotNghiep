@@ -1,7 +1,6 @@
 ﻿using LMS.BusinessLogic.DTOs;
 using LMS.BusinessLogic.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LMS.API.Controllers

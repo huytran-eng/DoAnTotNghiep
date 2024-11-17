@@ -14,5 +14,10 @@ namespace LMS.DataAccess.Models
         public virtual Subject Subject { get; set; }
 
         public virtual ICollection<StudentClass> StudentClasses { get; set; }
+        public virtual ICollection<ClassExercise> ClassExercises { get; set; }
+        public virtual ICollection<ClassStudyMaterial> ClassStudyMaterial { get; set; }
+        public virtual ICollection<Topic> Topics { get; set; }
+
+
     }
 }

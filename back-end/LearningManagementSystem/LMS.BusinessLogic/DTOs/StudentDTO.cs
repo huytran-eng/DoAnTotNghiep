@@ -5,7 +5,7 @@ namespace LMS.BusinessLogic.DTOs
     public class StudentDTO
     {
         public Guid Id { get; set; }
-        public string StudentId { get; set; }
+        public string StudentIdString { get; set; }
         public string Username { get; set; }
         public string Name { get; set; }
         public DateTime? BirthDate { get; set; }

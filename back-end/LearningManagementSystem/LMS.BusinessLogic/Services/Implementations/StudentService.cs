@@ -5,15 +5,9 @@ using LMS.Core.Enums;
 using LMS.Core.Helper;
 using LMS.DataAccess.Models;
 using LMS.DataAccess.Repositories;
-using Microsoft.VisualBasic;
 using OfficeOpenXml;
-using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace LMS.BusinessLogic.Services.Implementations
 {
@@ -21,16 +15,19 @@ namespace LMS.BusinessLogic.Services.Implementations
     {
         private readonly IStudentRepository _studentRepository;
         private readonly IUserRepository _userRepository;
+        private readonly IClassRepository _classRepository;
 
-        public StudentService(IStudentRepository studentRepository, IUserRepository userRepository)
+
+        public StudentService(IStudentRepository studentRepository, IUserRepository userRepository, IClassRepository classRepository)
         {
             _studentRepository = studentRepository;
             _userRepository = userRepository;
+            _classRepository = classRepository;
         }
 
         public async Task<CommonResult<IEnumerable<ClassDTO>>> GetClassesForStudent(Guid studentId, string? search, string? sortBy, bool descending)
         {
-            var classes = await _studentRepository.GetClassesForStudent(studentId);
+            var classes = await _classRepository.GetClassesForStudent(studentId);
 
             if (!string.IsNullOrEmpty(search))
             {

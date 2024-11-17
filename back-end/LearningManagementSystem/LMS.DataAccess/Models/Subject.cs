@@ -17,6 +17,8 @@ namespace LMS.DataAccess.Models
 
         [ForeignKey("DepartmentId")]
         public virtual Department Department { get; set; }
+        public ICollection<Topic> Topics { get; set; }
+        public ICollection<SubjectExercise> SubjectExercises { get; set; }
 
         //public ICollection<>
 

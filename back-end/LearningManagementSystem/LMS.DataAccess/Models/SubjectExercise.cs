@@ -17,5 +17,8 @@ namespace LMS.DataAccess.Models
         [ForeignKey("ExerciseId")]
         public virtual Exercise Exercise { get; set; }
         public DateTime AddedDate { get; set; }
+
+        public Guid? TopicId { get; set; }
+        public Topic Topic { get; set; }
     }
 }

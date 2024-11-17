@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using LMS.DataAccess.Models;
 
-namespace LMS.DataAccess.Repositories.University
+namespace LMS.DataAccess.Repositories
 {
-    internal interface IUniversityRepository
+    public interface IUniversityRepository : IBaseRepository<University>
     {
     }
 }

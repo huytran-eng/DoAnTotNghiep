@@ -1,13 +1,7 @@
 ﻿using LMS.BusinessLogic.DTOs;
 using LMS.BusinessLogic.Services.Interfaces;
-using LMS.Core;
-using LMS.Core.Enums;
-using LMS.DataAccess.Models;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using System.Security.Claims;
 
 namespace LMS.API.Controllers
 {
@@ -25,10 +19,9 @@ namespace LMS.API.Controllers
         }
 
 
-        // TODO change the get user logic to the service, remove the get user info by id method in the controller
         [Authorize]
         [HttpGet("list")]
-        public async Task<IActionResult> ViewClasses([FromQuery] ViewClassRequestDTO request)
+        public async Task<IActionResult> ViewClasses(string? subject, string sortBy, bool isDescending = false, int page = 1, int pageSize = 10)
         {
             var userId = GetCurrentUserId();
             if (userId == null)
@@ -36,7 +29,7 @@ namespace LMS.API.Controllers
                 return Unauthorized("UserId not found or invalid.");
             }
 
-            var classesResult = await _classService.GetClassesForUser(request);
+            var classesResult = await _classService.GetClassesForUser(subject, sortBy, isDescending, page, pageSize, userId.Value);
 
             if (!classesResult.IsSuccess)
             {
@@ -56,13 +49,13 @@ namespace LMS.API.Controllers
                 return Unauthorized("UserId not found or invalid.");
             }
 
-            var classResult = _classService.GetClassDetail(classId);
+            var classResult = _classService.GetClassDetailForUser(classId, userId.Value);
             return Ok();
         }
 
         [Authorize]
         [HttpPost("create")]
-        public async Task<IActionResult> CreateClass(CreateClassRequest request)
+        public async Task<IActionResult> CreateClass(CreateClassDTO request)
         {
             var userId = GetCurrentUserId();
             if (userId == null)

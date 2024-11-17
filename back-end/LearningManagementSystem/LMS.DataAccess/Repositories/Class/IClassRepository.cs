@@ -4,8 +4,9 @@ namespace LMS.DataAccess.Repositories
 {
     public  interface IClassRepository: IBaseRepository<Class>
     {
-        Task<List<Class>> GetAllAsync();
-        Task<List<Class>> GetByTeacherIdAsync(Guid teacherId);
-        Task<List<Class>> GetByStudentIdAsync(Guid studentId);
+        Task<IEnumerable<Class>> GetClassesByTeacherIdAsync(Guid teacherId);
+        Task<IEnumerable<Class>> GetClassesByStudentIdAsync(Guid studentId);
+        Task<IEnumerable<Class>> GetClassesForStudent(Guid studentId);
+
     }
 }

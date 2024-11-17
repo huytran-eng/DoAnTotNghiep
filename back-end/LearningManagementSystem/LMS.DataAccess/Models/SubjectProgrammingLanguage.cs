@@ -9,7 +9,6 @@ namespace LMS.DataAccess.Models
 {
     public class SubjectProgrammingLanguage : BaseEntity
     {
-        public Guid Id { get; set; }
         public Guid SubjectId { get; set; }
         [ForeignKey("SubjectId")]
         public Subject Subject { get; set; }

@@ -21,7 +21,7 @@ namespace LMS.API
             services.AddScoped<ITopicRepository, TopicRepository>();
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<ISubjectRepository, SubjectRepository>();
-
+            services.AddScoped<IClassStudyMaterialRepository, ClassStudyMaterialRepository>();
 
             // Register services
             services.AddScoped<IUserService, UserService>();

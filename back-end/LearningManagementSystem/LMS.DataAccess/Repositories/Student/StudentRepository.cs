@@ -9,15 +9,14 @@ namespace LMS.DataAccess.Repositories
         {
         }
 
-        public async Task<IEnumerable<Class>> GetClassesForStudent(Guid studentId)
+        public async Task<IEnumerable<Student>> GetStudentsByClassAsync(Guid classId)
         {
             return await _context.StudentClasses
-              .Where(sc => sc.StudentId == studentId)   
-              .Select(sc => sc.Class)     
-              .Include(c => c.Subject)
-              .Include(c=> c.Teacher)
-              .ToListAsync();
+                .Where(sc => sc.ClassId == classId)
+                .Select(sc => sc.Student)
+                .Include(student => student.User)
+                .ToListAsync();
         }
-
     }
 }
+  

@@ -414,12 +414,14 @@ namespace LMS.DataAccess.Models
                .HasOne(cto => cto.Class)
                .WithMany()
                .HasForeignKey(cto => cto.ClassId)
+               .OnDelete(DeleteBehavior.Restrict)
                .IsRequired();
 
             modelBuilder.Entity<ClassTopicOpen>()
                 .HasOne(cto => cto.Topic)
                 .WithMany()
                 .HasForeignKey(cto => cto.TopicId)
+                .OnDelete(DeleteBehavior.Restrict)
                 .IsRequired();
 
             modelBuilder.Entity<TestCase>()

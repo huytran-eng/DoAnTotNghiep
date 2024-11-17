@@ -18,15 +18,24 @@ namespace LMS.BusinessLogic.Services.Implementations
         private readonly ITeacherRepository _teacherRepository;
         private readonly IUserRepository _userRepository;
         private readonly ISubjectRepository _subjectRepository;
+        private readonly IStudentRepository _studentRepository;
+        private readonly IClassRepository _classRepository;
+
+
 
 
         public DepartmentService(
-              IStudentRepository studentRepository,
-              IClassRepository classRepository,
+              IDepartmentRepository departmentRepository,
+              IUniversityRepository universityRepository,
               ITeacherRepository teacherRepository,
               IUserRepository userRepository,
-              ISubjectRepository subjectRepository)
+              ISubjectRepository subjectRepository,
+              IStudentRepository studentRepository,
+              IClassRepository classRepository
+            )
         {
+            _departmentRepository = departmentRepository;
+            _universityRepository = universityRepository;
             _studentRepository = studentRepository;
             _classRepository = classRepository;
             _teacherRepository = teacherRepository;
@@ -43,7 +52,7 @@ namespace LMS.BusinessLogic.Services.Implementations
                 return new CommonResult<DepartmentDTO>
                 {
                     IsSuccess = false,
-                    Code=400,
+                    Code = 400,
                     Message = "No university in database."
                 };
             }
@@ -69,7 +78,7 @@ namespace LMS.BusinessLogic.Services.Implementations
                 {
                     IsSuccess = true,
                     Code = 200,
-                    Message ="Department added successfully"
+                    Message = "Department added successfully"
                 };
             }
             catch (Exception ex)

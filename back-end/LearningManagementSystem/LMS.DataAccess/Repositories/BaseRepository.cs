@@ -1,11 +1,6 @@
 ﻿using LMS.DataAccess.Models;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace LMS.DataAccess.Repositories
 {
@@ -20,7 +15,7 @@ namespace LMS.DataAccess.Repositories
             _dbSet = _context.Set<T>();
         }
 
-        public virtual async Task<IQueryable<T>> GetAllAsync()
+        public virtual async Task<IEnumerable<T>> GetAllAsync()
         {
             return await Task.FromResult(_dbSet);
         }
@@ -35,7 +30,7 @@ namespace LMS.DataAccess.Repositories
             return await _dbSet.FirstOrDefaultAsync(expression); 
         }
 
-        public virtual async Task<IQueryable<T>> FindListAsync(Expression<Func<T, bool>> expression)
+        public virtual async Task<IEnumerable<T>> FindListAsync(Expression<Func<T, bool>> expression)
         {
             return await Task.FromResult(_dbSet.Where(expression)); 
         }

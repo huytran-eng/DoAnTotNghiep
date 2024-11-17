@@ -20,8 +20,6 @@ namespace LMS.BusinessLogic.DTOs
         public SubjectDTO Subject { get; set; }
 
         public List<StudentDTO> Students { get; set; }
-
-
     }
 
 }

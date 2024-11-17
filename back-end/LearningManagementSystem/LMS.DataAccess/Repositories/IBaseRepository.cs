@@ -10,7 +10,7 @@ namespace LMS.DataAccess.Repositories
     public interface IBaseRepository<T> where T : class
     {
         // Get all entities
-        Task<IQueryable<T>> GetAllAsync();
+        Task<IEnumerable<T>> GetAllAsync();
 
         // Get entity by Id
         Task<T> GetByIdAsync(Guid id);
@@ -19,7 +19,7 @@ namespace LMS.DataAccess.Repositories
         Task<T> FindAsync(Expression<Func<T, bool>> expression);
 
         // Get list of entities by expression
-        Task<IQueryable<T>> FindListAsync(Expression<Func<T, bool>> expression);
+        Task<IEnumerable<T>> FindListAsync(Expression<Func<T, bool>> expression);
 
         // Add a new entity
         Task AddAsync(T entity);
