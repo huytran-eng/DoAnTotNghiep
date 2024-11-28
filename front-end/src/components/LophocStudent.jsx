@@ -1,48 +1,62 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import '../styles/homeStyles.css';
-import '../styles/sidebarStyles.css'; // Đảm bảo đường dẫn đúng
-import '../styles/lophoc.css';  // Import CSS cho Lophoc nếu có
-import Sidebar from './Layout/DefaultLayout/Sidebar';
+import '../styles/sidebarStudentStyles.css';
+import '../styles/lophocStudent.css';  // Import CSS cho Lophoc nếu có
+import SidebarStudent from './Layout/DefaultLayout/SidebarStudent';
 
-const Lophoc = () => {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [selectedFilter, setSelectedFilter] = useState('all'); // Bộ lọc sĩ số
-  const navigate = useNavigate(); // Khai báo useNavigate để điều hướng
+const LophocStudent = () => {
+  const navigate = useNavigate();
 
-  const handleSearchChange = (event) => {
-    setSearchTerm(event.target.value);
+  // Define state for search term and filter
+  const [searchTerm, setSearchTerm] = useState('');  // Define searchTerm
+  const [selectedFilter, setSelectedFilter] = useState('all'); // Assuming you have a filter
+
+  const handleSearchChange = (e) => {
+    setSearchTerm(e.target.value); // Update search term when user types
   };
 
-  const handleFilterChange = (event) => {
-    setSelectedFilter(event.target.value);
+  const handleFilterChange = (e) => {
+    setSelectedFilter(e.target.value); // Update selected filter when user changes the selection
   };
 
+  const handleView = (listType, className) => {
+    // Chuyển trang đến ListBaitap với thông tin lớp học
+    if (listType === 'assignments') {
+      navigate(`/listbaitap/${className}`, { state: { className } });
+    } else if (listType === 'materials') {
+      navigate(`/listtailieu/${className}`, { state: { className } });
+    }
+  };
+
+  // Dữ liệu lớp học mẫu
   const classes = [
     { name: 'D20CQ-CN01', size: 45, startDate: '18/03/2021', endDate: '18/06/2021' },
     { name: 'D20CQ-CN02', size: 40, startDate: '20/03/2021', endDate: '20/06/2021' },
     { name: 'D20CQ-CN03', size: 50, startDate: '22/03/2021', endDate: '22/06/2021' },
-    { name: 'D20CQ-CN04', size: 60, startDate: '23/03/2021', endDate: '23/06/2021' },
-    // Thêm các lớp học khác nếu cần
+    { name: 'D20CQ-CN04', size: 30, startDate: '23/03/2021', endDate: '23/06/2021' },
+    { name: 'D20CQ-CN05', size: 55, startDate: '25/03/2021', endDate: '25/06/2021' },
+    { name: 'D20CQ-CN03', size: 50, startDate: '22/03/2021', endDate: '22/06/2021' },
+    { name: 'D20CQ-CN04', size: 30, startDate: '23/03/2021', endDate: '23/06/2021' },
+    { name: 'D20CQ-CN05', size: 55, startDate: '25/03/2021', endDate: '25/06/2021' },
+    { name: 'D20CQ-CN03', size: 50, startDate: '22/03/2021', endDate: '22/06/2021' },
+    { name: 'D20CQ-CN04', size: 30, startDate: '23/03/2021', endDate: '23/06/2021' },
+    { name: 'D20CQ-CN05', size: 55, startDate: '25/03/2021', endDate: '25/06/2021' },
   ];
 
-  // Lọc lớp học theo từ khóa tìm kiếm và bộ lọc sĩ số
-  const filteredClasses = classes.filter((classItem) => {
-    const isNameMatch = classItem.name.toLowerCase().includes(searchTerm.toLowerCase());
-    const isSizeMatch = selectedFilter === 'all' || classItem.size >= parseInt(selectedFilter);
-
-    return isNameMatch && isSizeMatch;
-  });
-
-  const handleClassDetailClick = (className) => {
-    // Chuyển đến trang chi tiết lớp học với tên lớp
-    navigate(`/classdetail/${className}`);
-  };
+  // Filter các lớp học theo searchTerm và selectedFilter using useMemo
+  const filteredClasses = useMemo(() => {
+    return classes.filter(classItem => {
+      const matchesSearch = classItem.name.toLowerCase().includes(searchTerm.toLowerCase());
+      const matchesFilter = selectedFilter === 'all' || classItem.size >= parseInt(selectedFilter);
+      return matchesSearch && matchesFilter;
+    });
+  }, [classes, searchTerm, selectedFilter]);
 
   return (
     <div className='h-screen flex'>
       {/* Sidebar */}
-      <Sidebar/>
+      <SidebarStudent />
 
       {/* Main Content */}
       <div className='flex-grow flex flex-col'>
@@ -61,7 +75,7 @@ const Lophoc = () => {
                 <Link to='/help'>Trợ Giúp</Link>
               </li>
               <li className='header_navbar-item'>
-                <Link to='/register'>GV001</Link>
+                <Link to='/register'>HS001</Link>
               </li>
             </ul>
           </nav>
@@ -96,21 +110,22 @@ const Lophoc = () => {
           </div>
 
           {/* Nội dung bảng danh sách lớp học */}
-          <div className="class-table-wrapper">
-            <table className='class-table'>
+          <div className="student class-table-wrapper">
+            <table className="student class-table">
               <thead>
                 <tr>
                   <th>TÊN LỚP</th>
                   <th>SỸ SỐ LỚP</th>
                   <th>NGÀY BẮT ĐẦU</th>
                   <th>NGÀY KẾT THÚC</th>
-                  <th></th> {/* Cột "Xem" */}
+                  <th>DANH SÁCH BÀI TẬP</th>
+                  <th>DANH SÁCH TÀI LIỆU</th>
                 </tr>
               </thead>
               <tbody>
                 {filteredClasses.length === 0 ? (
                   <tr>
-                    <td colSpan="5">Không tìm thấy lớp học</td>
+                    <td colSpan="6">Không tìm thấy lớp học</td>
                   </tr>
                 ) : (
                   filteredClasses.map((classItem, index) => (
@@ -120,8 +135,15 @@ const Lophoc = () => {
                       <td>{classItem.startDate}</td>
                       <td>{classItem.endDate}</td>
                       <td>
-                        <button onClick={() => handleClassDetailClick(classItem.name)} className="view-btn">
-                          Xem chi tiết
+                        {/* Nút "Xem" cho danh sách bài tập */}
+                        <button onClick={() => handleView('assignments', classItem.name)}>
+                          Xem Bài Tập
+                        </button>
+                      </td>
+                      <td>
+                        {/* Nút "Xem" cho danh sách tài liệu */}
+                        <button onClick={() => handleView('materials', classItem.name)}>
+                          Xem Tài Liệu
                         </button>
                       </td>
                     </tr>
@@ -136,4 +158,4 @@ const Lophoc = () => {
   );
 };
 
-export default Lophoc;
+export default LophocStudent;

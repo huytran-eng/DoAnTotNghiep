@@ -1,25 +1,3 @@
-// src/components/Sidebar.jsx
-// import { Link } from 'react-router-dom';
-// import "../../../../styles/sidebarStyles.css";
-
-// const Sidebar = ( onShowContent ) => {
-//     return (
-//       <div className="sidebar">
-        
-//         <ul className="sidebar-list">
-//           <li className="sidebar-item">
-//             <Link to="/monhoc" onClick={onShowContent}>Môn Học</Link>
-//           </li>
-//           <li className="sidebar-item">
-//             <Link to="/khoahoc" onClick={onShowContent}>Khoa Học</Link>
-//           </li>
-//           <li className="sidebar-item">
-//             <Link to="/lophoc" onClick={onShowContent}>Lớp Học</Link>
-//           </li>
-//         </ul>
-//       </div>
-//     );
-// };
 import {
   Card,
   Typography,
@@ -35,10 +13,12 @@ import {
   BookmarkIcon,
   CodeBracketIcon,
 } from "@heroicons/react/24/solid";
-import  logoPtit from "../../../../assets/image/logo/Logo_PTIT.jpg";
+import logoPtit from "../../../../assets/image/logo/Logo_PTIT.jpg";
 import { useNavigate } from "react-router-dom";
-export function Sidebar() {
+
+function Sidebar() {
   const navigate = useNavigate();
+
   return (
     <Card className="h-[calc(100vh-2rem)] w-full max-w-[20rem] p-4 shadow-xl shadow-blue-gray-900/5">
       <div className="mb-2 p-4 flex justify-center items-center">
@@ -49,11 +29,11 @@ export function Sidebar() {
           <ListItemPrefix>
             <PresentationChartBarIcon className="h-5 w-5" />
           </ListItemPrefix>
-           <Typography color="blue-gray" className="mr-auto font-normal">
-                Môn học
+          <Typography color="blue-gray" className="mr-auto font-normal">
+            Môn học
           </Typography>
         </ListItem>
-        <ListItem onClick={()=> navigate("/khoahoc")}>
+        <ListItem onClick={() => navigate("/khoahoc")}>
           <ListItemPrefix>
             <BookmarkIcon className="h-5 w-5" />
           </ListItemPrefix>
@@ -61,7 +41,7 @@ export function Sidebar() {
             Khoa học
           </Typography>
         </ListItem>
-        <ListItem onClick={()=> navigate("/lophoc")}>
+        <ListItem onClick={() => navigate("/lophoc")}>
           <ListItemPrefix>
             <CodeBracketIcon className="h-5 w-5" />
           </ListItemPrefix>

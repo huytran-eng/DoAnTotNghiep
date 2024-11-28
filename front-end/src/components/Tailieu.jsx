@@ -4,6 +4,10 @@ import '../styles/sidebarStyles.css'; // Đảm bảo đường dẫn đúng
 import '../styles/tailieu.css';
 import { useState } from 'react';
 
+import Sidebar from "./Layout/DefaultLayout/Sidebar";
+
+
+
 const Lophoc = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedFilter, setSelectedFilter] = useState('all'); // Bộ lọc sĩ số

@@ -1,133 +1,98 @@
+/* Căn giữa bảng và thêm thanh cuộn */
 .class-table-wrapper {
-    width: 80%; /* Chiều rộng bảng là 80% của phần tử chứa */
-    max-width: 1200px; /* Giới hạn chiều rộng tối đa */
-    margin: 0 auto; /* Căn giữa bảng */
-    overflow-x: auto; /* Cho phép cuộn ngang nếu bảng quá rộng */
-    overflow-y: auto; /* Cho phép cuộn dọc nếu bảng quá dài */
-    max-height: 500px; /* Giới hạn chiều cao tối đa của bảng */
-  }
-  
-  .class-table {
-    width: 100%; /* Đảm bảo bảng chiếm toàn bộ chiều rộng phần tử cha */
-    border-collapse: collapse; /* Xóa khoảng cách giữa các ô */
-    table-layout: fixed; /* Cố định chiều rộng bảng */
-  }
-  
-  .class-table th, .class-table td {
-    padding: 5px 8px; /* Giảm khoảng cách padding để các cột gần nhau hơn */
-    text-align: left;
-    border: 1px solid #ddd; /* Đặt border cho các ô trong bảng */
-  }
-  
-  .class-table th {
-    background-color: #f2f2f2;
-    text-align: center; /* Căn giữa tiêu đề cột */
-  }
-  
-  .class-table tr:nth-child(even) {
-    background-color: #f9f9f9; /* Đổi màu nền cho các hàng chẵn */
-  }
-  
-  .class-table tr:hover {
-    background-color: #f1f1f1; /* Hiệu ứng hover cho dòng */
-  }
-  
-  .search-filter-container {
-    display: flex;
-    justify-content: center; /* Căn giữa theo chiều ngang */
-    align-items: center; /* Căn giữa theo chiều dọc */
-    margin-bottom: 20px; /* Khoảng cách phía dưới */
-    gap: 20px; /* Khoảng cách giữa các phần tử */
-    flex-wrap: wrap; /* Cho phép phần tử chuyển sang dòng mới nếu không đủ chỗ */
-  }
-  /* Các nút trong cột Action */
-.action-btn {
-    padding: 6px 12px;
-    font-size: 12px;
-    margin-right: 8px;
-    border: none;
-    cursor: pointer;
-    border-radius: 4px;
-  }
-  
-  .download-btn {
-    background-color: #4CAF50;
-    color: white;
-  }
-  
-  .edit-btn {
-    background-color: #FF9800;
-    color: white;
-  }
-  
-  .action-btn:hover {
-    opacity: 0.8;
-  }
-  
-  
-  .search-container {
-    display: flex;
-    align-items: center;
-  }
-  
-  .search-input {
-    padding: 8px;
-    font-size: 14px;
-  }
-  
-  .search-btn {
-    padding: 8px;
-    font-size: 14px;
-    background-color: #4CAF50;
-    color: white;
-    border: none;
-    cursor: pointer;
-    margin-left: 8px;
-  }
-  
-  .add-document-btn {
-    padding: 8px 16px;
-    font-size: 14px;
-    background-color: #007BFF;
-    color: white;
-    border: none;
-    cursor: pointer;
-  }
-  
-  .search-btn:hover {
-    background-color: #0056b3;
-  }
-  
-  .filter-container {
-    display: flex;
-    align-items: center;
-    gap: 10px; /* Khoảng cách giữa nhãn và dropdown */
-  }
-  
-  .filter-label {
-    font-weight: bold;
-  }
-  
-  .filter-select {
-    padding: 8px;
-    border-radius: 5px;
-    border: 1px solid #ccc;
-  }
-  .add-document-container {
-    margin-top: 20px;
-  }
-  
-  .add-document-btn {
-    padding: 10px 20px;
-    background-color: #4CAF50;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-  }
-  
-  .add-document-btn:hover {
-    background-color: #45a049;
-  }
-  
-  
+  width: 80%; /* Chiều rộng bảng là 80% của phần tử chứa */
+  max-width: 1200px; /* Giới hạn chiều rộng tối đa */
+  margin: 0 auto; /* Căn giữa bảng */
+  overflow-x: hidden; /* Cho phép cuộn ngang nếu bảng quá rộng */
+  overflow-y: auto; /* Cho phép cuộn dọc nếu bảng quá dài */
+  max-height: 500px; /* Giới hạn chiều cao tối đa của bảng */
+}
+
+.class-table {
+  width: 100%; /* Đảm bảo bảng chiếm toàn bộ chiều rộng phần tử cha */
+  border-collapse: collapse; /* Xóa khoảng cách giữa các ô */
+  margin-left:100px;
+}
+
+.class-table th, .class-table td {
+  padding: 12px;
+  text-align: left;
+  border: 1px solid #ddd; /* Đặt border cho các ô trong bảng */
+}
+
+.class-table th {
+  background-color: #f2f2f2;
+}
+
+.class-table tr:nth-child(even) {
+  background-color: #f9f9f9; /* Đổi màu nền cho các hàng chẵn */
+}
+
+.class-table tr:hover {
+  background-color: #f1f1f1; /* Hiệu ứng hover cho dòng */
+}
+
+
+
+/* Điều chỉnh CSS cho search-filter-container */
+.search-filter-container {
+  display: flex;
+  justify-content: center; /* Căn giữa theo chiều ngang */
+  align-items: center; /* Căn giữa theo chiều dọc */
+  margin-bottom: 20px; /* Khoảng cách phía dưới */
+  gap: 20px; /* Khoảng cách giữa các phần tử */
+  flex-wrap: wrap; /* Cho phép phần tử chuyển sang dòng mới nếu không đủ chỗ */
+}
+
+/* Điều chỉnh cho search-container */
+.search-container {
+  display: flex;
+  align-items: center;
+  border: 1px solid #ccc;
+  padding: 5px 10px;
+  border-radius: 5px;
+}
+h1.mb-4 {
+  font-weight: bold; /* In đậm chữ */
+  text-align: center; /* Căn giữa chữ */
+  margin-bottom: 20px; /* Khoảng cách giữa tiêu đề và bảng */
+}
+
+
+.search-input {
+  border: none;
+  padding: 8px;
+  outline: none;
+  width: 200px; /* Điều chỉnh chiều rộng của input */
+}
+
+.search-btn {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 8px;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.search-btn:hover {
+  background-color: #0056b3;
+}
+
+/* Điều chỉnh cho filter-container */
+.filter-container {
+  display: flex;
+  align-items: center;
+  gap: 10px; /* Khoảng cách giữa nhãn và dropdown */
+}
+
+.filter-label {
+  font-weight: bold;
+}
+
+.filter-select {
+  padding: 8px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+

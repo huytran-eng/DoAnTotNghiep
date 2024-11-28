@@ -1,17 +1,25 @@
 /* Căn giữa bảng và thêm thanh cuộn */
 .class-table-wrapper {
-  width: 80%; /* Chiều rộng bảng là 80% của phần tử chứa */
-  max-width: 1200px; /* Giới hạn chiều rộng tối đa */
-  margin: 0 auto; /* Căn giữa bảng */
-  overflow-x: hidden; /* Cho phép cuộn ngang nếu bảng quá rộng */
-  overflow-y: auto; /* Cho phép cuộn dọc nếu bảng quá dài */
-  max-height: 500px; /* Giới hạn chiều cao tối đa của bảng */
+  width: 100%; /* Đảm bảo phần tử chứa bảng không vượt quá màn hình */
+  max-width: 100%;
+  margin: 0 auto;
+  overflow-x: auto; /* Cho phép cuộn ngang nếu cần */
+  overflow-y: auto;
+  max-height: 500px;
+  box-sizing: border-box; /* Đảm bảo padding và border không làm tăng kích thước phần tử */
 }
 
 .class-table {
-  width: 100%; /* Đảm bảo bảng chiếm toàn bộ chiều rộng phần tử cha */
-  border-collapse: collapse; /* Xóa khoảng cách giữa các ô */
-  margin-left:100px;
+  width: 100%; /* Đảm bảo bảng không vượt quá kích thước phần tử cha */
+  border-collapse: collapse;
+  table-layout: fixed; /* Điều chỉnh tự động chiều rộng cột */
+}
+
+.class-table td, .class-table th {
+  word-wrap: break-word; /* Ngắt từ nếu quá dài */
+  white-space: nowrap; /* Không cho phép xuống dòng */
+  overflow: hidden;
+  text-overflow: ellipsis; /* Thêm dấu "..." nếu văn bản quá dài */
 }
 
 .class-table th, .class-table td {
@@ -32,8 +40,6 @@
   background-color: #f1f1f1; /* Hiệu ứng hover cho dòng */
 }
 
-
-
 /* Điều chỉnh CSS cho search-filter-container */
 .search-filter-container {
   display: flex;
@@ -52,12 +58,12 @@
   padding: 5px 10px;
   border-radius: 5px;
 }
+
 h1.mb-4 {
   font-weight: bold; /* In đậm chữ */
   text-align: center; /* Căn giữa chữ */
   margin-bottom: 20px; /* Khoảng cách giữa tiêu đề và bảng */
 }
-
 
 .search-input {
   border: none;
@@ -96,3 +102,19 @@ h1.mb-4 {
   border: 1px solid #ccc;
 }
 
+.view-btn {
+  background-color: #4CAF50;
+  color: white;
+  padding: 5px 10px;
+  border-radius: 5px;
+  text-decoration: none;
+}
+
+.view-btn:hover {
+  background-color: #45a049;
+}
+
+/* Đảm bảo padding không ảnh hưởng đến chiều rộng tổng */
+* {
+  box-sizing: border-box;
+}
