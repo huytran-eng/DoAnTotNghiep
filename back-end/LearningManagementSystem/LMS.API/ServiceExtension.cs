@@ -14,7 +14,7 @@ namespace LMS.API
             // Register repositories
             services.AddScoped<IClassRepository, ClassRepository>();
             services.AddScoped<IExerciseRepository, ExerciseRepository>();
-            services.AddScoped<IProgrammingLanguageRepository, ProgrammingLanguageRepository>();
+            services.AddScoped<ISubjectProgrammingLanguageRepository, SubjectProgrammingLanguageRepository>();
             services.AddScoped<IStudentRepository, StudentRepository>();
             services.AddScoped<ITeacherRepository, TeacherRepository>();
             services.AddScoped<ITestCaseRepository, TestCaseRepository>();
@@ -22,12 +22,14 @@ namespace LMS.API
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<ISubjectRepository, SubjectRepository>();
             services.AddScoped<IClassStudyMaterialRepository, ClassStudyMaterialRepository>();
+            services.AddScoped<ISubjectExerciseRepository, SubjectExerciseRepository>();
 
             // Register services
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<ITokenService, TokenService>();
             services.AddScoped<IStudentService, StudentService>();
             services.AddScoped<IClassService, ClassService>();
+            services.AddScoped<IExerciseService, ExerciseService>();
 
 
             return services;

@@ -1,10 +1,4 @@
 ﻿using LMS.Core.Enums;
-using LMS.DataAccess.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace LMS.BusinessLogic.DTOs
 {
@@ -17,6 +11,7 @@ namespace LMS.BusinessLogic.DTOs
         public DifficultyLevel Difficulty { get; set; } 
         public int TimeLimit { get; set; } // Time limit in milliseconds.
         public int SpaceLimit { get; set; } // Space limit in kilobytes.
+        public Guid? CurrentUserId { get; set; }
 
         // A collection of Test Cases for this exercise
         public List<TestCaseDTO> TestCases { get; set; } = new List<TestCaseDTO>();

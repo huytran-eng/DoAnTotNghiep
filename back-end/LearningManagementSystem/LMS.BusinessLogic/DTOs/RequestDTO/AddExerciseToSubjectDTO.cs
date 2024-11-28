@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace LMS.BusinessLogic.DTOs.RequestDTO
+﻿namespace LMS.BusinessLogic.DTOs.RequestDTO
 {
-    public class AddExerciseToSubjectDto
+    public class AddExerciseToSubjectDTO
     {
         public Guid SubjectId { get; set; }
         public Guid ExerciseId { get; set; }

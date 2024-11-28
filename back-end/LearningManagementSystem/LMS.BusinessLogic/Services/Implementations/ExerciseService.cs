@@ -21,7 +21,7 @@ namespace LMS.BusinessLogic.Services.Implementations
             _testCaseRepository = testCaseRepository;
             _subjectRepository = subjectRepository;
             _topicRepository = topicRepository;
-            _subjectExerciseRepository = subjectExerciseRepository
+            _subjectExerciseRepository = subjectExerciseRepository;
         }
 
         public async Task<CommonResult<Exercise>> CreateExerciseAsync(CreateExerciseDTO exerciseDto)
@@ -39,12 +39,16 @@ namespace LMS.BusinessLogic.Services.Implementations
                     Difficulty = exerciseDto.Difficulty,
                     TimeLimit = exerciseDto.TimeLimit,
                     SpaceLimit = exerciseDto.SpaceLimit,
+                    CreatedAt = DateTime.Now,
+                    CreatedById = exerciseDto.CurrentUserId.Value,
                     TestCases = exerciseDto.TestCases.Select(tc => new TestCase
                     {
                         Input = tc.Input,
                         ExpectedOutput = tc.ExpectedOutput,
                         Description = tc.Description,
-                        IsHidden = tc.IsHidden
+                        IsHidden = tc.IsHidden,
+                        CreatedAt = DateTime.Now,
+                        CreatedById = exerciseDto.CurrentUserId.Value
                     }).ToList()
                 };
 
@@ -57,14 +61,13 @@ namespace LMS.BusinessLogic.Services.Implementations
                     IsSuccess = true,
                     Code = 200,
                     Message = "Create exercise successful",
-                    Data = exercise
                 };
             }
             catch (Exception ex)
             {
                 return new CommonResult<Exercise>
                 {
-                    IsSuccess = true,
+                    IsSuccess = false,
                     Code = 500,
                     Message = $"Error when creating new exercise {ex.Message}",
                 };
@@ -96,6 +99,8 @@ namespace LMS.BusinessLogic.Services.Implementations
                 existingExercise.Difficulty = updateExerciseDTO.Difficulty;
                 existingExercise.TimeLimit = updateExerciseDTO.TimeLimit;
                 existingExercise.SpaceLimit = updateExerciseDTO.SpaceLimit;
+                existingExercise.UpdatedAt = DateTime.Now;
+                existingExercise.UpdatedById = updateExerciseDTO.CurrentUserId;
 
                 // Add new TestCases to the Exercise
                 if (updateExerciseDTO.NewTestCases != null && updateExerciseDTO.NewTestCases.Any())
@@ -108,7 +113,9 @@ namespace LMS.BusinessLogic.Services.Implementations
                             ExpectedOutput = testCaseDTO.ExpectedOutput,
                             Description = testCaseDTO.Description,
                             IsHidden = testCaseDTO.IsHidden,
-                            ExerciseId = existingExercise.Id
+                            ExerciseId = existingExercise.Id,
+                            CreatedAt = DateTime.Now,
+                            CreatedById = updateExerciseDTO.CurrentUserId.Value
                         };
 
                         existingExercise.TestCases.Add(newTestCase);
@@ -138,7 +145,7 @@ namespace LMS.BusinessLogic.Services.Implementations
             }
         }
 
-        public async Task<CommonResult<Exercise>> AddExerciseToSubjectAsync(AddExerciseToSubjectDto addExercuseToSubjectDTO)
+        public async Task<CommonResult<Exercise>> AddExerciseToSubjectAsync(AddExerciseToSubjectDTO addExercuseToSubjectDTO)
         {
             if (addExercuseToSubjectDTO == null)
                 throw new ArgumentNullException(nameof(addExercuseToSubjectDTO));
@@ -162,7 +169,7 @@ namespace LMS.BusinessLogic.Services.Implementations
 
                 // Check if the relationship already exists
                 var existingRelation = await _subjectExerciseRepository.FindBySubjectAsync(addExercuseToSubjectDTO.SubjectId);
-                if (existingRelation != null)
+                if (existingRelation != null && existingRelation.Count > 0)
                     return new CommonResult<Exercise> { IsSuccess = false, Code = 400, Message = "Exercise already added to the subject" };
 
                 // Add the relationship

@@ -1,5 +1,6 @@
 ﻿using Azure.Core;
 using LMS.BusinessLogic.DTOs;
+using LMS.BusinessLogic.DTOs.RequestDTO;
 using LMS.BusinessLogic.Services.Interfaces;
 using LMS.Core;
 using LMS.Core.Enums;
@@ -21,6 +22,7 @@ namespace LMS.BusinessLogic.Services.Implementations
         private readonly ITeacherRepository _teacherRepository;
         private readonly IUserRepository _userRepository;
         private readonly ISubjectRepository _subjectRepository;
+        private readonly ITopicRepository _topicRepository;
         private readonly IClassStudyMaterialRepository _classStudyMaterialRepository;
 
 
@@ -31,7 +33,8 @@ namespace LMS.BusinessLogic.Services.Implementations
               ITeacherRepository teacherRepository,
               IUserRepository userRepository,
               ISubjectRepository subjectRepository,
-              IClassStudyMaterialRepository classStudyMaterialRepository)
+              IClassStudyMaterialRepository classStudyMaterialRepository,
+              ITopicRepository topicRepository)
         {
             _studentRepository = studentRepository;
             _classRepository = classRepository;
@@ -39,6 +42,7 @@ namespace LMS.BusinessLogic.Services.Implementations
             _userRepository = userRepository;
             _subjectRepository = subjectRepository;
             _classStudyMaterialRepository = classStudyMaterialRepository;
+            _topicRepository = topicRepository;
         }
 
         /// <summary>
@@ -88,7 +92,7 @@ namespace LMS.BusinessLogic.Services.Implementations
                     Message = $"Students with the following IDs were not found: {string.Join(", ", notFoundIds)}"
                 };
             }
-
+ 
             // Create new class
             var newClass = new Class
             {
@@ -321,7 +325,134 @@ namespace LMS.BusinessLogic.Services.Implementations
             };
         }
 
-    
+
+        public async Task<CommonResult<ClassTopicOpenDTO>> OpenClassTopicAsync(OpenClassTopicDTO openClassTopicDTO)
+        {
+            // Validate input
+            if (openClassTopicDTO == null)
+                throw new ArgumentNullException(nameof(openClassTopicDTO));
+
+            try
+            {
+                // Validate class existence
+                var currentClass = await _classRepository.GetByIdAsync(openClassTopicDTO.ClassId);
+                if (currentClass == null)
+                {
+                    return new CommonResult<ClassTopicOpenDTO>
+                    {
+                        IsSuccess = false,
+                        Code = 404,
+                        Message = "Class not found."
+                    };
+                }
+
+                // Validate topic existence
+                var topic = await _topicRepository.GetByIdAsync(openClassTopicDTO.TopicId);
+                if (topic == null)
+                {
+                    return new CommonResult<ClassTopicOpenDTO>
+                    {
+                        IsSuccess = false,
+                        Code = 404,
+                        Message = "Topic not found."
+                    };
+                }
+
+                // Check if the topic belongs to the class's subject
+                if (topic.SubjectId != currentClass.SubjectId)
+                {
+                    return new CommonResult<ClassTopicOpenDTO>
+                    {
+                        IsSuccess = false,
+                        Code = 400,
+                        Message = "The topic does not belong to the subject of this class."
+                    };
+                }
+
+                // Validate selected SubjectExercises
+                var validSubjectExercises = await _subjectExerciseRepository.GetSubjectExercisesByTopicIdAsync(openClassTopicDTO.TopicId);
+                var selectedSubjectExercises = validSubjectExercises.Where(e => openClassTopicDTO.SubjectExerciseIds.Contains(e.Id)).ToList();
+
+                if (!selectedSubjectExercises.Any())
+                {
+                    return new CommonResult<ClassTopicOpenDTO>
+                    {
+                        IsSuccess = false,
+                        Code = 400,
+                        Message = "No valid exercises selected for this topic."
+                    };
+                }
+
+                // Check for conflicting timeframes
+                var existingClassTopic = await _classTopicOpenRepository.GetActiveClassTopicAsync(
+                    openClassTopicDTO.ClassId, openClassTopicDTO.TopicId, openClassTopicDTO.StartDate, openClassTopicDTO.EndDate
+                );
+                if (existingClassTopic != null)
+                {
+                    return new CommonResult<ClassTopicOpenDTO>
+                    {
+                        IsSuccess = false,
+                        Code = 400,
+                        Message = "A topic with overlapping timeframe is already open for this class."
+                    };
+                }
+
+                // Create ClassTopicOpen entry
+                var classTopicOpen = new ClassTopicOpen
+                {
+                    Id = Guid.NewGuid(),
+                    ClassId = openClassTopicDTO.ClassId,
+                    TopicId = openClassTopicDTO.TopicId,
+                    StartDate = openClassTopicDTO.StartDate,
+                    EndDate = openClassTopicDTO.EndDate,
+                    CreatedDate = DateTime.Now
+                };
+
+                await _classTopicOpenRepository.AddAsync(classTopicOpen);
+
+                // Associate selected SubjectExercises with the class topic
+                var classTopicExercises = selectedSubjectExercises.Select(e => new ClassExercise
+                {
+                    Id = Guid.NewGuid(),
+                    ClassTopicOpenId = classTopicOpen.Id,
+                    SubjectExerciseId = e.Id
+                }).ToList();
+
+                await _classExerciseRepository.AddRangeAsync(classTopicExercises);
+                await _classTopicOpenRepository.SaveAsync();
+
+                // Map to DTO for response
+                var resultDTO = new ClassTopicOpenDTO
+                {
+                    Id = classTopicOpen.Id,
+                    ClassId = classTopicOpen.ClassId,
+                    TopicId = classTopicOpen.TopicId,
+                    StartDate = classTopicOpen.StartDate,
+                    EndDate = classTopicOpen.EndDate,
+                    CreatedDate = classTopicOpen.CreatedDate,
+                    SubjectExercises = classTopicExercises.Select(e => e.SubjectExerciseId).ToList() // Returning list of selected exercises
+                };
+
+                return new CommonResult<ClassTopicOpenDTO>
+                {
+                    IsSuccess = true,
+                    Code = 200,
+                    Message = "Class topic opened successfully.",
+                    Data = resultDTO
+                };
+            }
+            catch (Exception ex)
+            {
+                return new CommonResult<ClassTopicOpenDTO>
+                {
+                    IsSuccess = false,
+                    Code = 500,
+                    Message = $"An error occurred while opening the class topic: {ex.Message}"
+                };
+            }
+        }
+
+
         /// <summary>
         /// method to get all exercises that has opened inside a class
         /// </summary>
