@@ -24,7 +24,7 @@ public class PythonExecutor implements CodeExecutor {
             Path codeFile = Files.createTempFile("code", ".py");
             Files.writeString(codeFile, code);
 
-            ProcessBuilder pb = new ProcessBuilder("python", codeFile.toString());
+            ProcessBuilder pb = new ProcessBuilder("python3", codeFile.toString());
             return executeProcess(pb, input);
         } catch (Exception e) {
             return new ExecutionResult(null, e.getMessage(), 0, 0, false);
