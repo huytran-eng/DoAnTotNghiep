@@ -3,7 +3,6 @@ import { useState } from 'react';
 import '../styles/homeStyles.css';
 import '../styles/sidebarStyles.css'; // Đảm bảo đường dẫn đúng
 import '../styles/classDetail.css';  // Import CSS cho Lophoc nếu có
-import Sidebar from './Layout/DefaultLayout/Sidebar';
 
 const ClassDetail = () => {
   const { className } = useParams(); // Lấy tên lớp từ URL

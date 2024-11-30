@@ -5,8 +5,6 @@ import '../styles/listBaitap.css'; // CSS cho trang danh sách bài tập
 import '../styles/homeStyles.css';
 import '../styles/sidebarStudentStyles.css';
 
-import SidebarStudent from './Layout/DefaultLayout/SidebarStudent';
-
 const ListBaitap = () => {
   const { className } = useParams(); // Lấy className từ URL
   const [assignments, setAssignments] = useState([]); // State để lưu bài tập
