@@ -46,7 +46,7 @@ const StudentHome = () => {
           </nav>
         </header>
 
-        <div className='flex-grow flex flex-col justify-center items-center bg-blue-200'>
+        <div className='flex-grow flex flex-col justify-center items-center bg-while'>
           <h1 className='mb-4'>Chào mừng đến với Home!</h1>
         </div>
       </div>

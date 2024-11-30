@@ -1,5 +1,3 @@
-import { useState } from 'react';
-import { Link } from 'react-router-dom';
 import '../styles/homeStyles.css';
 import '../styles/sidebarStyles.css'; // Đảm bảo đường dẫn đúng
 import '../styles/baitap.css';
@@ -146,7 +144,7 @@ const Baitap = () => {
           </nav>
         </header>
 
-        <div className='flex-grow flex flex-col justify-center items-center bg-blue-200'>
+        <div className='flex-grow flex flex-col justify-center items-center bg-while'>
           <h1 className='mb-4'>Danh Sách Bài Tập</h1>
 
           {/* Hiển thị các chương */}
