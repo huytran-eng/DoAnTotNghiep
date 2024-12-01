@@ -61,14 +61,14 @@ export function Sidebar() {
             Môn học
           </Typography>
         </ListItem>
-        <ListItem onClick={() => navigate("/khoahoc")}>
+        {/* <ListItem onClick={() => navigate("/khoahoc")}>
           <ListItemPrefix>
             <BookmarkIcon className="h-5 w-5" />
           </ListItemPrefix>
           <Typography color="blue-gray" className="mr-auto font-normal">
             Khoa học
           </Typography>
-        </ListItem>
+        </ListItem> */}
         <ListItem onClick={() => navigate("/class")}>
           <ListItemPrefix>
             <CodeBracketIcon className="h-5 w-5" />

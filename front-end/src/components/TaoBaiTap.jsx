@@ -18,7 +18,7 @@ const CreateExercise = () => {
     title: "",
     description: "",
     difficulty: "",
-    testCases: [{ input: "", output: "" }],
+    testCases: [{ input: "", expectedOutput: "" }],
   });
 
   const [loading, setLoading] = useState(false);
@@ -50,7 +50,7 @@ const CreateExercise = () => {
   const addTestCase = () => {
     setFormData((prevData) => ({
       ...prevData,
-      testCases: [...prevData.testCases, { input: "", output: "" }],
+      testCases: [...prevData.testCases, { input: "", expetedOutput: "" }],
     }));
   };
 
@@ -75,7 +75,7 @@ const CreateExercise = () => {
         headers,
       });
       alert("Exercise created successfully!");
-      navigate("/exercise"); // Redirect to the exercise list or detail page
+      navigate("/baitap"); // Redirect to the exercise list or detail page
     } catch (error) {
       console.error("Error creating exercise:", error);
       alert("Failed to create exercise. Please try again.");
