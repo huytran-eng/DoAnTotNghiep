@@ -1,135 +1,98 @@
-/* src/styles/homeStyles.css */
-
-/* Đảm bảo trang không bị cuộn ngang */
-html, body {
-  margin: 0;
-  padding: 0;
-  height: 100%; /* Đảm bảo chiều cao của trang chiếm hết màn hình */
-  overflow-x: hidden; /* Ngăn cuộn ngang */
-  box-sizing: border-box; /* Tính toán chiều rộng và chiều cao không bị vượt quá */
+/* Căn giữa bảng và thêm thanh cuộn */
+.class-table-wrapper {
+  width: 80%; /* Chiều rộng bảng là 80% của phần tử chứa */
+  max-width: 1200px; /* Giới hạn chiều rộng tối đa */
+  margin: 0 auto; /* Căn giữa bảng */
+  overflow-x: hidden; /* Cho phép cuộn ngang nếu bảng quá rộng */
+  overflow-y: auto; /* Cho phép cuộn dọc nếu bảng quá dài */
+  max-height: 500px; /* Giới hạn chiều cao tối đa của bảng */
 }
 
-/* Cấu hình cho header */
-.header {
-  width: 100%;
-  background-color: #eb8b7f; /* Màu nền cho header */
-  padding: 1rem;
-  color: white;
-  font-size: medium;
-  font-weight: 500;
+.class-table {
+  width: 100%; /* Đảm bảo bảng chiếm toàn bộ chiều rộng phần tử cha */
+  border-collapse: collapse; /* Xóa khoảng cách giữa các ô */
+  margin-left:100px;
+}
+
+.class-table th, .class-table td {
+  padding: 12px;
+  text-align: left;
+  border: 1px solid #ddd; /* Đặt border cho các ô trong bảng */
+}
+
+.class-table th {
+  background-color: #f2f2f2;
+}
+
+.class-table tr:nth-child(even) {
+  background-color: #f9f9f9; /* Đổi màu nền cho các hàng chẵn */
+}
+
+.class-table tr:hover {
+  background-color: #f1f1f1; /* Hiệu ứng hover cho dòng */
 }
 
 
-.header nav {
+
+/* Điều chỉnh CSS cho search-filter-container */
+.search-filter-container {
   display: flex;
-  justify-content: space-between;
+  justify-content: center; /* Căn giữa theo chiều ngang */
   align-items: center; /* Căn giữa theo chiều dọc */
-  margin-left: 200px;
+  margin-bottom: 20px; /* Khoảng cách phía dưới */
+  gap: 20px; /* Khoảng cách giữa các phần tử */
+  flex-wrap: wrap; /* Cho phép phần tử chuyển sang dòng mới nếu không đủ chỗ */
 }
 
-.header_navbar-item {
-  color: white; /* Đảm bảo chữ màu trắng */
-}
-
-.header nav ul {
-  list-style-type: none; /* Bỏ dấu đầu dòng */
-  margin-left: 120px;
-  padding: 0; /* Bỏ padding */
-  margin: 0; /* Bỏ margin */
-  display: flex; /* Sử dụng flexbox để hiển thị hàng ngang */
-  align-items: center; /* Căn giữa theo chiều dọc */
-  margin-left: 500px;
-}
-
-.header nav ul li {
-  margin: 0 1rem; /* Khoảng cách giữa các mục */
-}
-
-.header_navbar-item {
-  text-decoration: none; /* Bỏ gạch chân */
-  color: white; /* Đảm bảo chữ màu trắng */
-}
-
-/* Cấu hình cho container chính */
-.content {
+/* Điều chỉnh cho search-container */
+.search-container {
   display: flex;
-  flex-direction: column;
   align-items: center;
-  justify-content: flex-start; /* Căn đầu trang */
-  padding: 1rem;
-  width: 100%; /* Đảm bảo chiếm toàn bộ chiều rộng */
-  box-sizing: border-box;
-  overflow: hidden; /* Ngừng cho phép cuộn dọc */
-  height: 100vh; /* Đảm bảo chiều cao của content chiếm toàn bộ chiều cao màn hình */
-  margin-top: 80px; /* Khoảng cách dưới header */
+  border: 1px solid #ccc;
+  padding: 5px 10px;
+  border-radius: 5px;
+}
+h1.mb-4 {
+  font-weight: bold; /* In đậm chữ */
+  text-align: center; /* Căn giữa chữ */
+  margin-bottom: 20px; /* Khoảng cách giữa tiêu đề và bảng */
 }
 
-/* Container chứa bảng */
-.table-container {
-  width: 90%; /* Chiều rộng bảng */
-  max-width: 800px; /* Đặt chiều rộng tối đa cho bảng */
-  margin: 20px auto; /* Đặt ở giữa */
-  background-color: white; /* Màu nền trắng */
-  border-radius: 8px; /* Bo góc */
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Đổ bóng */
-  overflow-y: auto; /* Cho phép cuộn dọc */
-  max-height: 60vh; /* Giới hạn chiều cao tối đa để tạo thanh cuộn dọc */
+
+.search-input {
+  border: none;
+  padding: 8px;
+  outline: none;
+  width: 200px; /* Điều chỉnh chiều rộng của input */
 }
 
-/* Bảng */
-.subject-table {
-  width: 100%; /* Chiều rộng bảng */
-  border-collapse: collapse; /* Gộp các đường viền */
+.search-btn {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 8px;
+  cursor: pointer;
+  border-radius: 5px;
 }
 
-.subject-table th, .subject-table td {
-  border: 1px solid #ccc; /* Đường viền cho ô */
-  padding: 10px; /* Padding cho ô */
-  text-align: left; /* Căn trái nội dung */
+.search-btn:hover {
+  background-color: #0056b3;
 }
 
-.subject-table th {
-  background-color: #eb8b7f; /* Màu nền cho header */
-  color: white; /* Màu chữ trắng */
+/* Điều chỉnh cho filter-container */
+.filter-container {
+  display: flex;
+  align-items: center;
+  gap: 10px; /* Khoảng cách giữa nhãn và dropdown */
 }
 
-/* Button hành động */
-.action-button {
-  margin-right: 5px; /* Khoảng cách giữa các button */
-  background-color: #eb8b7f; /* Màu nền cho button */
-  color: white; /* Màu chữ trắng */
-  border: none; /* Không có đường viền */
-  padding: 5px 10px; /* Padding cho button */
-  border-radius: 5px; /* Bo góc cho button */
-  cursor: pointer; /* Con trỏ khi hover */
-  transition: background-color 0.3s ease; /* Hiệu ứng chuyển màu */
+.filter-label {
+  font-weight: bold;
 }
 
-.action-button:hover {
-  background-color: #180705; /* Màu nền khi hover */
+.filter-select {
+  padding: 8px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
 }
 
-/* Responsive Design */
-@media (max-width: 768px) {
-  .header {
-    font-size: small; /* Giảm kích thước chữ cho header trên màn hình nhỏ */
-  }
-
-  .content {
-    padding: 1rem; /* Giảm padding cho nội dung trên màn hình nhỏ */
-    height: calc(100vh - 60px); /* Giảm chiều cao content cho màn hình nhỏ */
-  }
-
-  .table-container {
-    width: 95%; /* Chiều rộng tối đa cho bảng trên màn hình nhỏ */
-  }
-
-  .subject-table th, .subject-table td {
-    padding: 8px; /* Giảm padding của bảng trên màn hình nhỏ */
-    font-size: 0.9rem; /* Giảm kích thước chữ trong bảng */
-  }
-
-  .action-button {
-    padding: 3px 8px; /* Giảm padding cho button trên màn hình nhỏ */
-  }
-}

@@ -4,6 +4,8 @@ import '../styles/sidebarStyles.css'; // Đảm bảo đường dẫn đúng
 import '../styles/tailieu.css';
 import { useState } from 'react';
 
+
+
 const Lophoc = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedFilter, setSelectedFilter] = useState('all'); // Bộ lọc sĩ số
@@ -82,7 +84,7 @@ const Lophoc = () => {
           </nav>
         </header>
 
-        <div className='flex-grow flex flex-col justify-center items-center bg-blue-200'>
+        <div className='flex-grow flex flex-col justify-center items-center bg-while'>
           <h1 className='mb-4'>Danh Sách Tài Liệu</h1>
 
           {/* Thanh tìm kiếm và thanh lọc nằm ngang hàng */}

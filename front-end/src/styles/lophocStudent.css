@@ -1,0 +1,119 @@
+/* Căn giữa bảng và thêm thanh cuộn chỉ cho giao diện sinh viên */
+.student .class-table-wrapper {
+  width: 400%; /* Đảm bảo chiều rộng của bảng chiếm hết chiều rộng màn hình */
+
+  max-width: 100%; /* Không giới hạn chiều rộng tối đa */
+  margin: 0 auto; /* Căn giữa bảng */
+  overflow-x: hidden; /* Cho phép cuộn ngang nếu bảng quá rộng */
+  overflow-y: auto; /* Cho phép cuộn dọc nếu bảng quá dài */
+  max-height: 500px; /* Giới hạn chiều cao tối đa của bảng */
+}
+
+/* Bảng tài liệu */
+.student .class-table {
+  width: 250%; /* Đảm bảo bảng chiếm toàn bộ chiều rộng phần tử cha */
+  border-collapse: collapse; /* Xóa khoảng cách giữa các ô */
+}
+
+/* Các ô trong bảng */
+.student .class-table th, .student .class-table td {
+  padding: 12px;
+  text-align: left;
+  border: 1px solid #d1cccc; /* Đặt border cho các ô trong bảng */
+}
+
+/* Điều chỉnh chiều rộng cho các cột */
+.student .class-table th:nth-child(1),
+.student .class-table td:nth-child(1) {  
+  width: 130px; /* Điều chỉnh chiều rộng của cột này */
+}
+
+.student .class-table th:nth-child(2),
+.student .class-table td:nth-child(2) {  
+  width: 110px; /* Điều chỉnh chiều rộng của cột này */
+}
+
+.student .class-table th:nth-child(3),
+.student .class-table td:nth-child(3) {  
+  width: 150px; /* Điều chỉnh chiều rộng của cột này */
+}
+
+.student .class-table th:nth-child(4),
+.student .class-table td:nth-child(4) {  
+  width: 150px; /* Điều chỉnh chiều rộng của cột này */
+}
+
+.student .class-table th:nth-child(5),
+.student .class-table td:nth-child(5) {  
+  width: 180px; /* Điều chỉnh chiều rộng của cột này */
+}
+
+/* Đổi màu nền cho các hàng chẵn */
+.student .class-table tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+/* Hiệu ứng hover cho dòng */
+.student .class-table tr:hover {
+  background-color: #f1f1f1;
+}
+
+/* Điều chỉnh CSS cho search-filter-container chỉ cho giao diện sinh viên */
+.student .search-filter-container {
+  display: flex;
+  justify-content: center; /* Căn giữa theo chiều ngang */
+  align-items: center; /* Căn giữa theo chiều dọc */
+  margin-bottom: 20px; /* Khoảng cách phía dưới */
+  gap: 20px; /* Khoảng cách giữa các phần tử */
+  flex-wrap: wrap; /* Cho phép phần tử chuyển sang dòng mới nếu không đủ chỗ */
+}
+
+/* Điều chỉnh cho search-container chỉ cho giao diện sinh viên */
+.student .search-container {
+  display: flex;
+  align-items: center;
+  border: 1px solid #ccc;
+  padding: 5px 10px;
+  border-radius: 5px;
+}
+
+/* Điều chỉnh cho search-input */
+.student .search-input {
+  border: none;
+  padding: 8px;
+  outline: none;
+  width: 200px; /* Điều chỉnh chiều rộng của input */
+}
+
+/* Nút tìm kiếm */
+.student .search-btn {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 8px;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.student .search-btn:hover {
+  background-color: #0056b3;
+}
+
+/* Điều chỉnh cho filter-container chỉ cho giao diện sinh viên */
+.student .filter-container {
+  display: flex;
+  align-items: center;
+  gap: 10px; /* Khoảng cách giữa nhãn và dropdown */
+}
+
+/* Nhãn lọc */
+.student .filter-label {
+  font-weight: bold;
+}
+
+/* Dropdown lọc */
+.student .filter-select {
+  padding: 8px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}

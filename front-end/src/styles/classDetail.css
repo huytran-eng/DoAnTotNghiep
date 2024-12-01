@@ -1,0 +1,103 @@
+/* ClassDetail.css */
+
+/* Căn chỉnh chung cho các phần tử trong trang */
+.container {
+    width: 80%;
+    margin: 0 auto;
+    font-family: Arial, sans-serif;
+    padding-top: 20px;
+  }
+  
+  /* Thêm kiểu cho tiêu đề */
+  h2 {
+    text-align: center;
+    font-size: 24px;
+    color: #333;
+    margin-bottom: 20px;
+  }
+  
+  /* Thêm kiểu cho phần mô tả lớp học */
+  p {
+    font-size: 16px;
+    margin: 8px 0;
+  }
+  
+  /* Các nút tab */
+  button {
+    padding: 10px 20px;
+    margin: 5px;
+    border: none;
+    background-color: #f0f0f0;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+  }
+  
+  button:hover {
+    background-color: #ddd;
+  }
+  
+  button.active {
+    background-color: #4CAF50;
+    color: white;
+  }
+  
+  /* Chia các tab thành một dòng */
+  button + button {
+    margin-left: 10px;
+  }
+  
+  /* Kiểu cho bảng */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    font-size: 14px;
+    text-align: left;
+  }
+  
+  table th, table td {
+    padding: 10px;
+    border: 1px solid #ddd;
+  }
+  
+  table th {
+    background-color: #f2f2f2;
+    color: #333;
+  }
+  
+  table td button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 5px 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  table td button:hover {
+    background-color: #45a049;
+  }
+  
+  /* Kiểu cho bảng khi không có dữ liệu */
+  table.empty {
+    text-align: center;
+  }
+  
+  table.empty td {
+    background-color: #f9f9f9;
+    color: #888;
+    font-style: italic;
+  }
+  
+  /* Đặt kiểu cho các phần tử trong từng tab */
+  .tab-content {
+    display: none;
+  }
+  
+  .tab-content.active {
+    display: block;
+  }
+  

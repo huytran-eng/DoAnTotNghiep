@@ -38,7 +38,7 @@ td button {
   
   /* Cấu hình cho content-container */
   .content-container {
-    margin-left: 200px; /* Dành không gian cho Sidebar */
+    margin-left: 100px; /* Dành không gian cho Sidebar */
     padding: 20px;
     min-height: 100vh; /* Đảm bảo chiều cao container bằng chiều cao của màn hình */
     display: flex;
