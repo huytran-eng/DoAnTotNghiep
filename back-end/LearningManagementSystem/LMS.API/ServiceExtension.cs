@@ -30,7 +30,8 @@ namespace LMS.API
             services.AddScoped<IStudentService, StudentService>();
             services.AddScoped<IClassService, ClassService>();
             services.AddScoped<IExerciseService, ExerciseService>();
-
+            services.AddScoped<ISubjectService, SubjectService>();
+            services.AddScoped<ITeacherService, TeacherService>();
 
             return services;
         }

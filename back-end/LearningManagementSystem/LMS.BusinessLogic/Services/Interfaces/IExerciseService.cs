@@ -11,11 +11,10 @@ namespace LMS.BusinessLogic.Services.Interfaces
         Task<CommonResult<Exercise>> CreateExerciseAsync(CreateExerciseDTO exerciseDto);
         Task<CommonResult<Exercise>> UpdateExerciseAsync(UpdateExerciseDto updateExerciseDTO);
         Task<CommonResult<Exercise>> AddExerciseToSubjectAsync(AddExerciseToSubjectDTO dto);
-        //Task<CommonResult<PaginatedResultDTO<ExerciseListDTO>>> GetClassExercises(string? subject,
-        //  string sortBy,
-        //  bool isDescending,
-        //  int page,
-        //  int pageSize,
-        //  Guid userId);
+        Task<CommonResult<List<ExerciseListDTO>>> GetExercisesForUser(Guid userId);
+
+        Task<CommonResult<ExerciseDTO>> GetExerciseDetail(Guid exerciseId, Guid userId);
+        Task<CommonResult<List<SubjectExerciseListDTO>>> GetExerciseForSubject(Guid subjectId, Guid userId);
+       
     }
 }

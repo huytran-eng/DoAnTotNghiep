@@ -380,7 +380,7 @@ namespace LMS.DataAccess.Models
 
             modelBuilder.Entity<Class>()
                 .HasOne(c => c.Subject)
-                .WithMany()
+                .WithMany(s => s.Classes)
                 .HasForeignKey(c => c.SubjectId)
                 .IsRequired();
 

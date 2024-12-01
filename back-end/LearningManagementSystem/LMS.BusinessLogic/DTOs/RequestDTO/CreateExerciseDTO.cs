@@ -8,6 +8,6 @@ namespace LMS.BusinessLogic.DTOs
 		public DifficultyLevel Difficulty { get; set; }
 		public int TimeLimit { get; set; }
 		public int SpaceLimit { get; set; }
-		public List<TestCaseDto> TestCases { get; set; } = new List<TestCaseDto>();
+		public List<TestCaseDTO> TestCases { get; set; } = new List<TestCaseDTO>();
 	}
 }

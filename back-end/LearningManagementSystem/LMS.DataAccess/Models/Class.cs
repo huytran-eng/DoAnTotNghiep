@@ -4,6 +4,7 @@ namespace LMS.DataAccess.Models
 {
     public class Class : BaseEntity
     {
+        public string Name { get; set; }
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
         public Guid TeacherId { get; set; }
@@ -17,7 +18,5 @@ namespace LMS.DataAccess.Models
         public virtual ICollection<ClassExercise> ClassExercises { get; set; }
         public virtual ICollection<ClassStudyMaterial> ClassStudyMaterial { get; set; }
         public virtual ICollection<Topic> Topics { get; set; }
-
-
     }
 }

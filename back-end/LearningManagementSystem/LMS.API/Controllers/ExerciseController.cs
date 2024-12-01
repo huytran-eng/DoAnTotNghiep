@@ -38,8 +38,61 @@ namespace LMS.API.Controllers
         //    return Ok(classesResult.Data);
         //}
 
+        [Authorize]
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetExerciseDetail(Guid id)
+        {
+            var userId = GetCurrentUserId();
+            if (userId == null)
+            {
+                return Unauthorized("UserId not found or invalid.");
+            }
+
+            // Fetch exercise details for the specific user
+            var exerciseResult = await _exerciseService.GetExerciseDetail(id, userId.Value);
+
+            if (exerciseResult.IsSuccess)
+            {
+                return Ok(exerciseResult.Data);
+            }
+            else
+            {
+                return exerciseResult.Code switch
+                {
+                    400 => BadRequest(exerciseResult.Message),
+                    _ => StatusCode(500, exerciseResult.Message)
+                };
+            }
+        }
+
+        [Authorize]
+        [HttpGet("")]
+        public async Task<IActionResult> GetExercises()
+        {
+            var userId = GetCurrentUserId();
+            if (userId == null)
+            {
+                return Unauthorized("UserId not found or invalid.");
+            }
+
+            var exerciseResult = await _exerciseService.GetExercisesForUser(userId.Value);
+
+            if (exerciseResult.IsSuccess)
+            {
+                return Ok(exerciseResult.Data);
+            }
+            else
+            {
+                return exerciseResult.Code switch
+                {
+                    400 => BadRequest(exerciseResult.Message),
+                    _ => StatusCode(500, exerciseResult.Message)
+                };
+            }
+        }
+
         [Authorize(Roles = "Admin")]
-        [HttpPost]
+        [HttpPost("create")]
         public async Task<IActionResult> CreateExercise([FromBody] CreateExerciseDTO exerciseDto)
         {
             if (!ModelState.IsValid)
@@ -75,33 +128,7 @@ namespace LMS.API.Controllers
             }
         }
 
-        [Authorize(Roles = "Admin")]
-        [HttpPost("add-exercise-to-subject")]
-        public async Task<IActionResult> AddExerciseToSubject([FromBody] AddExerciseToSubjectDTO dto)
-        {
-            if (!ModelState.IsValid)
-                return BadRequest("Invalid input");
-            try
-            {
-                var result = await _exerciseService.AddExerciseToSubjectAsync(dto);
-                if (result.IsSuccess)
-                {
-                    return Ok(result);
-                }
-                else
-                {
-                    return result.Code switch
-                    {
-                        400 => BadRequest(result.Message),
-                        _ => StatusCode(500, result.Message)
-                    };
-                }
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new { Message = "An error occurred while importing students", Error = ex.Message });
-            }
-        }
+      
 
        
 

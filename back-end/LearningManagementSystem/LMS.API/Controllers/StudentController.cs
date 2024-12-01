@@ -1,4 +1,6 @@
-﻿using LMS.BusinessLogic.Services.Interfaces;
+﻿using LMS.BusinessLogic.Services.Implementations;
+using LMS.BusinessLogic.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LMS.API.Controllers
@@ -14,6 +16,7 @@ namespace LMS.API.Controllers
             _studentService = studentService;
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost("import")]
         public async Task<IActionResult> ImportStudents(IFormFile file)
         {
@@ -51,5 +54,34 @@ namespace LMS.API.Controllers
             }
         }
 
+        [Authorize(Roles = "Admin")]
+        [HttpGet("")]
+        public async Task<IActionResult> GetStudentsListForAdmin(string? studentName, string? sortBy, bool isDescending = false, int page = 1, int pageSize = 10)
+        {
+            var userId = GetCurrentUserId();
+            if (userId == null)
+            {
+                return Unauthorized("UserId not found or invalid.");
+            }
+            var studentsResult = await _studentService.GetStudentsForAdmin(studentName, sortBy, isDescending, page, pageSize, userId.Value);
+            if (studentsResult.IsSuccess)
+            {
+                return Ok(studentsResult.Data);
+            }
+            else
+            {
+                return studentsResult.Code switch
+                {
+                    400 => BadRequest(studentsResult.Message),
+                    _ => StatusCode(500, studentsResult.Message)
+                };
+            }
+        }
+
+        private Guid? GetCurrentUserId()
+        {
+            var userIdClaim = User.FindFirst("UserId")?.Value;
+            return Guid.TryParse(userIdClaim, out var userId) ? userId : (Guid?)null;
+        }
     }
 }

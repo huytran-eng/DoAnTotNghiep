@@ -13,6 +13,7 @@ namespace LMS.DataAccess.Repositories
         {
             return await _context.Classes
                .Include(c => c.Teacher)
+               .ThenInclude(t => t.User)
                .Include(c => c.Subject)
                .Include(c => c.StudentClasses)
                .Include(c => c.Topics)
@@ -24,7 +25,9 @@ namespace LMS.DataAccess.Repositories
             return await _context.Classes
                 .Where(c => c.TeacherId == teacherId)
                 .Include(c => c.Teacher)
+                .ThenInclude(t => t.User)
                 .Include(c => c.Subject)
+                .ThenInclude(s => s.Department)
                 .Include(c => c.StudentClasses)
                 .Include(c => c.Topics)
                 .ToListAsync();
@@ -35,6 +38,7 @@ namespace LMS.DataAccess.Repositories
             return await _context.Classes
                 .Where(c => c.StudentClasses.Any(s => s.Id == studentId))
                 .Include(c => c.Teacher)
+                .ThenInclude(t => t.User)
                 .Include(c => c.Subject)
                 .Include(c => c.StudentClasses)
                 .Include(c => c.Topics)
@@ -44,7 +48,8 @@ namespace LMS.DataAccess.Repositories
         public override async Task<Class> GetByIdAsync(Guid id)
         {
             return await _context.Classes
-                .Include(c => c.Teacher) 
+                .Include(c => c.Teacher)
+                .ThenInclude(t => t.User)
                 .Include(c => c.Subject)
                 .Include(c => c.StudentClasses)
                 .Include(c => c.Topics)
@@ -58,6 +63,16 @@ namespace LMS.DataAccess.Repositories
               .Select(sc => sc.Class)
               .Include(c => c.Subject)
               .Include(c => c.Teacher)
+              .ToListAsync();
+        }
+        public async Task<IEnumerable<Class>> GetBySubjectIdAsync(Guid subjectId)
+        {
+            return await _context.Classes
+              .Where(sc => sc.SubjectId == subjectId)
+              .Include(c => c.Subject)
+              .Include(c => c.StudentClasses)
+              .Include(c => c.Teacher)
+              .ThenInclude(t => t.User)
               .ToListAsync();
         }
     }

@@ -4,7 +4,8 @@ namespace LMS.DataAccess.Repositories
 {
     public interface ISubjectExerciseRepository : IBaseRepository<SubjectExercise>
     {
-        Task<List<SubjectExercise>> FindBySubjectAsync(Guid subjectId);
+        Task<IEnumerable<SubjectExercise>> FindBySubjectAsync(Guid subjectId);
+        //Task<IEnumerable<SubjectExercise>> GetSubjectExercisesByTopicIdAsync(Guid topicId);
     }
 
 }

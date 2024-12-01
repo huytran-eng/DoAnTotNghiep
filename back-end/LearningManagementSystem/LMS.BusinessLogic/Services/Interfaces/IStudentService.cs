@@ -7,6 +7,12 @@ namespace LMS.BusinessLogic.Services.Interfaces
     {
         Task<CommonResult<StudentDTO>> ImportStudents(Stream stream);
         Task<CommonResult<IEnumerable<ClassDTO>>> GetClassesForStudent(Guid studentId, string? search, string? sortBy, bool descending);
-
+        Task<CommonResult<List<StudentDTO>>> GetStudentsForAdmin(
+           string? studentName,
+           string sortBy,
+           bool isDescending,
+           int page,
+           int pageSize,
+           Guid userId);
     }
 }

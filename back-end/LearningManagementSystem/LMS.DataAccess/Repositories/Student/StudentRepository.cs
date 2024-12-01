@@ -9,6 +9,10 @@ namespace LMS.DataAccess.Repositories
         {
         }
 
+        public override async Task<IEnumerable<Student>> GetAllAsync()
+        {
+            return await _context.Students.Include(student => student.User).ToListAsync();
+        }
         public async Task<IEnumerable<Student>> GetStudentsByClassAsync(Guid classId)
         {
             return await _context.StudentClasses

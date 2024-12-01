@@ -25,5 +25,15 @@ namespace LMS.DataAccess.Repositories
                 .FirstOrDefaultAsync();
         }
 
+        public async Task<IEnumerable<SubjectExercise>> GetBySubjectIdAsync(Guid subjectId)
+        {
+            return await _context.SubjectExercises
+                                        .Where(se => se.SubjectId == subjectId)
+                                        .Include(se => se.Exercise)  // Include the Exercise related to SubjectExercise
+                                        .Include(se => se.Topic)     // Include the Topic related to SubjectExercise
+                                        .ToListAsync();
+
+        }
+
     }
 }

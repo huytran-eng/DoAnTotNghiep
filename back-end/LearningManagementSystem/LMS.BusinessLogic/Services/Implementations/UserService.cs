@@ -1,4 +1,6 @@
 ﻿using LMS.BusinessLogic.DTOs;
+using LMS.BusinessLogic.DTOs.RequestDTO;
+using LMS.BusinessLogic.DTOs.ResponseDTO;
 using LMS.BusinessLogic.Services.Interfaces;
 using LMS.Core;
 using LMS.DataAccess.Repositories;
@@ -18,9 +20,9 @@ namespace LMS.BusinessLogic.Services.Implementations
         }
 
 
-        public async Task<CommonResult<UserDTO>> LoginAsync(UserDTO userLoginInfo)
+        public async Task<CommonResult<LoginResponseDTO>> LoginAsync(LoginRequestDTO userLoginInfo)
         {
-            var result = new CommonResult<UserDTO>();
+            var result = new CommonResult<LoginResponseDTO>();
             var user = await _userRepository.FindAsync(u => u.Username == userLoginInfo.Username);
 
             if (user == null)
@@ -45,7 +47,7 @@ namespace LMS.BusinessLogic.Services.Implementations
                 }
             }
 
-            var userDTO = new UserDTO()
+            var userResponseDTO = new LoginResponseDTO()
             {
                 Id = user.Id,
                 Username = user.Username,
@@ -61,7 +63,7 @@ namespace LMS.BusinessLogic.Services.Implementations
             result.IsSuccess = true;
             result.Message = "Login successful";
             result.Code = 200;
-            result.Data = userDTO;
+            result.Data = userResponseDTO;
 
             return result;
         }

@@ -5,6 +5,9 @@ namespace LMS.BusinessLogic.DTOs
     public class CreateClassDTO
     {
         [Required]
+        public string Name { get; set; }
+
+        [Required]
         public DateTime StartDate { get; set; }
 
         [Required]
@@ -16,8 +19,7 @@ namespace LMS.BusinessLogic.DTOs
         [Required]
         public Guid SubjectId { get; set; }
 
-        [Required]
-        public List<Guid> StudentIds { get; set; }
+        public List<Guid>? StudentIds { get; set; }
 
         public Guid CurrentUserId { get; set; }
     }

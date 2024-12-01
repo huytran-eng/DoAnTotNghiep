@@ -1,136 +1,115 @@
-import { useState } from 'react';
-import { Link } from 'react-router-dom';
-import '../styles/homeStyles.css';
-import '../styles/sidebarStyles.css'; // Đảm bảo đường dẫn đúng
-import '../styles/lophoc.css';  // Import CSS cho Lophoc nếu có
-import Sidebar from './Layout/DefaultLayout/Sidebar';
+import React, { useState, useEffect } from "react";
+import axios from "axios"; // Use Axios for simplified HTTP requests
+import { DataGrid } from "@mui/x-data-grid";
+import "../styles/homeStyles.css"; // Optional styles for the layout
+import { useNavigate } from "react-router-dom";
+import moment from "moment";
 
 const Lophoc = () => {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [selectedFilter, setSelectedFilter] = useState('all'); // Bộ lọc sĩ số
+  const [classes, setClasses] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
+  const token = localStorage.getItem("token"); // Retrieve JWT token
 
-  const handleSearchChange = (event) => {
-    setSearchTerm(event.target.value);
+  useEffect(() => {
+    fetchClasses();
+  }, []);
+
+  // Function to fetch classes
+  const fetchClasses = async () => {
+    setLoading(true);
+    try {
+      const response = await axios.get(
+        `https://localhost:7104/api/class/list`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      console.log(response);
+      setClasses(response.data);
+    } catch (error) {
+      console.error("Error fetching classes:", error);
+      if (error.response?.status === 401) {
+        alert("Session expired. Please log in again.");
+        window.location.href = "/login"; // Redirect to login page
+      }
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleFilterChange = (event) => {
-    setSelectedFilter(event.target.value);
-  };
-
-  const classes = [
-    { name: 'D20CQ-CN01', size: 45, startDate: '18/03/2021', endDate: '18/06/2021' },
-    { name: 'D20CQ-CN02', size: 40, startDate: '20/03/2021', endDate: '20/06/2021' },
-    { name: 'D20CQ-CN03', size: 50, startDate: '22/03/2021', endDate: '22/06/2021' },
-    { name: 'D20CQ-CN03', size: 50, startDate: '22/03/2021', endDate: '22/06/2021' },
-    { name: 'D20CQ-CN03', size: 50, startDate: '22/03/2021', endDate: '22/06/2021' },
-    { name: 'D20CQ-CN03', size: 50, startDate: '22/03/2021', endDate: '22/06/2021' },
-    { name: 'D20CQ-CN03', size: 50, startDate: '22/03/2021', endDate: '22/06/2021' },
-    { name: 'D20CQ-CN03', size: 50, startDate: '22/03/2021', endDate: '22/06/2021' },
-    { name: 'D20CQ-CN03', size: 50, startDate: '22/03/2021', endDate: '22/06/2021' },
-    { name: 'D20CQ-CN03', size: 50, startDate: '22/03/2021', endDate: '22/06/2021' },
-    { name: 'D20CQ-CN03', size: 50, startDate: '22/03/2021', endDate: '22/06/2021' },
-    { name: 'D20CQ-CN03', size: 50, startDate: '22/03/2021', endDate: '22/06/2021' },
-    { name: 'D20CQ-CN03', size: 50, startDate: '22/03/2021', endDate: '22/06/2021' },
-    { name: 'D20CQ-CN03', size: 50, startDate: '22/03/2021', endDate: '22/06/2021' },
-    { name: 'D20CQ-CN03', size: 50, startDate: '22/03/2021', endDate: '22/06/2021' },
-    { name: 'D20CQ-CN03', size: 50, startDate: '22/03/2021', endDate: '22/06/2021' },
-    // Thêm các lớp học khác nếu cần
+  const columns = [
+    { field: "name", headerName: "Tên lớp", flex: 1 },
+    { field: "subjectName", headerName: "Tên môn học", flex: 1.5 },
+    { field: "teacherName", headerName: "Tên giáo viên", flex: 1 },
+    { field: "numberOfStudent", headerName: "Sĩ số", flex: 0.5 },
+    {
+      field: "startDate",
+      headerName: "Ngày bắt đầu",
+      flex: 1,
+      valueFormatter: params => 
+        moment(params?.value).format("DD/MM/YYYY"),
+    },
+    {
+      field: "endDate",
+      headerName: "Ngày kết thúc",
+      flex: 1,
+      valueFormatter: params => 
+        moment(params?.value).format("DD/MM/YYYY"),
+    },
+    {
+      field: "action",
+      headerName: "Action",
+      flex: 1,
+      renderCell: (params) => (
+        <button onClick={() => handleViewDetails(params.row)}>View</button>
+      ),
+    },
   ];
 
-  // Lọc lớp học theo từ khóa tìm kiếm và bộ lọc sĩ số
-  const filteredClasses = classes.filter((classItem) => {
-    const isNameMatch = classItem.name.toLowerCase().includes(searchTerm.toLowerCase());
-    const isSizeMatch = selectedFilter === 'all' || classItem.size >= parseInt(selectedFilter);
+  const handleViewDetails = (rowData) => {
+    navigate(`/class/${rowData.id}`);
+  };
 
-    return isNameMatch && isSizeMatch;
-  });
+  const handleCreateClass = () => {
+    navigate("/class/create");
+  };
 
   return (
-    <div className='h-screen flex'>
-      {/* Sidebar */}
-      <Sidebar/>
+    <div className="content-container" style={{ padding: "20px" }}>
+      <h2 className="header-title">CLASS LIST</h2>
+      <div style={{ marginBottom: "20px", textAlign: "right" }}>
+        <button
+          onClick={handleCreateClass}
+          style={{
+            padding: "10px 20px",
+            backgroundColor: "#007bff",
+            color: "white",
+            border: "none",
+            borderRadius: "5px",
+            cursor: "pointer",
+          }}
+        >
+          Tạo lớp học mới
+        </button>
+      </div>
 
-      {/* Main Content */}
-      <div className='flex-grow flex flex-col'>
-        <header className='header'>
-          <nav>
-            <ul className='flex space-x-4'>
-              <li className='header_navbar-item'>
-                <Link to='/'>Welcome to Class Master!</Link>
-              </li>
-            </ul>
-            <ul className='flex space-x-4'>
-              <li className='header_navbar-item'>
-                <Link to='/account'>Thông Báo</Link>
-              </li>
-              <li className='header_navbar-item'>
-                <Link to='/help'>Trợ Giúp</Link>
-              </li>
-              <li className='header_navbar-item'>
-                <Link to='/register'>GV001</Link>
-              </li>
-            </ul>
-          </nav>
-        </header>
-
-        <div className='flex-grow flex flex-col justify-center items-center bg-blue-200'>
-          <h1 className='mb-4'>Danh Sách Lớp Học</h1>
-
-          {/* Thanh tìm kiếm và thanh lọc nằm ngang hàng */}
-          <div className='search-filter-container mb-4'>
-            <div className='search-container'>
-              <input
-                type="text"
-                placeholder="Tìm kiếm lớp học..."
-                className="search-input"
-                value={searchTerm}
-                onChange={handleSearchChange}
-              />
-              <button className="search-btn">
-                <i className="fa fa-search"></i>
-              </button>
-            </div>
-
-            <div className="filter-container">
-              <label className="filter-label">Lọc theo sĩ số lớp:</label>
-              <select value={selectedFilter} onChange={handleFilterChange} className="filter-select">
-                <option value="all">Tất cả</option>
-                <option value="40">Lớp từ 40 người trở lên</option>
-                <option value="50">Lớp từ 50 người trở lên</option>
-              </select>
-            </div>
-          </div>
-
-          {/* Nội dung bảng danh sách lớp học */}
-          <div className="class-table-wrapper">
-            <table className='class-table'>
-              <thead>
-                <tr>
-                  <th>TÊN LỚP</th>
-                  <th>SỸ SỐ LỚP</th>
-                  <th>NGÀY BẮT ĐẦU</th>
-                  <th>NGÀY KẾT THÚC</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filteredClasses.length === 0 ? (
-                  <tr>
-                    <td colSpan="4">Không tìm thấy lớp học</td>
-                  </tr>
-                ) : (
-                  filteredClasses.map((classItem, index) => (
-                    <tr key={index}>
-                      <td>{classItem.name}</td>
-                      <td>{classItem.size}</td>
-                      <td>{classItem.startDate}</td>
-                      <td>{classItem.endDate}</td>
-                    </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
-          </div>
-        </div>
+      <div
+        className="mt-5"
+        style={{
+          height: 400,
+          width: "80%",
+          maxWidth: "1200px",
+          margin: "0 auto",
+        }}
+      >
+        <DataGrid
+          rows={classes}
+          columns={columns}
+          pageSizeOptions={[5, 10, 25, { value: -1, label: "All" }]}
+        />
       </div>
     </div>
   );

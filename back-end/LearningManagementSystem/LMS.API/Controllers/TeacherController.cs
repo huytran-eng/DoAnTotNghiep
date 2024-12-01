@@ -32,5 +32,19 @@ namespace LMS.API.Controllers
             
             return Ok(result);
         }
+
+        [Authorize(Roles = "Admin")] 
+        [HttpGet("")]
+        public async Task<IActionResult> GetTeachers()
+        {
+            var result = await _teacherService.GetAllTeachers();
+
+            if (!result.IsSuccess)
+            {
+                return StatusCode(500, result.Message);
+            }
+
+            return Ok(result.Data);
+        }
     }
 }

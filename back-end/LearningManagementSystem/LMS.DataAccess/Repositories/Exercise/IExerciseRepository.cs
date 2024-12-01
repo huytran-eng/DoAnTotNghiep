@@ -6,7 +6,7 @@ namespace LMS.DataAccess.Repositories
     {
         Task<Exercise> GetByIdWithTestCasesAsync(Guid Id);
         Task<Exercise> GetExerciseWithTestCasesByClassExerciseIdAsync(Guid classExerciseId);
-
+        Task<IEnumerable<SubjectExercise>> GetBySubjectIdAsync(Guid subjectId);
     }
 
 }

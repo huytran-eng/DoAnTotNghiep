@@ -14,8 +14,7 @@ namespace LMS.DataAccess.Models
         public virtual Department Department { get; set; }
         public ICollection<Topic> Topics { get; set; }
         public ICollection<SubjectExercise> SubjectExercises { get; set; }
-
-        //public ICollection<>
+        public ICollection<Class> Classes { get; set; }
 
     }
 }

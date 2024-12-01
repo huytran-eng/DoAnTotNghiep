@@ -1,4 +1,5 @@
 ﻿using LMS.BusinessLogic.DTOs;
+using LMS.BusinessLogic.DTOs.ResponseDTO;
 using LMS.BusinessLogic.Services.Interfaces;
 using LMS.Core;
 using LMS.Core.Enums;
@@ -80,6 +81,37 @@ namespace LMS.BusinessLogic.Services.Implementations
                     Message = $"An error occurred while creating the teacher: {ex.Message}",
                 };
             }
+        }
+
+        public async Task<CommonResult<List<TeacherListDTO>>> GetAllTeachers()
+        {
+            try
+            {
+                var teachers = await _teacherRepository.GetAllAsync();
+                var teacherListDTO =  teachers.Select(t => new TeacherListDTO
+                {
+                    Id = t.Id,
+                    Name = t.User.Name,
+                }).ToList();
+
+                return new CommonResult<List<TeacherListDTO>>
+                {
+                    IsSuccess = true,
+                    Code = 200,
+                    Data = teacherListDTO
+                };
+            }
+            catch (Exception ex)
+            {
+                // Handle exceptions (e.g., database issues, validation errors).
+                return new CommonResult<List<TeacherListDTO>>
+                {
+                    IsSuccess = false,
+                    Code = 500,
+                    Message = $"An error occurred while getting the teacher list: {ex.Message}",
+                };
+            }
+
         }
     }
 }

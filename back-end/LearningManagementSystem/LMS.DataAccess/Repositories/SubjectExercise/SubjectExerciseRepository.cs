@@ -9,7 +9,7 @@ namespace LMS.DataAccess.Repositories
         {
         }
 
-        public async Task<List<SubjectExercise>> FindBySubjectAsync(Guid subjectId)
+        public async Task<IEnumerable<SubjectExercise>> FindBySubjectAsync(Guid subjectId)
         {
             return await _context.SubjectExercises
                                  .Where(se => se.SubjectId == subjectId)

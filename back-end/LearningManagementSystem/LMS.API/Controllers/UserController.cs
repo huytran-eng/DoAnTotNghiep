@@ -1,4 +1,5 @@
 ﻿using LMS.BusinessLogic.DTOs;
+using LMS.BusinessLogic.DTOs.RequestDTO;
 using LMS.BusinessLogic.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,7 +17,7 @@ namespace LMS.API.Controllers
         }
 
         [HttpPost("login")]
-        public async Task<IActionResult> Login(UserDTO loginRequest)
+        public async Task<IActionResult> Login(LoginRequestDTO loginRequest)
         {
             var result = await _userService.LoginAsync(loginRequest);
 
@@ -29,10 +30,7 @@ namespace LMS.API.Controllers
                     _ => BadRequest(result.Message)
                 };
             }
-
-            var user = result.Data;
-            var loginResponse = new UserDTO { Username = user.Username, Token = user.Token };
-            return Json(loginResponse);
+            else return Ok(result.Data);
         }
     }
 }
