@@ -6,11 +6,9 @@ import {
     ListItemPrefix,
   } from "@material-tailwind/react";
   import {
-    PresentationChartBarIcon,
     UserCircleIcon,
     Cog6ToothIcon,
     PowerIcon,
-    BookmarkIcon,
     CodeBracketIcon,
   } from "@heroicons/react/24/solid";
   import logoPtit from "../../../../assets/image/logo/Logo_PTIT.jpg";
