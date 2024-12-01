@@ -1,4 +1,3 @@
-import React from 'react';
 import { Outlet } from 'react-router-dom'; // Outlet renders child routes
 import Header from './DefaultLayout/Header';
 import Sidebar from './DefaultLayout/Sidebar';

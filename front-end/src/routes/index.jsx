@@ -1,5 +1,4 @@
 // src/routes.js
-import Login from '../components/Login';
 import Home from '../components/Home';
 import Monhoc from '../components/Monhoc';
 import Lophoc from '../components/Lophoc';
@@ -13,11 +12,12 @@ import PrivateRoute from '../util/privateRoute';
 import ExerciseDetail from '../components/ExerciseDetail';
 import Students from '../components/Students'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import LoginVer2 from '../components/LoginVer2';
 
 
 
 const paths = [
-  { path: "/login", element: <Login /> },
+  { path: "/login", element: <LoginVer2 /> },
   {path: "/", element: <PrivateRoute />, children: [
     { path: "/home", element: <Home />  },
     { path: "/", element: <Home />  },
@@ -31,8 +31,6 @@ const paths = [
     { path: "/exercise/create", element: <CreateExercise />  },
     {path: "/exercise/:id", element: <ExerciseDetail/>},
     { path: "/student", element: <Students />  },
-
-    
   ]}
 
 ]
