@@ -16,8 +16,8 @@ RUN apt-get update && apt-get install -y \
     g++ \
     && rm -rf /var/lib/apt/lists/*
 
-# Create non-root user
-RUN useradd -m -s /bin/bash coderunner
+# Create non-root user with limited permissions
+RUN useradd -r -s /bin/false coderunner
 RUN mkdir /app && chown coderunner:coderunner /app
 
 # Set working directory
@@ -28,17 +28,24 @@ COPY --from=build /app/target/*.jar app.jar
 
 # Create directories for temporary files with proper permissions
 RUN mkdir /app/temp && chown coderunner:coderunner /app/temp
+RUN chmod 700 /app/temp
 
 # Switch to non-root user
 USER coderunner
 
 # Environment variables
 ENV MAX_MEMORY=512m
-ENV TIMEOUT_SECONDS=5
+ENV TIMEOUT_SECONDS=30
 ENV TEMP_DIR=/app/temp
+ENV THREAD_POOL_SIZE=4
 
 # Expose port
 EXPOSE 8080
 
-# Run the application
-ENTRYPOINT ["java", "-jar", "-Xmx512m", "app.jar"]
+# Run the application without security manager
+ENTRYPOINT ["java", \
+    "-jar", \
+    "-Xmx512m", \
+    "-Dcode.execution.timeout=${TIMEOUT_SECONDS}", \
+    "-Dcode.execution.pool.size=${THREAD_POOL_SIZE}", \
+    "app.jar"]
