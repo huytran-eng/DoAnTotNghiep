@@ -13,6 +13,7 @@ import ExerciseDetail from '../components/ExerciseDetail';
 import Students from '../components/Students'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import LoginVer2 from '../components/LoginVer2';
+import ProblemPage from '../pages/problem-page';
 
 
 
@@ -31,7 +32,8 @@ const paths = [
     { path: "/exercise/create", element: <CreateExercise />  },
     {path: "/exercise/:id", element: <ExerciseDetail/>},
     { path: "/student", element: <Students />  },
-  ]}
+  ]},
+  {path: "/code", element: <ProblemPage/>}
 
 ]
 

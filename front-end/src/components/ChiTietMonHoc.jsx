@@ -1,8 +1,6 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 import { DataGrid } from "@mui/x-data-grid";
-import Sidebar from "./Layout/DefaultLayout/Sidebar";
-import Header from "./Layout/DefaultLayout/Header";
 import moment from "moment";
 import {
   Box,
