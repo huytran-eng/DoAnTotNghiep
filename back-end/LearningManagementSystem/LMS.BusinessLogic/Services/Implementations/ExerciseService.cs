@@ -74,14 +74,14 @@ namespace LMS.BusinessLogic.Services.Implementations
                 {
                     Id = exercise.Id,
                     Title = exercise.Title,
-                    Difficulty = exercise.Difficulty,
+                    Difficulty =  exercise.Difficulty,
                     CreatedAt = exercise.CreatedAt,
                     Description = exercise.Description,
                     TestCases = exercise.TestCases.Select(tc => new TestCaseDTO
                     {
                         Id = tc.Id,
                         Input = tc.Input,
-                        Output = tc.ExpectedOutput
+                        ExpectedOutput = tc.ExpectedOutput
                     }).ToList()
                 };
 
@@ -187,7 +187,7 @@ namespace LMS.BusinessLogic.Services.Implementations
                     TestCases = exerciseDto.TestCases.Select(tc => new TestCase
                     {
                         Input = tc.Input,
-                        ExpectedOutput = tc.Output,
+                        ExpectedOutput = tc.ExpectedOutput,
                         Description = tc.Description,
                         IsHidden = tc.IsHidden,
                         CreatedAt = DateTime.Now,
@@ -253,7 +253,7 @@ namespace LMS.BusinessLogic.Services.Implementations
                         var newTestCase = new TestCase
                         {
                             Input = testCaseDTO.Input,
-                            ExpectedOutput = testCaseDTO.Output,
+                            ExpectedOutput = testCaseDTO.ExpectedOutput,
                             Description = testCaseDTO.Description,
                             IsHidden = testCaseDTO.IsHidden,
                             ExerciseId = existingExercise.Id,
