@@ -56,11 +56,11 @@ public class CodeExecutionService {
                         );
 
                         return new ExecutionResult(
-                                result.output(),
+                                result.output().replace("\r\n", "\n"),
                                 result.error(),
                                 result.executionTime(),
                                 result.memoryUsed(),
-                                result.success() && result.output().equals(testCase.expectedOutput())
+                                result.output().replace("\r\n", "\n").equals(testCase.expectedOutput())
                         );
                     } catch (TimeoutException e) {
                         return createErrorResult("Code execution timed out after " + executionTimeout + " seconds");
