@@ -4,7 +4,7 @@ import { getDifficulty } from "../../util/getDifficulty";
 export default function ProblemDescription(props) {
   const problem = props.problem;
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 px-4 mt-4">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold">
            {problem.title}

@@ -6,6 +6,7 @@ import CodeEditor from "../components/problem/code-editor";
 import HeaderProblem from "../components/problem/header";
 import LanguageSelector from "../components/problem/language-selector";
 import loadingIcon from "../assets/image/loading.gif";
+import SubmitHistory from "../components/problem/submit-history";
 export default function ProblemPage() {
   const { problemId } = useParams();
   const [activeTab, setActiveTab] = useState("description");
@@ -112,7 +113,7 @@ export default function ProblemPage() {
       <div className=" flex-1 max-h-[calc(100vh-48px)] grid grid-cols-2 gap-2 p-3 bg-[rgb(240_240_240_/0.5)]">
         {/* Left Panel */}
         <div className="border flex flex-col border-gray-300 rounded-lg bg-white max-h-[calc(100vh-70px)]">
-          <div className="flex space-x-4 mb-4 py-[2px] bg-[#fafafa] rounded-t-lg shadow-sm">
+          <div className="flex space-x-4 py-[2px] bg-[#fafafa] rounded-t-lg shadow-sm">
             <button
               className={`px-4 py-2 rounded flex justify-center items-center w-[110px] text-sm ${
                 activeTab === "description" ? "font-medium" : "opacity-40 "
@@ -161,9 +162,11 @@ export default function ProblemPage() {
             </button>
           </div>
 
-          <div className="flex-1 w-full overflow-y-auto px-4 pt-0 pb-5">
-            {activeTab === "description" && (
+          <div className="flex-1 w-full overflow-y-auto pt-0 pb-5">
+            {activeTab === "description" ? (
               <ProblemDescription problem={problem} />
+            ):(
+              <SubmitHistory/>
             )}
           </div>
         </div>
