@@ -37,5 +37,14 @@ namespace LMS.DataAccess.Repositories
                 .Include(s => s.Topics)
                 .ToListAsync();
         }
+
+        public async Task<Subject> GetSubjectByClassIdAsync(Guid classId)
+        {
+            return  await _context.Classes
+                .Where(c => c.Id == classId)  
+                .Select(c => c.Subject)      
+                .FirstOrDefaultAsync();       
+
+        }
     }
 }

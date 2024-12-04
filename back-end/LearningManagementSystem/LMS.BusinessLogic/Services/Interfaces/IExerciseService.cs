@@ -15,6 +15,9 @@ namespace LMS.BusinessLogic.Services.Interfaces
 
         Task<CommonResult<ExerciseDTO>> GetExerciseDetail(Guid exerciseId, Guid userId);
         Task<CommonResult<List<SubjectExerciseListDTO>>> GetExerciseForSubject(Guid subjectId, Guid userId);
-       
+        Task<CommonResult<ClassExerciseDTO>> GetClassExerciseForStudent(Guid classExerciseId, Guid userId);
+
+
+
     }
 }

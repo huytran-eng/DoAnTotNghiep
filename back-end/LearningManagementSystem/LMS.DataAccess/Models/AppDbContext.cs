@@ -384,12 +384,20 @@ namespace LMS.DataAccess.Models
                 .HasForeignKey(c => c.SubjectId)
                 .IsRequired();
 
-            modelBuilder.Entity<ClassExercise>()
-                .HasOne(ce => ce.ClassTopicOpen)
-                .WithMany()
-                .HasForeignKey(ce => ce.ClassTopicOpenId)
-                .IsRequired();
+            modelBuilder.Entity<ClassTopicOpen>()
+               .HasOne(cto => cto.Class)
+               .WithMany()
+               .HasForeignKey(ce => ce.ClassId)
+               .IsRequired()
+                .OnDelete(DeleteBehavior.Restrict);
 
+            modelBuilder.Entity<ClassTopicOpen>()
+              .HasOne(cto => cto.Topic)
+              .WithMany()
+              .HasForeignKey(ce => ce.TopicId)
+              .IsRequired()
+                .OnDelete(DeleteBehavior.Restrict);
+         
             modelBuilder.Entity<ClassExercise>()
                 .HasOne(ce => ce.SubjectExercise)
                 .WithMany()

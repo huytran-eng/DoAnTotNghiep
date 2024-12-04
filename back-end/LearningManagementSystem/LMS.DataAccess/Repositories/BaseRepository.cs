@@ -39,7 +39,10 @@ namespace LMS.DataAccess.Repositories
         {
             await _dbSet.AddAsync(entity); 
         }
-
+        public virtual async Task AddRangeAsync(IEnumerable<T> entities)
+        {
+            await _dbSet.AddRangeAsync(entities);
+        }
         public virtual async Task UpdateAsync(T entity)
         {
             _dbSet.Attach(entity);

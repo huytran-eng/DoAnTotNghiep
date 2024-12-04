@@ -1,47 +1,60 @@
-// src/routes.js
-import Home from '../components/Home';
-import Monhoc from '../components/Monhoc';
-import Lophoc from '../components/Lophoc';
-import Khoahoc from '../components/Khoahoc';
-import Tailieu from '../components/Tailieu';
-import Baitap from '../components/Baitap';
-import SubjectDetail from '../components/ChiTietMonHoc';
-import CreateClass from '../components/TaoLopHoc';
-import CreateExercise from '../components/TaoBaiTap'
-import PrivateRoute from '../util/privateRoute';
-import ExerciseDetail from '../components/ExerciseDetail';
-import Students from '../components/Students'
-import { createBrowserRouter, RouterProvider } from 'react-router-dom';
-import LoginVer2 from '../components/LoginVer2';
-import ProblemPage from '../pages/problem-page';
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import LoginVer2 from "../components/LoginVer2";
+import ProblemPage from "../pages/problem-page";
+import AdminPrivateRoute from "../util/PrivateRoutes/AdminPrivateRoutes";
+import StudentPrivateRoute from "../util/PrivateRoutes/StudentPrivateRoutes";
 
+// Admin components import
+import AdminClassList from "../components/Admin/Class/AdminClassList";
+import CreateClass from "../components/Admin/Class/CreateClass";
+import AdminClassDetail from "../components/Admin/Class/AdminClassDetail";
 
+import AdminSubjectList from "../components/Admin/Subject/AdminSubjectList";
+import AdminSubjectDetail from "../components/Admin/Subject/AdminSubjectDetail";
+
+import AdminExerciseList from "../components/Admin/Exercise/AdminExerciseList";
+import AdminCreateExercise from "../components/Admin/Exercise/AdminCreateExercise";
+import AdminStudentList from "../components/Admin/Student/AdminStudentList";
+// Students components import
+import StudentClassList from "../components/Student/Class/StudentClassList";
+import StudentClassDetail from "../components/Student/Class/StudentClassDetail";
+
+// import AdminDetail from "../components/Admin/Class/AdminClassDetail";
 
 const paths = [
   { path: "/login", element: <LoginVer2 /> },
-  {path: "/", element: <PrivateRoute />, children: [
-    { path: "/home", element: <Home />  },
-    { path: "/", element: <Home />  },
-    { path: "/subject", element: <Monhoc />  },
-    { path: "/class", element: <Lophoc />  },
-    { path: "/khoahoc", element: <Khoahoc />  },
-    { path: "/tailieu", element: <Tailieu />  },
-    { path: "/baitap", element: <Baitap />  },
-    { path: "/subject/:id", element: <SubjectDetail />  },
-    { path: "/class/create", element: <CreateClass />  },
-    { path: "/exercise/create", element: <CreateExercise />  },
-    {path: "/exercise/:id", element: <ExerciseDetail/>},
-    { path: "/student", element: <Students />  },
-  ]},
-  {path: "/code", element: <ProblemPage/>}
+  {
+    path: "/",
+    element: <StudentPrivateRoute />, // Protected routes for student
+    children: [
+      { path: "/class", element: <StudentClassList /> },
+      { path: "/class/:id", element: <StudentClassDetail /> },
+      { path: "class/:id/exercise/:classExerciseId", element: <ProblemPage /> },
+    ],
+  },
+  {
+    path: "/admin",
+    element: <AdminPrivateRoute />, // Protected routes for Admin
+    children: [
+      { path: "class", element: <AdminClassList /> },
+      { path: "class/create", element: <CreateClass /> },
+      { path: "class/:id", element: <AdminClassDetail /> },
 
-]
+      { path: "subject", element: <AdminSubjectList /> },
+      // { path: "/subject/create", element: <CreateClass /> },
+      { path: "subject/:id", element: <AdminSubjectDetail /> },
 
+      { path: "exercise", element: <AdminExerciseList /> },
+      { path: "exercise/create", element: <AdminCreateExercise /> },
+      { path: "student", element: <AdminStudentList /> },
+    ],
+  },
+];
 
 const Routers = () => {
   const appRoutes = createBrowserRouter(paths);
 
-  return <RouterProvider router={appRoutes} />
-}
+  return <RouterProvider router={appRoutes} />;
+};
 
 export default Routers;

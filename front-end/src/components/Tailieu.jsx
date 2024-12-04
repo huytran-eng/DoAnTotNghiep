@@ -6,7 +6,7 @@ import { useState } from 'react';
 
 
 
-const Lophoc = () => {
+const Class = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedFilter, setSelectedFilter] = useState('all'); // Bộ lọc sĩ số
 
@@ -148,4 +148,4 @@ const Lophoc = () => {
   );
 };
 
-export default Lophoc;
+export default Class;

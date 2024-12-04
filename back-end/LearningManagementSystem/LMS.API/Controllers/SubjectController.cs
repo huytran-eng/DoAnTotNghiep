@@ -17,13 +17,15 @@ namespace LMS.API.Controllers
         private readonly ISubjectService _subjectService;
         private readonly IExerciseService _exerciseService;
         private readonly IClassService _classService;
+        private readonly IProgrammingLanguageService _programmingLanguageService;
 
-        public SubjectController(ISubjectService subjectService, IExerciseService exerciseService, IClassService classService)
+        public SubjectController(ISubjectService subjectService, IExerciseService exerciseService, IClassService classService, IProgrammingLanguageService programmingLanguageService)
         {
             _subjectService = subjectService;
             _exerciseService = exerciseService;
             _classService = classService;
             _classService = classService;
+            _programmingLanguageService = programmingLanguageService;
         }
 
         [Authorize]
@@ -154,6 +156,34 @@ namespace LMS.API.Controllers
         {
             var userIdClaim = User.FindFirst("UserId")?.Value;
             return Guid.TryParse(userIdClaim, out var userId) ? userId : (Guid?)null;
+        }
+
+        [HttpGet("{subjectId}/languages")]
+        public async Task<IActionResult> GetSubjectProgrammingLanguage(Guid subjectId)
+        {
+            var userId = GetCurrentUserId();
+            if (userId == null)
+            {
+                return Unauthorized("UserId not found or invalid.");
+            }
+
+            var subjectExercise = await _programmingLanguageService.GetSubjectProgrammingLanguages(subjectId);
+
+
+            if (subjectExercise.IsSuccess)
+            {
+                return Ok(subjectExercise.Data);
+            }
+            else
+            {
+                return subjectExercise.Code switch
+                {
+                    400 => BadRequest(subjectExercise.Message),
+                    404 => BadRequest(subjectExercise.Message),
+                    403 => BadRequest(subjectExercise.Message),
+                    _ => StatusCode(500, subjectExercise.Message)
+                };
+            }
         }
 
     }

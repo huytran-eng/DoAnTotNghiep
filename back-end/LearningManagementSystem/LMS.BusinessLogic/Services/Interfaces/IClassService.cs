@@ -1,4 +1,5 @@
 ﻿using LMS.BusinessLogic.DTOs;
+using LMS.BusinessLogic.DTOs.RequestDTO;
 using LMS.Core;
 using LMS.DataAccess.Models;
 
@@ -16,9 +17,12 @@ namespace LMS.BusinessLogic.Services.Interfaces
                                                                                         Guid userId);
         Task<CommonResult<ClassDTO>> GetClassDetailForUser(Guid classId, Guid userId);
 
-        Task<CommonResult<List<StudentDTO>>> GetStudentsByClassAsync(Guid classId, Guid userId);
         Task<CommonResult<List<ClassStudyMaterialDTO>>> GetStudyMaterialsForClassAsync(Guid classId, Guid userId);
 
         Task<CommonResult<List<ClassListDTO>>> GetClassesForSubject(Guid subjectId, Guid userId);
+        Task<CommonResult<ClassTopicOpenDTO>> OpenClassTopicAsync(OpenClassTopicDTO openClassTopicDTO, Guid userId);
+
+        Task<CommonResult<List<ClassTopicOpenListDTO>>> GetOpenClassTopicAsync(Guid classId, Guid userId);
+
     }
 }

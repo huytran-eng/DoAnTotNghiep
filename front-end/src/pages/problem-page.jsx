@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useCodeEditor } from "../hooks/useCodeEditor";
 import ProblemDescription from "../components/problem/description";
@@ -6,110 +6,57 @@ import CodeEditor from "../components/problem/code-editor";
 import HeaderProblem from "../components/problem/header";
 import LanguageSelector from "../components/problem/language-selector";
 import loadingIcon from "../assets/image/loading.gif";
+import axios from "axios";
 import SubmitHistory from "../components/problem/submit-history";
+
 export default function ProblemPage() {
-  const { problemId } = useParams();
   const [activeTab, setActiveTab] = useState("description");
+  const { classExerciseId } = useParams();
+  const [problem, setProblem] = useState(null); // State for the fetched data
+  const [isLoading, setIsLoading] = useState(false); // State for the loading status
+  const token = localStorage.getItem("token"); // Retrieve JWT token
+  const [error, setError] = useState(null); // State for any errors
 
-  //   const { data: problem, isLoading } = useQuery({
-  //     queryKey: ['problem', problemId],
-  //     queryFn: () => fetchProblem(problemId as string), // Implement this function to fetch problem data
-  //   });
-  const problem = {
-    title: "Kiểm tra chuỗi Palindrome",
-    description:
-      "Một chuỗi Palindrome là chuỗi mà khi đọc từ trái qua phải hoặc từ phải qua trái, " +
-      "nội dung của chuỗi vẫn không thay đổi. Ví dụ, chuỗi 'madam' hoặc 'racecar' là Palindrome, " +
-      "nhưng chuỗi 'hello' thì không. Trong bài toán này, bạn cần viết chương trình kiểm tra " +
-      "một chuỗi đầu vào và xác định xem chuỗi đó có phải là Palindrome hay không. " +
-      "Lưu ý rằng bạn cần loại bỏ các ký tự không hợp lệ (khoảng trắng, dấu câu) " +
-      "và không phân biệt chữ hoa chữ thường trước khi thực hiện kiểm tra.",
+  useEffect(() => {
+    if (!classExerciseId) return; // Prevent fetching if no ID is provided
 
-    requirements:
-      "Input: Một chuỗi ký tự, có thể chứa chữ cái, số, khoảng trắng, và các ký tự đặc biệt.\n" +
-      "Output: Trả về 'true' nếu chuỗi là Palindrome, ngược lại trả về 'false'.\n" +
-      "Không phân biệt chữ hoa và chữ thường.\n" +
-      "Loại bỏ tất cả các ký tự không phải là chữ cái hoặc số (bao gồm khoảng trắng, dấu câu và ký tự đặc biệt).\n" +
-      "Loại bỏ tất cả các ký tự không phải là chữ cái hoặc số (bao gồm khoảng trắng, dấu câu và ký tự đặc biệt).\n" +
-      "Loại bỏ tất cả các ký tự không phải là chữ cái hoặc số (bao gồm khoảng trắng, dấu câu và ký tự đặc biệt).\n" +
-      "Loại bỏ tất cả các ký tự không phải là chữ cái hoặc số (bao gồm khoảng trắng, dấu câu và ký tự đặc biệt).\n" +
-      "Loại bỏ tất cả các ký tự không phải là chữ cái hoặc số (bao gồm khoảng trắng, dấu câu và ký tự đặc biệt).\n" +
-      "Loại bỏ tất cả các ký tự không phải là chữ cái hoặc số (bao gồm khoảng trắng, dấu câu và ký tự đặc biệt).\n" +
-      "Đảm bảo chương trình xử lý được chuỗi có độ dài tối đa 1000 ký tự.",
+    const fetchData = async () => {
+      setIsLoading(true); // Set loading to true before fetching
+      setError(null); // Reset error state
 
-    difficulty: 2, // Mức độ khó: trung bình
-    timeLimit: 1000, // Giới hạn thời gian: 1000ms
-    spaceLimit: 128, // Giới hạn bộ nhớ: 128MB
+      try {
+        const response = await axios.get(
+          `https://localhost:7104/api/class/exercise/${classExerciseId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        setProblem(response.data); // Store the fetched data in state
+      } catch (err) {
+        setError(err.message || "Failed to fetch data."); // Handle any errors
+      } finally {
+        setIsLoading(false); // Set loading to false after fetching
+      }
+    };
 
-    testCases: [
-      {
-        input: '"A man, a plan, a canal: Panama"',
-        expectedOutput: "true",
-        explanation:
-          "Chuỗi đầu vào chứa ký tự chữ cái, khoảng trắng, và dấu câu. Sau khi loại bỏ ký tự không hợp lệ " +
-          "và chuyển tất cả sang chữ thường, chuỗi còn lại là 'amanaplanacanalpanama'. " +
-          "Chuỗi này đọc xuôi và đọc ngược giống nhau nên kết quả là 'true'.",
-      },
-      {
-        input: '"No lemon, no melon"',
-        expectedOutput: "true",
-        explanation:
-          "Chuỗi đầu vào chứa ký tự chữ cái, khoảng trắng, và dấu câu. Sau khi xử lý, " +
-          "chuỗi còn lại là 'nolemonnomelon'. Đây là một Palindrome nên kết quả là 'true'.",
-      },
-      {
-        input: '"Hello, World!"',
-        expectedOutput: "false",
-        explanation:
-          "Chuỗi đầu vào sau khi loại bỏ ký tự không hợp lệ là 'helloworld'. " +
-          "Chuỗi này không giống nhau khi đọc xuôi và đọc ngược nên kết quả là 'false'.",
-      },
-    ],
-  };
+    fetchData(); // Call the async function
+  }, []);
 
-  const { code, language, isRunning, output, setCode, setLanguage,runCode } =
-    useCodeEditor();
-  // const runCode = async () => {
-  //   try {
-  //     const testCases = [
-  //       {
-  //           input: "2\n5 6 2\n0 1 2\n1 2 3\n2 3 4\n3 4 5\n0 3 10\n1 3 8\n0 4\n2 4",
-  //           expectedOutput: "Case #1:\nShortest distance: 11\nPath: 0 -> 1 -> 2 -> 3 -> 4\nShortest distance: 9\nPath: 2 -> 3 -> 4"
-  //       },
-  //       {
-  //           input: "1\n3 2 3\n0 1 5\n1 2 3\n0 2\n2 0\n1 2",
-  //           expectedOutput: "Case #1:\nShortest distance: 8\nPath: 0 -> 1 -> 2\nShortest distance: 8\nPath: 2 -> 1 -> 0\nShortest distance: 3\nPath: 1 -> 2"
-  //       },
-  //       {
-  //           input: "1\n3 2 3\n0 1 5\n1 2 3\n0 2\n2 0\n1 2",
-  //           expectedOutput: "Case #1:\nShortest distance: 8\nPath: 0 -> 1 -> 2\nShortest distance: 8\nPath: 2 -> 1 -> 0\nShortest distance: 3\nPath: 1 -> 2"
-  //       },
-  //       {
-  //           input: "1\n3 2 3\n0 1 5\n1 2 3\n0 2\n2 0\n1 2",
-  //           expectedOutput: "Case #1:\nShortest distance: 8\nPath: 0 -> 1 -> 2\nShortest distance: 8\nPath: 2 -> 1 -> 0\nShortest distance: 3\nPath: 1 -> 2"
-  //       }
-  //   ]
-  //     const response = await axios.post("http://localhost:8080/api/execute", {
-  //       code,
-  //       language,
-  //       testCases,
-  //     });
-
-  //     if (!response) {
-  //       throw new Error("Execution failed");
-  //     }
-  //     return response.data;
-  //   } catch (error) {
-  //     throw new Error(
-  //       error instanceof Error ? error.message : "Execution failed"
-  //     );
-  //   }
-  // };
-  //   if (isLoading) return <div>Loading...</div>;
+  const {
+    code,
+    language,
+    isRunning,
+    output,
+    setCode,
+    setLanguage,
+    runCode,
+    setLanguageId,
+  } = useCodeEditor();
 
   return (
     <div className="h-screen max-h-screen flex flex-col overflow-hidden">
-      <HeaderProblem />
       <div className=" flex-1 max-h-[calc(100vh-48px)] grid grid-cols-2 gap-2 p-3 bg-[rgb(240_240_240_/0.5)]">
         {/* Left Panel */}
         <div className="border flex flex-col border-gray-300 rounded-lg bg-white max-h-[calc(100vh-70px)]">
@@ -163,19 +110,21 @@ export default function ProblemPage() {
           </div>
 
           <div className="flex-1 w-full overflow-y-auto pt-0 pb-5">
-            {activeTab === "description" ? (
-              <ProblemDescription problem={problem} />
-            ):(
-              <SubmitHistory/>
-            )}
+            {activeTab === "description" &&
+              (problem ? (
+                <ProblemDescription problem={problem} />
+              ) : (
+                <div>Loading problem description...</div>
+              ))}
+            {activeTab === "submissions" && <SubmitHistory />}
           </div>
         </div>
 
         {/* Right Panel */}
-        <div className="border flex flex-col border-gray-300 rounded-lg bg-white max-h-[calc(100vh-64px)]">
-          <div className="flex space-x-4 bg-[#fafafa] rounded-t-lg shadow-sm justify-between p-[2px]">
+        <div className="border flex flex-col border-gray-300 rounded-lg bg-inherit max-h-[calc(100vh-64px)]">
+          <div className="flex space-x-4 bg-[#fafafa] rounded-t-lg shadow-sm justify-between p-[2px] shadow-sm mb-[2px] ">
             <div
-              className={`px-4 py-2 rounded flex justify-center items-center w-[100px] text-sm font-medium`}
+              className={`px-4 py-2 rounded flex justify-center items-center w-[100px] text-sm font-medium `}
             >
               <svg
                 className="size-4 mr-2 text-green-500"
@@ -200,7 +149,7 @@ export default function ProblemPage() {
               whitespace-nowrap focus:outline-none 
               inline-flex relative select-none px-3 py-1.5 
               rounded text-[#01B328] hover:bg-[#0000000f]"
-              onClick={runCode}
+                onClick={() => runCode(classExerciseId)}
               >
                 <div className="relative text-[16px] leading-[normal] p-0.5 before:block before:h-4 before:w-4 mr-2">
                   <svg
@@ -228,14 +177,68 @@ export default function ProblemPage() {
             )}
           </div>
 
-          <div className="flex h-8 items-center justify-between border-b p-3 text-[#0000008c] ">
+          <div className="flex h-8 items-center justify-between border-b p-3 text-[#0000008c] bg-white ">
             <div className="rounded hover:bg-[#0000000f] px-1">
-              <LanguageSelector setLanguage={setLanguage} />
+              <LanguageSelector
+                setLanguage={setLanguage}
+                setLanguageId={setLanguageId}
+              />
             </div>
           </div>
 
-          <div className="flex-1">
+          <div className="flex-1 bg-white rounded-b-lg pb-1">
             <CodeEditor value={code} onChange={setCode} language={language} />
+          </div>
+          <div className={`h-[190px] bg-white rounded-lg mt-2 shadow-md`}>
+            <div className="flex space-x-4 bg-[#fafafa] rounded-t-lg justify-between p-[2px] shadow-sm">
+              <div
+                className={`px-4 py-2 rounded flex  items-center w-[150px] text-sm font-medium`}
+              >
+                <svg
+                  className="size-4 mr-2 text-green-500"
+                  aria-hidden="true"
+                  focusable="false"
+                  data-prefix="far"
+                  data-icon="terminal"
+                  role="img"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 576 512"
+                >
+                  <path
+                    fill="currentColor"
+                    d="M6.3 72.2c-9-9.8-8.3-24.9 1.4-33.9s24.9-8.3 33.9 1.4l184 200c8.5 9.2 8.5 23.3 0 32.5l-184 200c-9 9.8-24.2 10.4-33.9 1.4s-10.4-24.2-1.4-33.9L175.4 256 6.3 72.2zM248 432H552c13.3 0 24 10.7 24 24s-10.7 24-24 24H248c-13.3 0-24-10.7-24-24s10.7-24 24-24z"
+                  ></path>
+                </svg>
+                Kết quả
+              </div>
+              <div
+                className={`font-medium items-center 
+              whitespace-nowrap focus:outline-none 
+              inline-flex relative select-none px-3 py-1.5 
+              rounded text-[#01B328] ${
+                Object.keys(output).length === 0 ? "hidden" : ""
+              }`}
+              >
+                <div className="relative text-[16px] leading-[normal] p-0.5 before:block before:h-4 before:w-4 mr-2">
+                  <svg
+                    aria-hidden="true"
+                    focusable="false"
+                    data-prefix="far"
+                    data-icon="cloud-arrow-up"
+                    className="size-5 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
+                    role="img"
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 640 512"
+                  >
+                    <path
+                      fill="currentColor"
+                      d="M354.9 121.7c13.8 16 36.5 21.1 55.9 12.5c8.9-3.9 18.7-6.2 29.2-6.2c39.8 0 72 32.2 72 72c0 4-.3 7.9-.9 11.7c-3.5 21.6 8.1 42.9 28.1 51.7C570.4 276.9 592 308 592 344c0 46.8-36.6 85.2-82.8 87.8c-.6 0-1.3 .1-1.9 .2H504 144c-53 0-96-43-96-96c0-41.7 26.6-77.3 64-90.5c19.2-6.8 32-24.9 32-45.3l0-.2v0 0c0-66.3 53.7-120 120-120c36.3 0 68.8 16.1 90.9 41.7zM512 480v-.2c71.4-4.1 128-63.3 128-135.8c0-55.7-33.5-103.7-81.5-124.7c1-6.3 1.5-12.8 1.5-19.3c0-66.3-53.7-120-120-120c-17.4 0-33.8 3.7-48.7 10.3C360.4 54.6 314.9 32 264 32C171.2 32 96 107.2 96 200l0 .2C40.1 220 0 273.3 0 336c0 79.5 64.5 144 144 144H464h40 8zM223 255c-9.4 9.4-9.4 24.6 0 33.9s24.6 9.4 33.9 0l39-39V384c0 13.3 10.7 24 24 24s24-10.7 24-24V249.9l39 39c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-80-80c-9.4-9.4-24.6-9.4-33.9 0l-80 80z"
+                    ></path>
+                  </svg>
+                </div>
+                <span className="text-sm font-medium">Submit</span>
+              </div>
+            </div>
           </div>
         </div>
       </div>

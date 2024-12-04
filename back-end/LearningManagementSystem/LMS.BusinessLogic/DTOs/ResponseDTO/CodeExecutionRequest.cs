@@ -3,7 +3,7 @@
     public class CodeExecutionRequest
     {
         public string Code { get; set; }
-        public string ProgrammingLanguage { get; set; }
+        public string Language { get; set; }
         public IEnumerable<TestCasePayload> TestCases { get; set; }
     }
 

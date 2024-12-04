@@ -5,7 +5,7 @@
 // import PrivateRoute from "../util/privateRoute";
 // import { Navigate } from "react-router-dom";
 // import Monhoc from "../components/Monhoc";
-// import Lophoc from "../components/Lophoc";
+// import Class from "../components/Class";
 // import Khoahoc from "../components/Khoahoc";
 // import Tailieu from "../components/Tailieu";
 // import Baitap from "../components/Baitap";
@@ -21,7 +21,7 @@
 //         <Route path="/" element={<Home />} />
 //         <Route path="/home" element={<Home />} />
 //         <Route path="/subject" element={<Monhoc />} />
-//         <Route path="/class" element={<Lophoc />} />
+//         <Route path="/class" element={<Class />} />
 //         <Route path="/khoahoc" element={<Khoahoc />} />
 //         <Route path="/tailieu" element={<Tailieu />} />
 //         <Route path="/baitap" element={<Baitap />} />

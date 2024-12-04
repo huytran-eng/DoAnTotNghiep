@@ -24,6 +24,9 @@ namespace LMS.DataAccess.Repositories
         // Add a new entity
         Task AddAsync(T entity);
 
+        // Add range off entities
+        Task AddRangeAsync(IEnumerable<T> entities);
+
         // Update an entity
         Task UpdateAsync(T entity);
 

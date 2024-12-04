@@ -1,15 +1,16 @@
 import { useState, useEffect } from "react";
 import axios from "axios"; // Use Axios for simplified HTTP requests
 import { DataGrid } from "@mui/x-data-grid";
-import "../styles/homeStyles.css"; // Optional styles for the layout
+import "../../../styles/homeStyles.css"; 
 import { useNavigate } from "react-router-dom";
 import moment from "moment";
 
-const Lophoc = () => {
+const AdminClassList = () => {
   const [classes, setClasses] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const token = localStorage.getItem("token"); // Retrieve JWT token
+  const user = JSON.parse(localStorage.getItem("userInfo"));
 
   useEffect(() => {
     fetchClasses();
@@ -49,15 +50,13 @@ const Lophoc = () => {
       field: "startDate",
       headerName: "Ngày bắt đầu",
       flex: 1,
-      valueFormatter: params => 
-        moment(params?.value).format("DD/MM/YYYY"),
+      valueFormatter: (params) => moment(params?.value).format("DD/MM/YYYY"),
     },
     {
       field: "endDate",
       headerName: "Ngày kết thúc",
       flex: 1,
-      valueFormatter: params => 
-        moment(params?.value).format("DD/MM/YYYY"),
+      valueFormatter: (params) => moment(params?.value).format("DD/MM/YYYY"),
     },
     {
       field: "action",
@@ -70,16 +69,16 @@ const Lophoc = () => {
   ];
 
   const handleViewDetails = (rowData) => {
-    navigate(`/class/${rowData.id}`);
+    navigate(`/admin/class/${rowData.id}`);
   };
 
   const handleCreateClass = () => {
-    navigate("/class/create");
+    navigate("/admin/class/create");
   };
 
   return (
     <div className="content-container" style={{ padding: "20px" }}>
-      <h2 className="header-title">CLASS LIST</h2>
+      <h2 >Danh sách các lớp học</h2>
       <div style={{ marginBottom: "20px", textAlign: "right" }}>
         <button
           onClick={handleCreateClass}
@@ -95,7 +94,6 @@ const Lophoc = () => {
           Tạo lớp học mới
         </button>
       </div>
-
       <div
         className="mt-5"
         style={{
@@ -115,4 +113,4 @@ const Lophoc = () => {
   );
 };
 
-export default Lophoc;
+export default AdminClassList;

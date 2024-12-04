@@ -2,10 +2,10 @@ import { useState, useMemo } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "../styles/homeStyles.css";
 import "../styles/sidebarStudentStyles.css";
-import "../styles/lophocStudent.css"; // Import CSS cho Lophoc nếu có
+import "../styles/lophocStudent.css"; // Import CSS cho Class nếu có
 import SidebarStudent from "./Layout/DefaultLayout/SidebarStudent";
 
-const LophocStudent = () => {
+const ClassStudent = () => {
   const navigate = useNavigate();
 
   // Define state for search term and filter
@@ -228,4 +228,4 @@ const LophocStudent = () => {
   );
 };
 
-export default LophocStudent;
+export default ClassStudent;

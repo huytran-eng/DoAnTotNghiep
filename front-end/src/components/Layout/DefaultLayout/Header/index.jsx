@@ -19,20 +19,20 @@ const Header = () => {
       {" "}
       {/* Áp dụng lớp CSS cho header */}
       <nav>
-        <h1>Welcome to Class Master!</h1>
+        <h1></h1>
         <ul>
           <li>
-            <Link className="header_navbar-item" to="/">
+            <Link className="header_navbar-item" to="#">
               Thông báo
             </Link>
           </li>
           <li>
-            <Link className="header_navbar-item" to="/monhoc">
+            <Link className="header_navbar-item" to="#">
               Trợ giúp
             </Link>
           </li>
           <li>
-            <Link className="header_navbar-item" to="/khoahoc">
+            <Link className="header_navbar-item" to="#">
               {username}
             </Link>
           </li>

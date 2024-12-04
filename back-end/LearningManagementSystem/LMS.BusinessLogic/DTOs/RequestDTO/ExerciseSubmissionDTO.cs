@@ -4,6 +4,6 @@
     {
         public Guid ClassExerciseId { get; set; }
         public string StudentCode { get; set; }
-        public string ProgrammingLanguage { get; set; }
+        public Guid SubjectProgrammingLanguageId { get; set; }
     }
-}
+} 

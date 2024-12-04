@@ -192,7 +192,7 @@ namespace LMS.BusinessLogic.Services.Implementations
                         var currentUser = new User
                         {
                             Id = Guid.NewGuid(),
-                            Username = studentName,
+                            Username = studentId,
                             Name = studentName,
                             Email = studentEmail,
                             PasswordHash = hash,
@@ -282,7 +282,68 @@ namespace LMS.BusinessLogic.Services.Implementations
                     {
                         IsSuccess = false,
                         Code = 404,
-                        Message ="No students found"
+                        Message = "No students found"
+                    };
+
+                }
+
+
+                var studentListDTO = students.Select(s => new StudentDTO
+                {
+                    Id = s.Id,
+                    StudentIdString = s.StudentIdString,
+                    Name = s.User.Name,
+                    BirthDate = s.User.BirthDate,
+                    Email = s.User.Email,
+                    Address = s.User.Address,
+                    Phone = s.User.Phone
+                }).ToList();
+
+                return new CommonResult<List<StudentDTO>>
+                {
+                    IsSuccess = true,
+                    Code = 200,
+                    Data = studentListDTO
+                };
+
+
+            }
+            catch (Exception e)
+            {
+                return new CommonResult<List<StudentDTO>>
+                {
+                    IsSuccess = false,
+                    Code = 500,
+                    Message = $"Error when getting students list {e}"
+                };
+            }
+        }
+
+        public async Task<CommonResult<List<StudentDTO>>> GetStudentsForClass(Guid classId, Guid userId)
+        {
+            try
+            {
+                // Get the user info
+                var currentUserInfo = await _userRepository.GetByIdAsync(userId);
+                if (currentUserInfo == null)
+                {
+                    return new CommonResult<List<StudentDTO>>
+                    {
+                        IsSuccess = false,
+                        Code = 404,
+                        Message = "User not found."
+                    };
+                }
+
+                var students = await _studentRepository.GetStudentsByClassAsync(classId);
+
+                if (students == null || students.Count() < 1)
+                {
+                    return new CommonResult<List<StudentDTO>>
+                    {
+                        IsSuccess = false,
+                        Code = 404,
+                        Message = "No students found"
                     };
 
                 }

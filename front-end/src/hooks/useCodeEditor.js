@@ -5,40 +5,47 @@ async function delay(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-async function executeCode(code, language) {
-  try {
-    const testCases = [
-      {
-        input: "2\n5 6 2\n0 1 2\n1 2 3\n2 3 4\n3 4 5\n0 3 10\n1 3 8\n0 4\n2 4",
-        expectedOutput:
-          "Case #1:\nShortest distance: 11\nPath: 0 -> 1 -> 2 -> 3 -> 4\nShortest distance: 9\nPath: 2 -> 3 -> 4",
-      },
-      {
-        input: "1\n3 2 3\n0 1 5\n1 2 3\n0 2\n2 0\n1 2",
-        expectedOutput:
-          "Case #1:\nShortest distance: 8\nPath: 0 -> 1 -> 2\nShortest distance: 8\nPath: 2 -> 1 -> 0\nShortest distance: 3\nPath: 1 -> 2",
-      },
-      {
-        input: "1\n3 2 3\n0 1 5\n1 2 3\n0 2\n2 0\n1 2",
-        expectedOutput:
-          "Case #1:\nShortest distance: 8\nPath: 0 -> 1 -> 2\nShortest distance: 8\nPath: 2 -> 1 -> 0\nShortest distance: 3\nPath: 1 -> 2",
-      },
-    ];
-    const response = await axios.post("http://localhost:8080/api/execute", {
-      code,
-      language,
-      testCases,
-    });
+async function executeCode(
+  code,
+  subjectProgrammingLanguageId,
+  classExerciseId
+) {
+  const token = localStorage.getItem("token"); // Retrieve the token from localStorage
 
-    if (!response) {
-      throw new Error("Execution failed");
+  try {
+    if (!code || !subjectProgrammingLanguageId || !classExerciseId) {
+      console.error("Missing required parameters.");
+      return;
     }
 
-    return response.data;
-  } catch (error) {
-    throw new Error(
-      error instanceof Error ? error.message : "Execution failed"
+    console.log("Code:", code);
+    console.log("SubjectProgrammingLanguageId:", subjectProgrammingLanguageId);
+    console.log("ClassExerciseId:", classExerciseId);
+
+    // Make the POST request
+    const response = await axios.post(
+      "https://localhost:7104/api/submission/submit-code",
+      {
+        code: code,
+        subjectProgrammingLanguageId: subjectProgrammingLanguageId,
+        classExerciseId: classExerciseId,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`, // Attach the token in the Authorization header
+        },
+      }
     );
+
+    console.log(response);
+    // Check the response status
+    if (response.status === 200) {
+      console.log("Execution result:", response.data);
+    } else {
+      console.error("Execution failed with status:", response.status);
+    }
+  } catch (error) {
+    console.error("Error executing code:", error);
   }
 }
 
@@ -47,6 +54,7 @@ export const useCodeEditor = () => {
     code: "\n \n \n \n \n \n \n \n \n",
     language: "java",
     isRunning: false,
+    languageId: "",
     output: {},
   });
 
@@ -58,10 +66,18 @@ export const useCodeEditor = () => {
     setState((prev) => ({ ...prev, language }));
   };
 
-  const runCode = async () => {
+  const setLanguageId = (languageId) => {
+    setState((prev) => ({ ...prev, languageId }));
+  };
+
+  const runCode = async (classExerciseId) => {
     setState((prev) => ({ ...prev, isRunning: true }));
     try {
-      const result = await executeCode(state.code, state.language);
+      const result = await executeCode(
+        state.code,
+        state.languageId,
+        classExerciseId
+      );
       setState((prev) => ({ ...prev, output: result }));
     } catch (error) {
       setState((prev) => ({
@@ -78,5 +94,6 @@ export const useCodeEditor = () => {
     setCode,
     setLanguage,
     runCode,
+    setLanguageId,
   };
 };

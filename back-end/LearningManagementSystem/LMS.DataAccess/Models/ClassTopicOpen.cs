@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 
 namespace LMS.DataAccess.Models
 {
@@ -19,5 +14,8 @@ namespace LMS.DataAccess.Models
         public Guid TopicId { get; set; }
         [ForeignKey("TopicId")]
         public virtual Topic Topic { get; set; }
+
+        public ICollection<ClassExercise> ClassExercises { get; set; }
+
     }
 }

@@ -14,5 +14,6 @@ namespace LMS.BusinessLogic.Services.Interfaces
            int page,
            int pageSize,
            Guid userId);
+        Task<CommonResult<List<StudentDTO>>> GetStudentsForClass(Guid classId, Guid userId);
     }
 }

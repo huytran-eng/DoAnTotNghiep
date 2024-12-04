@@ -2,35 +2,37 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 const LoginVer2 = () => {
-    const [username, setUsername] = useState(""); // State for username
-    const [password, setPassword] = useState(""); // State for password
-    const [error, setError] = useState(""); // State for error messages
-    const navigate = useNavigate();
+  const [username, setUsername] = useState(""); // State for username
+  const [password, setPassword] = useState(""); // State for password
+  const [error, setError] = useState(""); // State for error messages
+  const navigate = useNavigate();
 
-    const handleLogin = async (e) => {
-        e.preventDefault(); // Prevent default form submission
-        setError(""); // Reset error message before new attempt
+  const handleLogin = async (e) => {
+    e.preventDefault(); // Prevent default form submission
+    setError(""); // Reset error message before new attempt
 
-        try {
-        const response = await fetch("https://localhost:7104/api/User/login", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ username, password }),
-        });
+    try {
+      const response = await fetch("https://localhost:7104/api/User/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, password }),
+      });
 
-        if (response.ok) {
-            const data = await response.json();
-            localStorage.setItem("token", data.token);
-            localStorage.setItem("userInfo", JSON.stringify(data));
+      if (response.ok) {
+        const data = await response.json();
+        localStorage.setItem("token", data.token);
+        localStorage.setItem("userInfo", JSON.stringify(data));
 
-            navigate(""); // Redirect to dashboard
-        } else {
-            setError("Sai tài khoản hoặc mật khẩu"); // Show error on failure
-        }
-        } catch (err) {
-        setError("Đăng nhập thất bại vui lòng thử lại.", err); // Show general error
-        }
-    };
+        if (data.position.toLowerCase() === "admin") navigate("/admin"); // Redirect to dashboard
+
+        navigate("/"); // Redirect to dashboard
+      } else {
+        setError("Sai tài khoản hoặc mật khẩu"); // Show error on failure
+      }
+    } catch (err) {
+      setError("Đăng nhập thất bại vui lòng thử lại.", err); // Show general error
+    }
+  };
 
   return (
     <div className="flex h-screen">
@@ -317,13 +319,15 @@ const LoginVer2 = () => {
               </button>
             </div>
           </form>
-          {error && <div className="m-2 mb-0 flex items-center justify-center"><p className="text-red-500">{error}</p></div>}
+          {error && (
+            <div className="m-2 mb-0 flex items-center justify-center">
+              <p className="text-red-500">{error}</p>
+            </div>
+          )}
           <div className="mt-4 text-sm text-gray-600 text-center">
             <p>
               Bạn chưa có tài khoản?{" "}
-              <span className="text-black hover:underline">
-                Tạo tài khoản
-              </span>
+              <span className="text-black hover:underline">Tạo tài khoản</span>
             </p>
           </div>
         </div>

@@ -17,10 +17,12 @@ namespace LMS.DataAccess.Repositories
         {
             return await _context.StudentClasses
                 .Where(sc => sc.ClassId == classId)
+                .Include(sc => sc.Student.User) 
                 .Select(sc => sc.Student)
-                .Include(student => student.User)
                 .ToListAsync();
         }
+
+
+
     }
 }
-  

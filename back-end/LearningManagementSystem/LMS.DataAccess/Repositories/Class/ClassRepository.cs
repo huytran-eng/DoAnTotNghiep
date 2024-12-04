@@ -36,7 +36,7 @@ namespace LMS.DataAccess.Repositories
         public async Task<IEnumerable<Class>> GetClassesByStudentIdAsync(Guid studentId)
         {
             return await _context.Classes
-                .Where(c => c.StudentClasses.Any(s => s.Id == studentId))
+                .Where(c => c.StudentClasses.Any(s => s.StudentId == studentId))
                 .Include(c => c.Teacher)
                 .ThenInclude(t => t.User)
                 .Include(c => c.Subject)

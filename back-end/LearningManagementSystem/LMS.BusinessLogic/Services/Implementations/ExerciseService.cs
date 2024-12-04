@@ -18,13 +18,15 @@ namespace LMS.BusinessLogic.Services.Implementations
         private readonly ITopicRepository _topicRepository;
         private readonly ISubjectExerciseRepository _subjectExerciseRepository;
         private readonly IUserRepository _userRepository;
+        private readonly IClassExerciseRepository _classExerciseRepository;
 
         public ExerciseService(IExerciseRepository exerciseRepository,
             ITestCaseRepository testCaseRepository,
             ISubjectRepository subjectRepository,
             ITopicRepository topicRepository,
             ISubjectExerciseRepository subjectExerciseRepository,
-             IUserRepository userRepository)
+             IUserRepository userRepository,
+             IClassExerciseRepository classExerciseRepository)
         {
             _exerciseRepository = exerciseRepository;
             _testCaseRepository = testCaseRepository;
@@ -32,6 +34,7 @@ namespace LMS.BusinessLogic.Services.Implementations
             _topicRepository = topicRepository;
             _subjectExerciseRepository = subjectExerciseRepository;
             _userRepository = userRepository;
+            _classExerciseRepository = classExerciseRepository;
         }
 
         public async Task<CommonResult<ExerciseDTO>> GetExerciseDetail(Guid exerciseId, Guid userId)
@@ -74,7 +77,7 @@ namespace LMS.BusinessLogic.Services.Implementations
                 {
                     Id = exercise.Id,
                     Title = exercise.Title,
-                    Difficulty =  exercise.Difficulty,
+                    Difficulty = exercise.Difficulty,
                     CreatedAt = exercise.CreatedAt,
                     Description = exercise.Description,
                     TestCases = exercise.TestCases.Select(tc => new TestCaseDTO
@@ -311,7 +314,7 @@ namespace LMS.BusinessLogic.Services.Implementations
                     return new CommonResult<Exercise> { IsSuccess = false, Code = 400, Message = "Invalid topic for the subject" };
 
                 // Check if the relationship already exists
-                var existingRelation = await _subjectExerciseRepository.FindBySubjectAsync(addExercuseToSubjectDTO.SubjectId);
+                var existingRelation = await _subjectExerciseRepository.FindBySubjectAsync(addExercuseToSubjectDTO.SubjectId, addExercuseToSubjectDTO.ExerciseId);
                 if (existingRelation != null && existingRelation.Any())
                     return new CommonResult<Exercise> { IsSuccess = false, Code = 400, Message = "Exercise already added to the subject" };
 
@@ -399,5 +402,74 @@ namespace LMS.BusinessLogic.Services.Implementations
                 };
             }
         }
+
+        public async Task<CommonResult<ClassExerciseDTO>> GetClassExerciseForStudent(Guid classExerciseId, Guid userId)
+        {
+            try
+            {
+                var currentUserInfo = await _userRepository.GetByIdAsync(userId);
+                if (currentUserInfo == null)
+                {
+                    return new CommonResult<ClassExerciseDTO>
+                    {
+                        IsSuccess = false,
+                        Code = 404,
+                        Message = "User not found."
+                    };
+                }
+
+                // Check user position
+                if (currentUserInfo.Position != PositionEnum.Student)
+                {
+                    return new CommonResult<ClassExerciseDTO>
+                    {
+                        IsSuccess = false,
+                        Code = 404,
+                        Message = "Unauthorzied."
+                    };
+                }
+
+                var classExercise = await _classExerciseRepository.GetClassExerciseWithPublicTestCasesByIdAsync(classExerciseId);
+                if (classExercise == null)
+                {
+                    return new CommonResult<ClassExerciseDTO>
+                    {
+                        IsSuccess = false,
+                        Code = 404,
+                        Message = "No exercise found."
+                    };
+                }
+
+                var classExerciseDTO = new ClassExerciseDTO
+                {
+                    Title = classExercise.SubjectExercise.Exercise.Title,
+                    Description = classExercise.SubjectExercise.Exercise.Description,
+                    Requirements = classExercise.SubjectExercise.Exercise.Requirements,
+                    Difficulty = classExercise.SubjectExercise.Exercise.Difficulty,
+                    TestCases = classExercise.SubjectExercise.Exercise.TestCases.Select(tc => new TestCase
+                    {
+                        Input = tc.Input,
+                        ExpectedOutput = tc.ExpectedOutput,
+                    }).ToList()
+                };
+
+                return new CommonResult<ClassExerciseDTO>
+                {
+                    IsSuccess = true,
+                    Code = 200,
+                    Data = classExerciseDTO
+                };
+            }
+            catch (Exception ex)
+            {
+                return new CommonResult<ClassExerciseDTO>
+                {
+                    IsSuccess = false,
+                    Code = 500,
+                    Message = $"There's a problem fetching the exercise data for subject {ex}"
+                };
+            }
+        }
+
     }
 }
