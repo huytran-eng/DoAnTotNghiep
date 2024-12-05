@@ -16,8 +16,7 @@ import {
 } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import logoPtit from "../../../assets/image/logo/Logo_PTIT.jpg";
-import { red } from "@mui/material/colors";
-
+import "./homeStyles.css"
 export function AdminHeader() {
   const navigate = useNavigate();
   const user = JSON.parse(localStorage.getItem("userInfo"));

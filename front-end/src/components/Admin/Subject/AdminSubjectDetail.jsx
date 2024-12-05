@@ -10,6 +10,7 @@ import {
   Select,
   MenuItem,
   Button,
+  Grid,
 } from "@mui/material";
 import { useParams } from "react-router-dom";
 
@@ -279,125 +280,133 @@ const AdminSubjectDetail = () => {
     },
   ];
   return (
-    <div className="content-container" style={{ padding: "20px" }}>
-      <Typography variant="h4" component="h2">
+    <div
+      className="content-container"
+      style={{ padding: "20px", width: "80%", margin: "0 auto" }}
+    >
+      <Typography variant="h5" component="h2" gutterBottom align="center">
         Chi tiết môn học
       </Typography>
-
       {/* Subject Details Box */}
-      <Box
-        className="mt-3"
-        sx={{
-          p: 2,
-          mb: 3,
-          border: "1px solid #ccc",
-          borderRadius: "8px",
-          backgroundColor: "#f9f9f9",
-        }}
-      >
-        {subjectDetails ? (
-          <>
-            <Typography variant="h6" gutterBottom>
-              {subjectDetails.name}
-            </Typography>
-            <Typography variant="body1">
-              <strong>Số tín chỉ:</strong> {subjectDetails.credit}
-            </Typography>
-            <Typography variant="body1">
-              <strong>Khoa:</strong> {subjectDetails.departmentName}
-            </Typography>
-            <Typography variant="body1">
-              <strong>Số lớp đang mở:</strong> {subjectDetails.numberOfClasses}
-            </Typography>
-            <Typography variant="body1" sx={{ mt: 2 }}>
-              <strong>Mô tả:</strong> {subjectDetails.description}
-            </Typography>
-            <Typography
-              variant="body1"
-              sx={{ mt: 2, display: "flex", alignItems: "center" }}
-            >
-              <strong>Danh sách chủ đề:</strong>
-              <Box sx={{ ml: 2, minWidth: 300 }}>
-                <Select
-                  size="small"
-                  fullWidth
-                  value={
-                    subjectDetails.topics.length > 0
-                      ? subjectDetails.topics[0].id
-                      : ""
-                  }
-                  onChange={() => {}}
-                  displayEmpty
+      <Grid container spacing={3}>
+        <Grid item xs={12} sm={4}>
+          <Box
+            className="mt-3"
+            sx={{
+              p: 2,
+              mb: 3,
+              border: "1px solid #ccc",
+              borderRadius: "8px",
+              backgroundColor: "#f9f9f9",
+            }}
+          >
+            {subjectDetails ? (
+              <>
+                <Typography variant="h6" gutterBottom>
+                  {subjectDetails.name}
+                </Typography>
+                <Typography variant="body1">
+                  <strong>Số tín chỉ:</strong> {subjectDetails.credit}
+                </Typography>
+                <Typography variant="body1">
+                  <strong>Khoa:</strong> {subjectDetails.departmentName}
+                </Typography>
+                <Typography variant="body1">
+                  <strong>Số lớp đang mở:</strong>{" "}
+                  {subjectDetails.numberOfClasses}
+                </Typography>
+                <Typography variant="body1" sx={{ mt: 2 }}>
+                  <strong>Mô tả:</strong> {subjectDetails.description}
+                </Typography>
+                <Typography
+                  variant="body1"
+                  sx={{ mt: 2, display: "flex", alignItems: "center" }}
                 >
-                  {subjectDetails.topics.map((topic) => (
-                    <MenuItem value={topic.id} key={topic.id}>
-                      {topic.name}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </Box>
-            </Typography>
-          </>
-        ) : (
-          <Typography>Loading subject details...</Typography>
-        )}
-      </Box>
+                  <strong>Danh sách chủ đề:</strong>
+                  <Box sx={{ ml: 2, minWidth: 300 }}>
+                    <Select
+                      size="small"
+                      fullWidth
+                      value={
+                        subjectDetails.topics.length > 0
+                          ? subjectDetails.topics[0].id
+                          : ""
+                      }
+                      onChange={() => {}}
+                      displayEmpty
+                    >
+                      {subjectDetails.topics.map((topic) => (
+                        <MenuItem value={topic.id} key={topic.id}>
+                          {topic.name}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </Box>
+                </Typography>
+              </>
+            ) : (
+              <Typography>Loading subject details...</Typography>
+            )}
+          </Box>
+        </Grid>
+        <Grid item xs={12} sm={8}>
+          <Box sx={{ borderBottom: 1, borderColor: "divider", mb: 3 }}>
+            <Tabs
+              value={activeTab}
+              onChange={(e, newValue) => setActiveTab(newValue)}
+              aria-label="Subject Details Tabs"
+            >
+              <Tab label="Các lớp học" />
+              <Tab label="Danh sách bài tập" />
+              <Tab label="Tài liệu môn học" />
+            </Tabs>
+          </Box>
 
-      <Box sx={{ borderBottom: 1, borderColor: "divider", mb: 3 }}>
-        <Tabs
-          value={activeTab}
-          onChange={(e, newValue) => setActiveTab(newValue)}
-          aria-label="Subject Details Tabs"
-        >
-          <Tab label="Các lớp học" />
-          <Tab label="Danh sách bài tập" />
-          <Tab label="Tài liệu môn học" />
-        </Tabs>
-      </Box>
-
-      {/* Tab Content */}
-      <div>
-        {/* Tab Panels */}
-        {activeTab === 0 && (
+          {/* Tab Content */}
           <div>
-            <DataGrid
-              rows={classes}
-              columns={classColumns}
-              autoHeight
-              pageSize={5}
-              loading={loading}
-            />
-          </div>
-        )}
+            {/* Tab Panels */}
+            {activeTab === 0 && (
+              <div>
+                <DataGrid
+                  rows={classes}
+                  columns={classColumns}
+                  autoHeight
+                  pageSize={5}
+                  loading={loading}
+                />
+              </div>
+            )}
 
-        {activeTab === 1 && (
-          <div>
-            <Button variant="contained" onClick={handleAddExercise}>
-              Thêm bài tập cho môn học
-            </Button>
-            <DataGrid
-              rows={exercises}
-              columns={exerciseColumns}
-              autoHeight // This makes the grid resize automatically based on its content
-              pageSize={5}
-              loading={loading}
-              sx={{ minHeight: 400, maxHeight: "80vh", width: "100%" }} // Adjust height dynamically, with a max height of 80% of the viewport height
-            />
-          </div>
-        )}
+            {activeTab === 1 && (
+              <div>
+                <Button variant="contained" onClick={handleAddExercise}>
+                  Thêm bài tập cho môn học
+                </Button>
+                <DataGrid
+                  rows={exercises}
+                  columns={exerciseColumns}
+                  autoHeight // This makes the grid resize automatically based on its content
+                  pageSize={5}
+                  loading={loading}
+                  sx={{ minHeight: 400, maxHeight: "80vh", width: "100%" }} // Adjust height dynamically, with a max height of 80% of the viewport height
+                />
+              </div>
+            )}
 
-        {activeTab === 2 && (
-          <div>
-            <DataGrid
-              rows={classes}
-              columns={classColumns}
-              autoHeight
-              pageSize={5}
-              loading={loading}
-            />
+            {activeTab === 2 && (
+              <div>
+                <DataGrid
+                  rows={classes}
+                  columns={classColumns}
+                  autoHeight
+                  pageSize={5}
+                  loading={loading}
+                />
+              </div>
+            )}
           </div>
-        )}
-      </div>
+        </Grid>{" "}
+      </Grid>
     </div>
   );
 };

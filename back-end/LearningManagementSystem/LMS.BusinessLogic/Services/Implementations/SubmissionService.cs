@@ -76,12 +76,27 @@ namespace LMS.BusinessLogic.Services.Implementations
                                 Message = "Failed to deserialize the response from the API."
                             };
                         }
-
-                        // Check if all test cases passed
                         var passedTestCases = result.TestCases.Count(r => r.Success);
                         var totalTestCases = result.TestCases.Count;
-                        var status = passedTestCases == totalTestCases ? 0 : (result.TestCases.Any(r => r.Success == false) ? 1 : 2);
-                        var message = result.Message ?? "No message from the execution service";
+                        var status = 0;
+                        if (result.IsSuccess == false)
+                        {
+                            status = 2;
+                        }
+                        else
+                        {
+                            status = passedTestCases == totalTestCases ? 0 : (result.TestCases.Any(r => r.Success == false) ? 1 : 2);
+                        }
+                        var message = "";
+                        if (status == 0)
+                        {
+                            message = $"Đã pass toàn bộ {passedTestCases}/{totalTestCases} test case";
+                        }
+                        else if (status == 1)
+                        {
+                            message = $"Đã pass {passedTestCases}/{totalTestCases} test case";
+                        }
+                        else { message = result.Message; }
 
                         return new CommonResult<StudentSubmissionResultDTO>
                         {
@@ -92,7 +107,8 @@ namespace LMS.BusinessLogic.Services.Implementations
                             {
                                 Status = status,
                                 Message = message,
-                                TestCases = status == 2 ? 0 : passedTestCases // 0 if there's an error in execution, else count passed test cases
+                                TestCases = status == 2 ? 0 : passedTestCases,
+                                TotalTestCases = exercise.TestCases.Count
                             }
                         };
                     }
@@ -108,7 +124,6 @@ namespace LMS.BusinessLogic.Services.Implementations
                             {
                                 Status = 3, // Mark as error if the request failed
                                 Message = "Failed to connect to the evaluation service",
-                                TestCases = 0
                             }
                         };
                     }

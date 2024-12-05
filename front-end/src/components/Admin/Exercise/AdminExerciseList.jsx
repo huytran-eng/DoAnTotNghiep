@@ -80,8 +80,8 @@ const AdminExerciseList = () => {
   };
 
   return (
-    <div className="content-container" style={{ padding: "40px" }}>
-      <Typography variant="h4" component="h2">
+    <div style={{ padding: "20px", width: "80%", margin: "0 auto" }}>
+      <Typography variant="h4" component="h2" sx={{ mb: 2 }}>
         Danh sách bài tập
       </Typography>
 
@@ -99,16 +99,18 @@ const AdminExerciseList = () => {
           variant="contained"
           color="primary"
           onClick={handleCreateExercise}
+          sx={{ mb: 3 }}
         >
           Tạo bài tập
         </Button>
-        <div style={{ height: 400, width: "100%", marginTop: "20px" }}>
+        <div style={{ height: 400, width: "100%" }}>
           <DataGrid
             rows={exercises}
             columns={exerciseColumns}
             pageSize={5}
             getRowId={(row) => row.id}
             sx={{ minHeight: 400, width: "100%" }}
+            loading={loading}
           />
         </div>
       </Box>

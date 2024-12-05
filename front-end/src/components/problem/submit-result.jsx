@@ -1,10 +1,12 @@
 /* eslint-disable react/prop-types */
 const SubmitResult = (props) => {
   const { output } = props;
+  console.log(output);
+  
   return (
     <div
       className={`flex flex-col min-h-[190px] max-h-[170px] bg-white rounded-lg mt-2 shadow-md  ${
-        output.Status === 0 ? "text-green-500" : "text-red-500"
+        output.status === 0 ? "text-green-500" : "text-red-500"
       }`}
     >
       <div className="flex space-x-4 bg-[#fafafa] rounded-t-lg justify-between p-[2px] shadow-sm">
@@ -35,16 +37,13 @@ const SubmitResult = (props) => {
               rounded ${Object.keys(output).length === 0 ? "hidden" : ""}`}
         >
           <span className="mr-3">
-            {output.Status === 0 ? "AC" : output.Status === 1 ? "WA" : "RE"}
+            {output.status === 0 ? "AC" : output.status === 1 ? "WA" : "RE"}
           </span>
 
-          <span className="">
-            {output.TestCases + "/" + output.TotalTestCases}
-          </span>
         </div>
       </div>
 
-      <pre className="text-left text-sm py-3 px-4">{output.Message}</pre>
+      <pre className="text-left text-sm py-3 px-4">{output.message}</pre>
     </div>
   );
 };

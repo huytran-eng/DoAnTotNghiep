@@ -1,0 +1,7 @@
+.custom-data-grid .MuiDataGrid-columnHeaders {
+  background-color: red !important;
+  color: white !important;
+}
+.datagrid-header {
+  background-color: #faeded;
+}

@@ -25,6 +25,7 @@ const LanguageSelector = (props) => {
         );
         if (response.data) {
           setLanguages(response.data);
+          setLanguageId(response.data[0].id)
         }
       } catch (error) {
         console.error("Error fetching languages:", error);

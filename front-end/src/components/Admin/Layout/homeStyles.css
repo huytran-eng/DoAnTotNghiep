@@ -1,6 +1,7 @@
 /* src/styles/homeStyles.css */
 
-html, body {
+html,
+body {
   margin: 0;
   padding: 0;
   height: 100%;
@@ -22,7 +23,6 @@ html, body {
   text-decoration: none; /* Bỏ gạch chân */
   color: white; /* Đảm bảo chữ màu trắng */
 }
-
 
 .header {
   width: 100%;
@@ -67,7 +67,8 @@ html, body {
   border-collapse: collapse; /* Gộp các đường viền */
 }
 
-.subject-table th, .subject-table td {
+.subject-table th,
+.subject-table td {
   border: 1px solid #ccc; /* Đường viền cho ô */
   padding: 10px; /* Padding cho ô */
   text-align: left; /* Căn trái nội dung */
@@ -98,11 +99,11 @@ html, body {
   .header {
     font-size: small; /* Giảm kích thước chữ cho header trên màn hình nhỏ */
   }
-  
+
   .content {
     padding: 1rem; /* Giảm padding cho nội dung trên màn hình nhỏ */
   }
-  
+
   .table-container {
     width: 95%; /* Chiều rộng tối đa cho bảng trên màn hình nhỏ */
   }

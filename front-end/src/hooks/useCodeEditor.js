@@ -38,12 +38,9 @@ async function executeCode(
     );
 
     console.log(response);
-    // Check the response status
-    if (response.status === 200) {
-      console.log("Execution result:", response.data);
-    } else {
-      console.error("Execution failed with status:", response.status);
-    }
+    // Check the response statu
+    return  response.data;
+    
   } catch (error) {
     console.error("Error executing code:", error);
   }

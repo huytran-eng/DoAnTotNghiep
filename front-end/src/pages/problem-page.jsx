@@ -35,6 +35,7 @@ export default function ProblemPage() {
           }
         );
         setProblem(response.data); // Store the fetched data in state
+
       } catch (err) {
         setError(err.message || "Failed to fetch data."); // Handle any errors
       } finally {
@@ -56,7 +57,7 @@ export default function ProblemPage() {
   } = useCodeEditor();
   return (
     <div className="h-screen max-h-screen flex flex-col overflow-hidden">
-      <div className=" flex-1 max-h-[calc(100vh-48px)] grid grid-cols-2 gap-2 p-3 bg-[rgb(240_240_240_/0.5)]">
+      <div className=" flex-1 max-h-[calc(100vh-64px)] grid grid-cols-2 gap-2 p-3 bg-[rgb(240_240_240_/0.5)]">
         {/* Left Panel */}
         <div className="border flex flex-col border-gray-300 rounded-lg bg-white max-h-[calc(100vh-70px)] shadow-md">
           <div className="flex space-x-4 py-[2px] bg-[#fafafa] rounded-t-lg shadow-sm">

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { DataGrid } from "@mui/x-data-grid";
-import { Box, Typography, Tabs, Tab } from "@mui/material";
+import { Box, Typography, Tabs, Tab, Grid } from "@mui/material";
 import { useParams, useNavigate } from "react-router-dom";
 import moment from "moment";
 import { DataGridPro } from "@mui/x-data-grid-pro";
@@ -186,114 +186,115 @@ const StudentClassDetail = () => {
   ];
 
   return (
-    <div className="content-container" style={{ padding: "20px" }}>
-      <Typography variant="h4" component="h2">
+    <div
+      className="content-container"
+      style={{ padding: "20px", width: "80%", margin: "0 auto" }}
+    >
+      <Typography variant="h5" component="h2" gutterBottom align="center">
         Chi tiết lớp học
       </Typography>
-
-      {/* Class Details Box */}
-      <Box
-        className="mt-3"
-        sx={{
-          p: 2,
-          mb: 3,
-          border: "1px solid #ccc",
-          borderRadius: "8px",
-          backgroundColor: "#f9f9f9",
-        }}
-      >
-        {classDetails ? (
-          <>
-            <Typography variant="h6" gutterBottom>
-              {classDetails.name}
-            </Typography>
-            <Typography variant="body1">
-              <strong>Môn học:</strong> {classDetails.subjectName}
-            </Typography>
-            <Typography variant="body1">
-              <strong>Giáo viên:</strong> {classDetails.teacherName}
-            </Typography>
-            <Typography variant="body1">
-              <strong>Ngày bắt đầu:</strong>{" "}
-              {moment(classDetails.startDate).format("DD/MM/YYYY")}
-            </Typography>
-            <Typography variant="body1">
-              <strong>Ngày kết thúc:</strong>{" "}
-              {moment(classDetails.endDate).format("DD/MM/YYYY")}
-            </Typography>
-            <Typography variant="body1">
-              <strong>Sĩ số:</strong> {classDetails.numberOfStudent}
-            </Typography>
-            <Typography variant="body1">
-              <strong>Mô tả:</strong> {classDetails.description}
-            </Typography>
-          </>
-        ) : (
-          <Typography>Loading class details...</Typography>
-        )}
-      </Box>
-
-      <Box sx={{ borderBottom: 1, borderColor: "divider", mb: 3 }}>
-        <Tabs
-          value={activeTab}
-          onChange={(e, newValue) => setActiveTab(newValue)}
-          aria-label="Class Details Tabs"
-        >
-          <Tab label="Sinh viên" />
-          <Tab label="Chủ đề đã mở" />
-          <Tab label="Tài liệu lớp học" />
-        </Tabs>
-      </Box>
-
-      {/* Tab Content */}
-      <div>
-        {activeTab === 0 && (
-          <DataGrid
-            rows={students}
-            columns={studentColumns}
-            autoHeight
-            pageSize={5}
-            loading={loading}
-          />
-        )}
-
-        {activeTab === 1 && (
-          <DataGridPro
-            rows={topics}
-            columns={topicColumns}
-            autoHeight
-            pageSize={5}
-            loading={loading}
-            getRowId={(row) => row.id} // Ensure unique row IDs
-            getDetailPanelContent={({ row }) => (
-              <Box sx={{ padding: 2 }}>
-                <Typography variant="subtitle1">
-                  Exercises for {row.name}
+      <Grid container spacing={3}>
+        {/* Left Column (Class Details) */}
+        <Grid item xs={12} sm={4}>
+          <Box
+            sx={{
+              p: 2,
+              mb: 3,
+              mt: 3,
+              border: "1px solid #ccc",
+              borderRadius: "8px",
+              backgroundColor: "#f9f9f9",
+            }}
+          >
+            {classDetails ? (
+              <>
+                <Typography variant="h6" gutterBottom>
+                  {classDetails.name}
                 </Typography>
-                <DataGrid
-                  rows={row.classExerciseListDTOs || []}
-                  columns={exerciseColumns}
-                  autoHeight
-                  pageSize={5}
-                />
-              </Box>
+                <Typography variant="body1">
+                  <strong>Môn học:</strong> {classDetails.subjectName}
+                </Typography>
+                <Typography variant="body1">
+                  <strong>Giảng viên:</strong> {classDetails.teacherName}
+                </Typography>
+                <Typography variant="body1">
+                  <strong>Ngày bắt đầu:</strong>{" "}
+                  {moment(classDetails.startDate).format("DD/MM/YYYY")}
+                </Typography>
+                <Typography variant="body1">
+                  <strong>Ngày kết thúc:</strong>{" "}
+                  {moment(classDetails.endDate).format("DD/MM/YYYY")}
+                </Typography>
+                <Typography variant="body1">
+                  <strong>Sĩ số:</strong> {classDetails.numberOfStudent}
+                </Typography>
+              </>
+            ) : (
+              <Typography>Loading class details...</Typography>
             )}
-            getDetailPanelHeight={() => 300} // Adjust height of detail panel
-          />
-        )}
+          </Box>
+        </Grid>
 
-        {activeTab === 2 && (
-          <DataGrid
-            rows={materials}
-            columns={materialColumns}
-            autoHeight
-            pageSize={5}
-            loading={loading}
-          />
-        )}
-      </div>
+        {/* Right Column (Tabs and DataGrids) */}
+        <Grid item xs={12} sm={8}>
+          <Box sx={{ borderBottom: 1, borderColor: "divider", mb: 3 }}>
+            <Tabs
+              value={activeTab}
+              onChange={(e, newValue) => setActiveTab(newValue)}
+              aria-label="Class Details Tabs"
+            >
+              <Tab label="Danh sách sinh viên" />
+              <Tab label="Chủ đề đã mở" />
+              <Tab label="Tài liệu lớp học" />
+            </Tabs>
+          </Box>
+
+          {/* Tab Content */}
+          <div>
+            {activeTab === 0 && (
+              <DataGrid
+                rows={students}
+                columns={studentColumns}
+                autoHeight
+                pageSize={5}
+                loading={loading}
+              />
+            )}
+
+            {activeTab === 1 && (
+              <DataGridPro
+                rows={topics}
+                columns={topicColumns}
+                autoHeight
+                pageSize={5}
+                loading={loading}
+                getRowId={(row) => row.id} // Ensure unique row IDs
+                getDetailPanelContent={({ row }) => (
+                  <Box sx={{ padding: 2 }}>
+                    <DataGrid
+                      rows={row.classExerciseListDTOs || []}
+                      columns={exerciseColumns}
+                      autoHeight
+                      pageSize={5}
+                    />
+                  </Box>
+                )}
+              />
+            )}
+
+            {activeTab === 2 && (
+              <DataGrid
+                rows={materials}
+                columns={materialColumns}
+                autoHeight
+                pageSize={5}
+                loading={loading}
+              />
+            )}
+          </div>
+        </Grid>
+      </Grid>
     </div>
   );
 };
-
 export default StudentClassDetail;

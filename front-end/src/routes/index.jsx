@@ -57,7 +57,7 @@ const paths = [
   {
     path: "/unauthorized",
     element: <UnauthorisedPage />,
-  }
+  },
 ];
 
 const Routers = () => {

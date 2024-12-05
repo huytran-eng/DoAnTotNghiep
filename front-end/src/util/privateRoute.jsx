@@ -1,43 +1,22 @@
 import { Navigate, Outlet } from "react-router-dom";
-import { IsAuthenticated } from "./auth";
-
-import AdminLayout from "../components/Admin/Layout/AdminLayout"; // Import Admin layout
-// import TeacherLayout from "../components/Layout/TeacherLayout"; // Import Teacher layout
-// import StudentLayout from "../components/Layout/StudentLayout"; // Import Student layout
+import { IsAuthenticated } from "./auth"; // Assuming you have a custom context for authentication
 
 const PrivateRoute = () => {
-  const isAuthenticated = IsAuthenticated();
-  const userInfo = JSON.parse(localStorage.getItem("userInfo")); // Assuming user info is stored in localStorage
-
-  if (!isAuthenticated) {
-    return <Navigate to="/login" replace />;
+  const userRole = IsAuthenticated(); // Get user data from context (this can include the role)
+  // If the user is not authenticated, redirect to login or unauthorized page
+  if (!userRole) {
+    return <Navigate to="/unauthorized" />;
   }
 
-  const userRole = userInfo?.position; // Assuming 'position' is the role field in user info
-
-  let Layout;
-  switch (userRole) {
-    case "Admin":
-      Layout = AdminLayout;
-      break;
-    // case "Teacher":
-    //   Layout = TeacherLayout;
-    //   break;
-    // case "Student":
-    //   Layout = StudentLayout;
-    //   break;
-    // default:
-    //   Layout = null; // Fallback if no role found
-    //   break;
+  // If the user is authenticated, check their role
+  if (userRole === "Admin") {
+    return <Navigate to="/admin" />;
+  } else if (userRole === "Student") {
+    return <Navigate to="/student" />;
   }
 
-  return Layout ? (
-    <Layout>
-      <Outlet />
-    </Layout>
-  ) : (
-    <Navigate to="/unauthorized" replace /> // Redirect to Unauthorized if no layout is assigned
-  );
+  // Default behavior: if the role is not recognized, show unauthorized page
+  return <Navigate to="/unauthorized" />;
 };
 
 export default PrivateRoute;

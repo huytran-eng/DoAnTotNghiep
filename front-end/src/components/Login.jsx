@@ -24,6 +24,9 @@ const Login = () => {
         localStorage.setItem("token", data.token);
         localStorage.setItem("userInfo", JSON.stringify(data));
 
+        if (data.postion == "Admin") {
+          navigate("/admin");
+        }
         navigate(""); // Redirect to dashboard
       } else {
         setError("Invalid username or password"); // Show error on failure
