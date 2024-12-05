@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import {
@@ -22,11 +22,11 @@ const CreateExercise = () => {
   });
 
   const [loading, setLoading] = useState(false);
-  const [difficultyLevels, setDifficultyLevels] = useState([
+  const difficultyLevels=[
     { label: "Dễ", value: 1 },
     { label: "Trung bình", value: 2 },
     { label: "Khó", value: 3 },
-  ]);
+  ]
   const navigate = useNavigate();
   const token = localStorage.getItem("token");
 

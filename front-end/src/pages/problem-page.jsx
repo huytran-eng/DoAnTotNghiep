@@ -1,13 +1,14 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useCodeEditor } from "../hooks/useCodeEditor";
 import ProblemDescription from "../components/problem/description";
 import CodeEditor from "../components/problem/code-editor";
-import HeaderProblem from "../components/problem/header";
 import LanguageSelector from "../components/problem/language-selector";
 import loadingIcon from "../assets/image/loading.gif";
 import axios from "axios";
 import SubmitHistory from "../components/problem/submit-history";
+import SubmitResult from "../components/problem/submit-result";
 
 export default function ProblemPage() {
   const [activeTab, setActiveTab] = useState("description");
@@ -43,7 +44,6 @@ export default function ProblemPage() {
 
     fetchData(); // Call the async function
   }, []);
-
   const {
     code,
     language,
@@ -54,12 +54,11 @@ export default function ProblemPage() {
     runCode,
     setLanguageId,
   } = useCodeEditor();
-
   return (
     <div className="h-screen max-h-screen flex flex-col overflow-hidden">
       <div className=" flex-1 max-h-[calc(100vh-48px)] grid grid-cols-2 gap-2 p-3 bg-[rgb(240_240_240_/0.5)]">
         {/* Left Panel */}
-        <div className="border flex flex-col border-gray-300 rounded-lg bg-white max-h-[calc(100vh-70px)]">
+        <div className="border flex flex-col border-gray-300 rounded-lg bg-white max-h-[calc(100vh-70px)] shadow-md">
           <div className="flex space-x-4 py-[2px] bg-[#fafafa] rounded-t-lg shadow-sm">
             <button
               className={`px-4 py-2 rounded flex justify-center items-center w-[110px] text-sm ${
@@ -109,10 +108,14 @@ export default function ProblemPage() {
             </button>
           </div>
 
-          <div className="flex-1 w-full overflow-y-auto pt-0 pb-5">
+          <div className="flex-1 w-full overflow-y-auto pt-0 pb-1">
             {activeTab === "description" &&
-              (problem ? (
-                <ProblemDescription problem={problem} />
+              (isLoading === false ? (
+                error ? (
+                  <div>{error}</div>
+                ) : (
+                  <ProblemDescription problem={problem} />
+                )
               ) : (
                 <div>Loading problem description...</div>
               ))}
@@ -122,7 +125,7 @@ export default function ProblemPage() {
 
         {/* Right Panel */}
         <div className="border flex flex-col border-gray-300 rounded-lg bg-inherit max-h-[calc(100vh-64px)]">
-          <div className="flex space-x-4 bg-[#fafafa] rounded-t-lg shadow-sm justify-between p-[2px] shadow-sm mb-[2px] ">
+          <div className="flex space-x-4 bg-[#fafafa] rounded-t-lg shadow-sm justify-between p-[2px] mb-[2px] ">
             <div
               className={`px-4 py-2 rounded flex justify-center items-center w-[100px] text-sm font-medium `}
             >
@@ -189,56 +192,8 @@ export default function ProblemPage() {
           <div className="flex-1 bg-white rounded-b-lg pb-1">
             <CodeEditor value={code} onChange={setCode} language={language} />
           </div>
-          <div className={`h-[190px] bg-white rounded-lg mt-2 shadow-md`}>
-            <div className="flex space-x-4 bg-[#fafafa] rounded-t-lg justify-between p-[2px] shadow-sm">
-              <div
-                className={`px-4 py-2 rounded flex  items-center w-[150px] text-sm font-medium`}
-              >
-                <svg
-                  className="size-4 mr-2 text-green-500"
-                  aria-hidden="true"
-                  focusable="false"
-                  data-prefix="far"
-                  data-icon="terminal"
-                  role="img"
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 576 512"
-                >
-                  <path
-                    fill="currentColor"
-                    d="M6.3 72.2c-9-9.8-8.3-24.9 1.4-33.9s24.9-8.3 33.9 1.4l184 200c8.5 9.2 8.5 23.3 0 32.5l-184 200c-9 9.8-24.2 10.4-33.9 1.4s-10.4-24.2-1.4-33.9L175.4 256 6.3 72.2zM248 432H552c13.3 0 24 10.7 24 24s-10.7 24-24 24H248c-13.3 0-24-10.7-24-24s10.7-24 24-24z"
-                  ></path>
-                </svg>
-                Kết quả
-              </div>
-              <div
-                className={`font-medium items-center 
-              whitespace-nowrap focus:outline-none 
-              inline-flex relative select-none px-3 py-1.5 
-              rounded text-[#01B328] ${
-                Object.keys(output).length === 0 ? "hidden" : ""
-              }`}
-              >
-                <div className="relative text-[16px] leading-[normal] p-0.5 before:block before:h-4 before:w-4 mr-2">
-                  <svg
-                    aria-hidden="true"
-                    focusable="false"
-                    data-prefix="far"
-                    data-icon="cloud-arrow-up"
-                    className="size-5 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
-                    role="img"
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 640 512"
-                  >
-                    <path
-                      fill="currentColor"
-                      d="M354.9 121.7c13.8 16 36.5 21.1 55.9 12.5c8.9-3.9 18.7-6.2 29.2-6.2c39.8 0 72 32.2 72 72c0 4-.3 7.9-.9 11.7c-3.5 21.6 8.1 42.9 28.1 51.7C570.4 276.9 592 308 592 344c0 46.8-36.6 85.2-82.8 87.8c-.6 0-1.3 .1-1.9 .2H504 144c-53 0-96-43-96-96c0-41.7 26.6-77.3 64-90.5c19.2-6.8 32-24.9 32-45.3l0-.2v0 0c0-66.3 53.7-120 120-120c36.3 0 68.8 16.1 90.9 41.7zM512 480v-.2c71.4-4.1 128-63.3 128-135.8c0-55.7-33.5-103.7-81.5-124.7c1-6.3 1.5-12.8 1.5-19.3c0-66.3-53.7-120-120-120c-17.4 0-33.8 3.7-48.7 10.3C360.4 54.6 314.9 32 264 32C171.2 32 96 107.2 96 200l0 .2C40.1 220 0 273.3 0 336c0 79.5 64.5 144 144 144H464h40 8zM223 255c-9.4 9.4-9.4 24.6 0 33.9s24.6 9.4 33.9 0l39-39V384c0 13.3 10.7 24 24 24s24-10.7 24-24V249.9l39 39c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-80-80c-9.4-9.4-24.6-9.4-33.9 0l-80 80z"
-                    ></path>
-                  </svg>
-                </div>
-                <span className="text-sm font-medium">Submit</span>
-              </div>
-            </div>
+          <div>
+            <SubmitResult output={output} />
           </div>
         </div>
       </div>

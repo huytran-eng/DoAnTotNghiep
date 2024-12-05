@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from "react";
+/* eslint-disable react-hooks/exhaustive-deps */
+import { useState, useEffect } from "react";
 import axios from "axios";
 import { Box, Typography, Button } from "@mui/material";
 import { useNavigate, useParams } from "react-router-dom";

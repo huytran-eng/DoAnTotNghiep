@@ -18,6 +18,7 @@ import AdminStudentList from "../components/Admin/Student/AdminStudentList";
 // Students components import
 import StudentClassList from "../components/Student/Class/StudentClassList";
 import StudentClassDetail from "../components/Student/Class/StudentClassDetail";
+import UnauthorisedPage from "../pages/unauthorised-page";
 
 // import AdminDetail from "../components/Admin/Class/AdminClassDetail";
 
@@ -49,6 +50,14 @@ const paths = [
       { path: "student", element: <AdminStudentList /> },
     ],
   },
+  {
+    path: "/code",
+    element: <ProblemPage />,
+  },
+  {
+    path: "/unauthorized",
+    element: <UnauthorisedPage />,
+  }
 ];
 
 const Routers = () => {

@@ -10,7 +10,6 @@ const StudentHome = () => {
 
   useEffect(() => {
     const storedUser = JSON.parse(localStorage.getItem('user'));
-    console.log("Stored user:", storedUser);
     if (!storedUser || storedUser.role !== 'student') {
       navigate('/login');
     } else {

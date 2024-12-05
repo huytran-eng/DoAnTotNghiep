@@ -91,10 +91,6 @@ const Students = () => {
     navigate(`/student/${rowData.studentId}`);
   };
 
-  const handleCreateStudent = () => {
-    navigate("/student/create");
-  };
-
   return (
     <div className="content-container" style={{ padding: "20px" }}>
       <h2 className="header-title">STUDENT LIST</h2>

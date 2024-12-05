@@ -1,5 +1,5 @@
 // src/components/Layout/DefaultLayout/Header.jsx
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import "../../../../styles/homeStyles.css"; // Đường dẫn từ Header đến homeStyles
 

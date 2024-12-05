@@ -1,3 +1,5 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable react/prop-types */
 import { NativeSelect } from "@mui/material";
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";

@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from "react";
+/* eslint-disable react-hooks/exhaustive-deps */
+import { useState, useEffect } from "react";
 import axios from "axios";
 import { DataGrid } from "@mui/x-data-grid";
-import { Box, Typography, Tabs, Tab, Button, IconButton } from "@mui/material";
+import { Box, Typography, Button, IconButton } from "@mui/material";
 import moment from "moment";
-import { Navigate, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Visibility, Edit } from "@mui/icons-material";
 const Exercises = () => {
   const [exercises, setExercises] = useState([]); // List of exercises
@@ -78,7 +79,9 @@ const Exercises = () => {
   const handleUpdateExercise = (id) => {
     navigate(`/exercise/update/${id}`);
   };
-
+  if (loading) {
+    return <div>Loading...</div>;
+  }
   return (
     <div className="content-container" style={{ padding: "20px" }}>
       <Typography variant="h4" component="h2">

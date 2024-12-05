@@ -1,25 +1,23 @@
-import React, { useState, useEffect } from "react";
+/* eslint-disable react-hooks/exhaustive-deps */
+import { useState, useEffect } from "react";
 import axios from "axios"; // Use Axios for simplified HTTP requests
 import { DataGrid } from "@mui/x-data-grid";
-import Sidebar from "./Layout/DefaultLayout/Sidebar";
-import Header from "./Layout/DefaultLayout/Header";
 import "../styles/homeStyles.css"; // Optional styles for the layout
 import { useNavigate } from "react-router-dom";
 
 const Monhoc = () => {
   const [subjects, setSubjects] = useState([]);
-  const [currentPage, setCurrentPage] = useState(1);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   // Retrieve JWT token
   const token = localStorage.getItem("token");
 
   useEffect(() => {
-    fetchSubjects(currentPage);
+    fetchSubjects();
   }, []);
 
   // Function to fetch subjects
-  const fetchSubjects = async (page) => {
+  const fetchSubjects = async () => {
     console.log("here");
     setLoading(true);
     try {
@@ -36,7 +34,7 @@ const Monhoc = () => {
       if (error.response?.status === 401) {
         alert("Session expired. Please log in again.");
         // Redirect to login page
-        window.location.href = "/login";
+        navigate("/login");
       }
     } finally {
       setLoading(false);
@@ -62,6 +60,9 @@ const Monhoc = () => {
   const handleViewDetails = (rowData) => {
     navigate(`/subject/${rowData.id}`);
   };
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div className="content-container" style={{ padding: "20px" }}>
