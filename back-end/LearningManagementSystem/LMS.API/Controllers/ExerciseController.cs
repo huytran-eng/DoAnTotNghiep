@@ -128,9 +128,46 @@ namespace LMS.API.Controllers
             }
         }
 
-      
+        [Authorize(Roles = "Admin")]
+        [HttpPost("edit/{id}")]
+        public async Task<IActionResult> UpdateExercise(Guid id, [FromBody] UpdateExerciseDTO exerciseDto)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
 
-       
+            var userId = GetCurrentUserId();
+            if (userId == null)
+            {
+                return Unauthorized("UserId not found or invalid.");
+            }
+
+            exerciseDto.CurrentUserId = userId;
+
+            try
+            {
+                var result = await _exerciseService.UpdateExerciseAsync(exerciseDto);
+
+                if (result.IsSuccess)
+                {
+                    return Ok(result);
+                }
+                else
+                {
+                    return result.Code switch
+                    {
+                        400 => BadRequest(result),
+                        _ => StatusCode(500, result)
+                    };
+                }
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+
+
+
 
 
         private Guid? GetCurrentUserId()

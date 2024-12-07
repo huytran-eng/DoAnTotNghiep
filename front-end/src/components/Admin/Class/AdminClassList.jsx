@@ -1,9 +1,11 @@
 import { useState, useEffect } from "react";
 import axios from "axios"; // Use Axios for simplified HTTP requests
 import { DataGrid } from "@mui/x-data-grid";
-import "../../../styles/homeStyles.css"; 
+import "../../../styles/homeStyles.css";
 import { useNavigate } from "react-router-dom";
 import moment from "moment";
+import { Typography, Box, Button } from "@mui/material";
+import { Visibility, Edit } from "@mui/icons-material";
 
 const AdminClassList = () => {
   const [classes, setClasses] = useState([]);
@@ -63,7 +65,10 @@ const AdminClassList = () => {
       headerName: "Action",
       flex: 1,
       renderCell: (params) => (
-        <button onClick={() => handleViewDetails(params.row)}>View</button>
+        <button onClick={() => handleViewDetails(params.row)}>
+          {" "}
+          <Visibility style={{ color: "#1976d2" }} />
+        </button>
       ),
     },
   ];
@@ -78,37 +83,34 @@ const AdminClassList = () => {
 
   return (
     <div className="content-container" style={{ padding: "20px" }}>
-      <h2 >Danh sách các lớp học</h2>
-      <div style={{ marginBottom: "20px", textAlign: "right" }}>
-        <button
-          onClick={handleCreateClass}
-          style={{
-            padding: "10px 20px",
-            backgroundColor: "#007bff",
-            color: "white",
-            border: "none",
-            borderRadius: "5px",
-            cursor: "pointer",
-          }}
-        >
-          Tạo lớp học mới
-        </button>
-      </div>
-      <div
-        className="mt-5"
-        style={{
-          height: 400,
-          width: "80%",
-          maxWidth: "1200px",
-          margin: "0 auto",
+      <Typography variant="h4" component="h2" gutterBottom align="center">
+        Danh sách lớp học
+      </Typography>
+      <Box
+        sx={{
+          p: 2,
+          mb: 3,
+          border: "1px solid #ccc",
+          borderRadius: "8px",
+          backgroundColor: "#f9f9f9",
         }}
       >
-        <DataGrid
-          rows={classes}
-          columns={columns}
-          pageSizeOptions={[5, 10, 25, { value: -1, label: "All" }]}
-        />
-      </div>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={handleCreateClass}
+          sx={{ mb: 3 }}
+        >
+          Tạo lớp học
+        </Button>
+        <div style={{ height: 600, width: "100%" }}>
+          <DataGrid
+            rows={classes}
+            columns={columns}
+            pageSizeOptions={[5, 10, 25, { value: -1, label: "All" }]}
+          />
+        </div>
+      </Box>
     </div>
   );
 };

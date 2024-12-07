@@ -9,7 +9,7 @@ namespace LMS.BusinessLogic.Services.Interfaces
     public interface IExerciseService
     {
         Task<CommonResult<Exercise>> CreateExerciseAsync(CreateExerciseDTO exerciseDto);
-        Task<CommonResult<Exercise>> UpdateExerciseAsync(UpdateExerciseDto updateExerciseDTO);
+        Task<CommonResult<Exercise>> UpdateExerciseAsync(UpdateExerciseDTO updateExerciseDTO);
         Task<CommonResult<Exercise>> AddExerciseToSubjectAsync(AddExerciseToSubjectDTO dto);
         Task<CommonResult<List<ExerciseListDTO>>> GetExercisesForUser(Guid userId);
 

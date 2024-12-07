@@ -11,6 +11,7 @@ namespace LMS.BusinessLogic.Services.Interfaces
     public interface IDepartmentService
     {
         Task<CommonResult<DepartmentDTO>> CreateDepartmentAsync(DepartmentCreateDTO departmentCreateDTO);
+        Task<CommonResult<List<DepartmentDTO>>> GetAllDepartmentsAsync();
     }
 
 }

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import {
   Box,
   Button,
@@ -15,7 +15,7 @@ import {
   FormControl,
 } from "@mui/material";
 
-const AdminCreateExercise = () => {
+const AdminEditExercise = () => {
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -29,8 +29,34 @@ const AdminCreateExercise = () => {
     { label: "Trung bình", value: 2 },
     { label: "Khó", value: 3 },
   ]);
+  const { id } = useParams(); // Get exercise ID from the URL
   const navigate = useNavigate();
   const token = localStorage.getItem("token");
+
+  useEffect(() => {
+    // Fetch existing exercise data to populate the form
+    const fetchExerciseData = async () => {
+      setLoading(true);
+      try {
+        if (!token) {
+          throw new Error("User is not authenticated");
+        }
+        const headers = { Authorization: `Bearer ${token}` };
+        const response = await axios.get(`https://localhost:7104/api/exercise/${id}`, {
+          headers,
+        });
+        console.log(response.data)
+        setFormData(response.data); // Populate form with existing data
+      } catch (error) {
+        console.error("Error fetching exercise data:", error);
+        alert("Failed to fetch exercise data. Please try again.");
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    fetchExerciseData();
+  }, [id, token]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -52,7 +78,7 @@ const AdminCreateExercise = () => {
   const addTestCase = () => {
     setFormData((prevData) => ({
       ...prevData,
-      testCases: [...prevData.testCases, { input: "", expetedOutput: "" }],
+      testCases: [...prevData.testCases, { input: "", expectedOutput: "" }],
     }));
   };
 
@@ -71,16 +97,15 @@ const AdminCreateExercise = () => {
       if (!token) {
         throw new Error("User is not authenticated");
       }
-      console.log(formData);
       const headers = { Authorization: `Bearer ${token}` };
-      await axios.post("https://localhost:7104/api/exercise/create", formData, {
+      await axios.post(`https://localhost:7104/api/exercise/edit/${id}`, formData, {
         headers,
       });
-      alert("Exercise created successfully!");
+      alert("Exercise updated successfully!");
       navigate("/baitap"); // Redirect to the exercise list or detail page
     } catch (error) {
-      console.error("Error creating exercise:", error);
-      alert("Failed to create exercise. Please try again.");
+      console.error("Error updating exercise:", error);
+      alert("Failed to update exercise. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -118,7 +143,7 @@ const AdminCreateExercise = () => {
       }}
     >
       <Typography variant="h5" textAlign="center">
-        Tạo bài tập
+        Cập nhật bài tập
       </Typography>
 
       <TextField
@@ -154,8 +179,9 @@ const AdminCreateExercise = () => {
           labelId="difficulty-label"
           id="difficulty"
           label="Độ khó"
-          onChange={handleChange}
           name="difficulty"
+          value={formData.difficulty}
+          onChange={handleChange}
         >
           {difficultyLevels.map((level) => (
             <MenuItem key={level.value} value={level.value}>
@@ -199,7 +225,7 @@ const AdminCreateExercise = () => {
           <TextField
             label="Đầu ra"
             name={`expectedOutput-${index}`}
-            value={testCase.output}
+            value={testCase.expectedOutput}
             onChange={(e) =>
               handleTestCaseChange(index, "expectedOutput", e.target.value)
             }
@@ -226,7 +252,7 @@ const AdminCreateExercise = () => {
             onClick={() => removeTestCase(index)}
             sx={{ alignSelf: "flex-end" }}
           >
-            Hủy
+            Xóa
           </Button>
         </Box>
       ))}
@@ -236,10 +262,10 @@ const AdminCreateExercise = () => {
       </Button>
 
       <Button type="submit" variant="contained" color="primary" fullWidth>
-        {loading ? "Creating..." : "Create Exercise"}
+        {loading ? "Updating..." : "Update Exercise"}
       </Button>
     </Box>
   );
 };
 
-export default AdminCreateExercise;
+export default AdminEditExercise;

@@ -152,11 +152,7 @@ namespace LMS.API.Controllers
                 return StatusCode(500, new { Message = "An error occurred while importing students", Error = ex.Message });
             }
         }
-        private Guid? GetCurrentUserId()
-        {
-            var userIdClaim = User.FindFirst("UserId")?.Value;
-            return Guid.TryParse(userIdClaim, out var userId) ? userId : (Guid?)null;
-        }
+        
 
         [HttpGet("{subjectId}/languages")]
         public async Task<IActionResult> GetSubjectProgrammingLanguage(Guid subjectId)
@@ -186,5 +182,45 @@ namespace LMS.API.Controllers
             }
         }
 
+        [Authorize(Roles = "Admin")]
+        [HttpPost("create")]
+        public async Task<IActionResult> CreateSubject([FromBody] CreateSubjectDTO dto)
+        {
+            var userId = GetCurrentUserId();
+            if (userId == null)
+            {
+                return Unauthorized("UserId not found or invalid.");
+            }
+          
+
+            try
+            {
+                var result = await _subjectService.CreateSubjectAsync(dto, userId.Value);
+
+                if (result.IsSuccess)
+                {
+                    return Ok(result.Data);
+                }
+                else
+                {
+                    return result.Code switch
+                    {
+                        400 => BadRequest(result.Message),
+                        404 => NotFound(result.Message),
+                        _ => StatusCode(500, result.Message)
+                    };
+                }
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { Message = "An error occurred while creating the subject.", Error = ex.Message });
+            }
+        }
+
+        private Guid? GetCurrentUserId()
+        {
+            var userIdClaim = User.FindFirst("UserId")?.Value;
+            return Guid.TryParse(userIdClaim, out var userId) ? userId : (Guid?)null;
+        }
     }
 }

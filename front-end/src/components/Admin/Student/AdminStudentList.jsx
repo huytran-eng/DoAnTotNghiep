@@ -3,7 +3,7 @@ import axios from "axios";
 import { DataGrid } from "@mui/x-data-grid";
 import { useNavigate } from "react-router-dom";
 import moment from "moment";
-
+import { Box, Typography, Tabs, Tab, Button, IconButton } from "@mui/material";
 const AdminStudentList = () => {
   const [students, setStudents] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -91,72 +91,57 @@ const AdminStudentList = () => {
   };
 
   return (
-    <div className="content-container" style={{ padding: "20px" }}>
-      <h2 className="header-title">STUDENT LIST</h2>
-
-      {/* <div style={{ marginBottom: "20px", textAlign: "right" }}>
-        <button
-          onClick={handleCreateStudent}
-          style={{
-            padding: "10px 20px",
-            backgroundColor: "#007bff",
-            color: "white",
-            border: "none",
-            borderRadius: "5px",
-            cursor: "pointer",
-          }}
-        >
-          Add New Student
-        </button>
-      </div> */}
-
-      <div style={{ marginBottom: "20px", textAlign: "right" }}>
-        <label
-          htmlFor="import-students-file"
-          style={{
-            display: "inline-block",
-            padding: "10px 20px",
-            backgroundColor: "#28a745",
-            color: "white",
-            border: "none",
-            borderRadius: "5px",
-            cursor: "pointer",
-            fontSize: "14px",
-          }}
-        >
-          Import Students (Excel)
-        </label>
-        <input
-          id="import-students-file"
-          type="file"
-          accept=".xlsx, .xls"
-          onChange={handleImportExcel}
-          style={{
-            display: "none", // Hide the default file input
-          }}
-        />
-        <p style={{ fontSize: "12px", color: "#6c757d", marginTop: "5px" }}>
-          Upload an Excel file with student details to import them into the
-          system.
-        </p>
-      </div>
-
-      <div
-        className="mt-5"
-        style={{
-          height: 600,
-          width: "80%",
-          maxWidth: "1200px",
-          margin: "0 auto",
+    <div>
+      <Typography variant="h4" component="h2" gutterBottom align="center">
+        Danh sách sinh viên
+      </Typography>
+      <Box
+        sx={{
+          p: 2,
+          mb: 3,
+          border: "1px solid #ccc",
+          borderRadius: "8px",
+          backgroundColor: "#f9f9f9",
         }}
       >
-        <DataGrid
-          rows={students}
-          columns={columns}
-          pageSizeOptions={[5, 10, 25, { value: -1, label: "All" }]}
-          loading={loading}
-        />
-      </div>
+        <div style={{ marginBottom: "20px", textAlign: "right" }}>
+          <label
+            htmlFor="import-students-file"
+            style={{
+              display: "inline-block",
+              padding: "10px 20px",
+              backgroundColor: "#28a745",
+              color: "white",
+              border: "none",
+              borderRadius: "5px",
+              cursor: "pointer",
+              fontSize: "14px",
+            }}
+          >
+            Tải danh sách sinh viên (Excel)
+          </label>
+          <input
+            id="import-students-file"
+            type="file"
+            accept=".xlsx, .xls"
+            onChange={handleImportExcel}
+            style={{
+              display: "none", // Hide the default file input
+            }}
+          />
+          <p style={{ fontSize: "12px", color: "#6c757d", marginTop: "5px" }}>
+            Tải lên file excel chứa thông tin danh sách sinh viên
+          </p>
+        </div>
+        <div style={{ height: 600, width: "100%" }}>
+          <DataGrid
+            rows={students}
+            columns={columns}
+            pageSizeOptions={[5, 10, 25, { value: -1, label: "All" }]}
+            loading={loading}
+          />
+        </div>
+      </Box>
     </div>
   );
 };

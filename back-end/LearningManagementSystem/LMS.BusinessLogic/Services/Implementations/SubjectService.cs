@@ -1,9 +1,11 @@
 ﻿using LMS.BusinessLogic.DTOs;
+using LMS.BusinessLogic.DTOs.RequestDTO;
 using LMS.BusinessLogic.Services.Interfaces;
 using LMS.Core;
 using LMS.Core.Enums;
 using LMS.DataAccess.Models;
 using LMS.DataAccess.Repositories;
+using Microsoft.EntityFrameworkCore;
 
 namespace LMS.BusinessLogic.Services.Implementations
 {
@@ -14,6 +16,10 @@ namespace LMS.BusinessLogic.Services.Implementations
         private readonly ITeacherRepository _teacherRepository;
         private readonly IClassRepository _classRepository;
         private readonly IExerciseRepository _exerciseRepository;
+        private readonly ITopicRepository _topicRepository;
+        private readonly IProgrammingLanguageRepository _programmingLanguageRepository;
+        private readonly ISubjectProgrammingLanguageRepository _subjectProgrammingLanguageRepository;
+
 
 
         public SubjectService(
@@ -21,8 +27,10 @@ namespace LMS.BusinessLogic.Services.Implementations
               ISubjectRepository subjectRepository,
               ITeacherRepository teacherRepository,
               IClassRepository classRepository,
-              IExerciseRepository exerciseRepository
-
+              IExerciseRepository exerciseRepository,
+              ITopicRepository topicRepository,
+              IProgrammingLanguageRepository programmingLanguageRepository,
+              ISubjectProgrammingLanguageRepository subjectProgrammingLanguageRepository
             )
         {
             _userRepository = userRepository;
@@ -30,6 +38,10 @@ namespace LMS.BusinessLogic.Services.Implementations
             _teacherRepository = teacherRepository;
             _classRepository = classRepository;
             _exerciseRepository = exerciseRepository;
+            _topicRepository = topicRepository;
+            _programmingLanguageRepository = programmingLanguageRepository;
+            _subjectProgrammingLanguageRepository = subjectProgrammingLanguageRepository;
+
         }
 
         public async Task<CommonResult<List<SubjectListDTO>>> GetSubjectsForUser(
@@ -142,6 +154,105 @@ namespace LMS.BusinessLogic.Services.Implementations
             };
         }
 
-        
+        public async Task<CommonResult<SubjectDTO>> CreateSubjectAsync(CreateSubjectDTO dto, Guid userId)
+        {
+            try
+            {
+                var currentUserInfo = await _userRepository.GetByIdAsync(userId);
+                if (currentUserInfo == null)
+                {
+                    return new CommonResult<SubjectDTO>
+                    {
+                        IsSuccess = false,
+                        Code = 404,
+                        Message = "User not found."
+                    };
+                }
+
+                var subject = new Subject
+                {
+                    Id = Guid.NewGuid(),
+                    Name = dto.Name,
+                    Description = dto.Description,
+                    Credit = dto.Credit,
+                    DepartmentId = dto.DepartmentId,
+                    CreatedAt = DateTime.UtcNow,
+                    CreatedById = userId,
+                };
+                await _subjectRepository.AddAsync(subject);
+                var topics = new List<Topic>();
+                if (dto.Topics != null && dto.Topics.Any())
+                {
+                    foreach (var topicDTO in dto.Topics)
+                    {
+                        var topic = new Topic
+                        {
+                            Name = topicDTO.Name,
+                            Description = topicDTO.Description,
+                            SubjectId = subject.Id,
+                            CreatedAt = DateTime.UtcNow,
+                            CreatedById = userId,
+                        };
+                        topics.Add(topic);
+                    }
+                }
+
+                await _topicRepository.AddRangeAsync(topics);
+                if (dto.ProgrammingLanguageIds != null && dto.ProgrammingLanguageIds.Any())
+                {
+                    var programmingLanguageIds = dto.ProgrammingLanguageIds.ToList();
+                    var existingProgrammingLanguages = await _programmingLanguageRepository.FindListAsync(pl => programmingLanguageIds.Contains(pl.Id));
+
+
+                    // If the number of existing programming languages doesn't match the requested IDs, throw an exception
+                    if (existingProgrammingLanguages.Count() != programmingLanguageIds.Count)
+                    {
+                        return new CommonResult<SubjectDTO>
+                        {
+                            IsSuccess = false,
+                            Code = 404,
+                            Message = "One or more programming language IDs do not exist."
+                        };
+                    }
+
+                    var subjectProgrammingLanguages = new List<SubjectProgrammingLanguage>();
+
+                    // Create the SubjectProgrammingLanguage relationships
+                    foreach (var programmingLanguageId in dto.ProgrammingLanguageIds)
+                    {
+                        var subjectProgrammingLanguage = new SubjectProgrammingLanguage
+                        {
+                            Subject = subject,
+                            ProgrammingLanguageId = programmingLanguageId,
+                            CreatedAt = DateTime.UtcNow,
+                            CreatedById = userId,
+                        };
+                        subjectProgrammingLanguages.Add(subjectProgrammingLanguage);
+                    }
+
+                   await _subjectProgrammingLanguageRepository.AddRangeAsync(subjectProgrammingLanguages);
+
+                }
+
+               await _subjectRepository.SaveAsync();
+                return new CommonResult<SubjectDTO>
+                {
+                    IsSuccess = true,
+                    Code = 200,
+                    Message ="Success"
+                };
+            }
+            catch (Exception ex)
+            {
+                return new CommonResult<SubjectDTO>
+                {
+                    IsSuccess = false,
+                    Code = 500,
+                    Message = $"Error when creating subject {ex}"
+                };
+            }
+        }
+
+
     }
 }

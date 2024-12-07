@@ -51,75 +51,50 @@ namespace LMS.API.Controllers
             return Ok(classesResult.Data);
         }
 
-        [Authorize]
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetClassDetail(Guid id)
-        {
-            var userId = GetCurrentUserId();
-            if (userId == null)
-            {
-                return Unauthorized("UserId not found or invalid.");
-            }
+       
 
-            var classResult = await _classService.GetClassDetailForUser(id, userId.Value);
-            if (classResult.IsSuccess)
+        [Authorize(Roles = "Admin")]
+        [HttpPost("create")]
+        public async Task<IActionResult> CreateClass([FromForm] IFormFile file, [FromForm] CreateClassDTO request)
+        {
+            if (file == null || file.Length == 0)
             {
-                return Ok(classResult.Data);
+                return BadRequest("No file uploaded.");
             }
-            else
+            try
             {
-                return classResult.Code switch
+                var userId = GetCurrentUserId();
+                if (userId == null)
                 {
-                    400 => BadRequest(classResult.Message),
-                    404 => BadRequest(classResult.Message),
-                    403 => BadRequest(classResult.Message),
-                    _ => StatusCode(500, classResult.Message)
-                };
+                    return Unauthorized("UserId not found or invalid.");
+                }
+                request.CurrentUserId = userId.Value;
+                using (var stream = new MemoryStream())
+                {
+                    await file.CopyToAsync(stream); // Copy file content to a MemoryStream
+                    stream.Position = 0; // Reset the stream position to the beginning before passing to the service
+
+                    var result = await _classService.CreateClass(request, stream);
+
+                    if (result.IsSuccess)
+                    {
+                        return Ok(result);
+                    }
+                    else
+                    {
+                        return result.Code switch
+                        {
+                            400 => BadRequest(result.Message),
+                            _ => StatusCode(500, result.Message)
+                        };
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { Message = "An error occurred while importing students", Error = ex.Message });
             }
         }
-
-        //[Authorize(Roles = "Admin")]
-        //[HttpPost("create")]
-        //public async Task<IActionResult> CreateClass([FromForm] IFormFile file, [FromForm] CreateClassDTO request)
-        //{
-        //    if (file == null || file.Length == 0)
-        //    {
-        //        return BadRequest("No file uploaded.");
-        //    }
-        //    try
-        //    {
-        //        var userId = GetCurrentUserId();
-        //        if (userId == null)
-        //        {
-        //            return Unauthorized("UserId not found or invalid.");
-        //        }
-        //        request.CurrentUserId = userId.Value;
-        //        using (var stream = new MemoryStream())
-        //        {
-        //            await file.CopyToAsync(stream); // Copy file content to a MemoryStream
-        //            stream.Position = 0; // Reset the stream position to the beginning before passing to the service
-
-        //            var result = await _classService.CreateClass(request, stream);
-
-        //            if (result.IsSuccess)
-        //            {
-        //                return Ok(result);
-        //            }
-        //            else
-        //            {
-        //                return result.Code switch
-        //                {
-        //                    400 => BadRequest(result.Message),
-        //                    _ => StatusCode(500, result.Message)
-        //                };
-        //            }
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return StatusCode(500, new { Message = "An error occurred while importing students", Error = ex.Message });
-        //    }
-        //}
 
         [HttpGet("{classId}/students")]
         public async Task<IActionResult> GetStudentsByClass(Guid classId)
@@ -130,27 +105,27 @@ namespace LMS.API.Controllers
                 return Unauthorized("UserId not found or invalid.");
             }
 
-            var subjectExercise = await _studentService.GetStudentsForClass(classId, userId.Value);
+            var result = await _studentService.GetStudentsForClass(classId, userId.Value);
 
 
-            if (subjectExercise.IsSuccess)
+            if (result.IsSuccess)
             {
-                return Ok(subjectExercise.Data);
+                return Ok(result.Data);
             }
             else
             {
-                return subjectExercise.Code switch
+                return result.Code switch
                 {
-                    400 => BadRequest(subjectExercise.Message),
-                    404 => BadRequest(subjectExercise.Message),
-                    403 => BadRequest(subjectExercise.Message),
-                    _ => StatusCode(500, subjectExercise.Message)
+                    400 => BadRequest(result.Message),
+                    404 => BadRequest(result.Message),
+                    403 => BadRequest(result.Message),
+                    _ => StatusCode(500, result.Message)
                 };
             }
         }
 
         [Authorize]
-        [HttpPost("open")]
+        [HttpPost("opentopic")]
         public async Task<IActionResult> OpenClassTopicAsync([FromBody] OpenClassTopicDTO openClassTopicDTO)
         {
 
@@ -183,7 +158,7 @@ namespace LMS.API.Controllers
 
         [Authorize]
         [HttpGet("{id}/topics")]
-        public async Task<IActionResult> OpenClassTopicAsync(Guid id)
+        public async Task<IActionResult> GetClassTopicsAsync(Guid id)
         {
 
             var userId = GetCurrentUserId();
@@ -194,6 +169,37 @@ namespace LMS.API.Controllers
 
             // Call the service method to open the class topic
             var result = await _classService.GetOpenClassTopicAsync(id, userId.Value);
+
+            // Check if the result is successful
+            if (result.IsSuccess)
+            {
+                return Ok(result.Data);
+            }
+            else
+            {
+                return result.Code switch
+                {
+                    400 => BadRequest(result.Message),
+                    404 => BadRequest(result.Message),
+                    403 => BadRequest(result.Message),
+                    _ => StatusCode(500, result.Message)
+                };
+            }
+        }
+
+        [Authorize]
+        [HttpGet("{id}/alltopics")]
+        public async Task<IActionResult> GetAllClassTopicsAsync(Guid id)
+        {
+
+            var userId = GetCurrentUserId();
+            if (userId == null)
+            {
+                return Unauthorized("UserId not found or invalid.");
+            }
+
+            // Call the service method to open the class topic
+            var result = await _classService.GetAvailableClassTopicAsync(id, userId.Value);
 
             // Check if the result is successful
             if (result.IsSuccess)
@@ -267,6 +273,33 @@ namespace LMS.API.Controllers
                     404 => BadRequest(result.Message),
                     403 => BadRequest(result.Message),
                     _ => StatusCode(500, result.Message)
+                };
+            }
+        }
+
+        [Authorize]
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetClassDetail(Guid id)
+        {
+            var userId = GetCurrentUserId();
+            if (userId == null)
+            {
+                return Unauthorized("UserId not found or invalid.");
+            }
+
+            var classResult = await _classService.GetClassDetailForUser(id, userId.Value);
+            if (classResult.IsSuccess)
+            {
+                return Ok(classResult.Data);
+            }
+            else
+            {
+                return classResult.Code switch
+                {
+                    400 => BadRequest(classResult.Message),
+                    404 => BadRequest(classResult.Message),
+                    403 => BadRequest(classResult.Message),
+                    _ => StatusCode(500, classResult.Message)
                 };
             }
         }

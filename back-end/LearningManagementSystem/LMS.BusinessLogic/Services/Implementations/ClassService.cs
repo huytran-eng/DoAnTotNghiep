@@ -629,6 +629,51 @@ namespace LMS.BusinessLogic.Services.Implementations
             }
         }
 
+        public async Task<CommonResult<List<TopicDTO>>> GetAvailableClassTopicAsync(Guid classId, Guid userId)
+        {
+            try
+            {
+                // Check if the class exists and is accessible by the user
+                var classExists = await _classRepository.GetByIdAsync(classId);
+                if (classExists == null)
+                {
+                    return new CommonResult<List<TopicDTO>>
+                    {
+                        IsSuccess = false,
+                        Code = 404,
+                        Message = "Class not found."
+                    };
+                }
+
+                // Get topics that are associated with the class but not opened yet
+                var topics = await _topicRepository.FindListAsync(t => t.SubjectId == classExists.SubjectId);
+                var topicDTOs = topics.Select(t => new TopicDTO
+                {
+                    Id = t.Id,
+                    Name = t.Name,
+                    Description = t.Description
+                }).ToList();
+
+                return new CommonResult<List<TopicDTO>>
+                {
+                    IsSuccess = true,
+                    Code = 200,
+                    Message = "Class topic opened successfully.",
+                    Data = topicDTOs
+                };
+            }
+            catch (Exception ex)
+            {
+                // Log exception (not included in this snippet)
+                return new CommonResult<List<TopicDTO>>
+                {
+                    IsSuccess = false,
+                    Code = 500,
+                    Message = $"An error occurred while opening the class topic: {ex.Message}"
+                };
+            }
+        }
+
         public async Task<CommonResult<List<ClassTopicOpenListDTO>>> GetOpenClassTopicAsync(Guid classId, Guid userId)
         {
             try

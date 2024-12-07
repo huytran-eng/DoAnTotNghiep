@@ -3,7 +3,17 @@ import axios from "axios"; // Use Axios for simplified HTTP requests
 import { DataGrid } from "@mui/x-data-grid";
 import { useNavigate } from "react-router-dom";
 import "../../../styles/homeStyles.css";
-
+import {
+  Box,
+  Typography,
+  Tabs,
+  Tab,
+  Select,
+  MenuItem,
+  Button,
+  Grid,
+} from "@mui/material";
+import { Visibility, Edit } from "@mui/icons-material";
 const AdminSubjectList = () => {
   const [subjects, setSubjects] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -40,18 +50,25 @@ const AdminSubjectList = () => {
     }
   };
 
+  const handleCreateSubject = () => {
+    navigate("/admin/subject/create");
+  };
+
   const columns = [
-    { field: "name", headerName: "Tên Môn", width: 400 },
-    { field: "credit", headerName: "Số tín chỉ", width: 200 },
-    { field: "departmentName", headerName: "Tên khoa", width: 200 },
-    { field: "numberOfClasses", headerName: "Số lượng lớp", width: 200 },
+    { field: "name", headerName: "Tên Môn", flex: 1 },
+    { field: "credit", headerName: "Số tín chỉ", flex: 1 },
+    { field: "departmentName", headerName: "Tên khoa", flex: 1 },
+    { field: "numberOfClasses", headerName: "Số lượng lớp", flex: 1 },
 
     {
       field: "action",
       headerName: "Action",
       width: 150,
       renderCell: (params) => (
-        <button onClick={() => handleViewDetails(params.row)}>Xem</button>
+        <button onClick={() => handleViewDetails(params.row)}>
+          {" "}
+          <Visibility style={{ color: "#1976d2" }} />
+        </button>
       ),
     },
   ];
@@ -62,24 +79,35 @@ const AdminSubjectList = () => {
 
   return (
     <div className="content-container" style={{ padding: "20px" }}>
-      <h2 className="header-title">DANH SÁCH MÔN HỌC</h2>
-
+      <Typography variant="h4" component="h2" gutterBottom align="center">
+        Danh sách môn học
+      </Typography>
       {/* Material-UI DataGrid */}
-      <div
-        className="mt-5"
-        style={{
-          height: 400,
-          width: "80%", // Adjust the width to your desired size
-          maxWidth: "1200px", // Optional max-width for the table
-          margin: "0 auto", // Center the table horizontally
+      <Box
+        sx={{
+          p: 2,
+          mb: 3,
+          border: "1px solid #ccc",
+          borderRadius: "8px",
+          backgroundColor: "#f9f9f9",
         }}
       >
-        <DataGrid
-          rows={subjects} // The data for the table
-          columns={columns} // The columns to display
-          pageSizeOptions={[5, 10, 25, { value: -1, label: "All" }]}
-        />
-      </div>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={handleCreateSubject}
+          sx={{ mb: 3 }}
+        >
+          Tạo môn học
+        </Button>
+        <div style={{ height: 400, width: "100%" }}>
+          <DataGrid
+            rows={subjects} // The data for the table
+            columns={columns} // The columns to display
+            pageSizeOptions={[5, 10, 25, { value: -1, label: "All" }]}
+          />
+        </div>
+      </Box>
     </div>
   );
 };

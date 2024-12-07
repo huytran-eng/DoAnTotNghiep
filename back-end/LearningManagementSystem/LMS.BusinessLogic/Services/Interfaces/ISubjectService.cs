@@ -1,4 +1,5 @@
 ﻿using LMS.BusinessLogic.DTOs;
+using LMS.BusinessLogic.DTOs.RequestDTO;
 using LMS.Core;
 
 namespace LMS.BusinessLogic.Services.Interfaces
@@ -13,5 +14,6 @@ namespace LMS.BusinessLogic.Services.Interfaces
                 Guid userId);
 
         Task<CommonResult<SubjectDetailDTO>> GetSubjectDetailForUser(Guid subjectId, Guid userId);
+        Task<CommonResult<SubjectDTO>> CreateSubjectAsync(CreateSubjectDTO dto, Guid userId);
     }
 }

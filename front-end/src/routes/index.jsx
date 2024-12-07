@@ -11,9 +11,13 @@ import AdminClassDetail from "../components/Admin/Class/AdminClassDetail";
 
 import AdminSubjectList from "../components/Admin/Subject/AdminSubjectList";
 import AdminSubjectDetail from "../components/Admin/Subject/AdminSubjectDetail";
+import AdminSubjectCreate from "../components/Admin/Subject/AdminSubjectCreate";
+
 
 import AdminExerciseList from "../components/Admin/Exercise/AdminExerciseList";
 import AdminCreateExercise from "../components/Admin/Exercise/AdminCreateExercise";
+import AdminEditExercise from "../components/Admin/Exercise/AdminEditExercise";
+
 import AdminStudentList from "../components/Admin/Student/AdminStudentList";
 // Students components import
 import StudentClassList from "../components/Student/Class/StudentClassList";
@@ -42,11 +46,13 @@ const paths = [
       { path: "class/:id", element: <AdminClassDetail /> },
 
       { path: "subject", element: <AdminSubjectList /> },
-      // { path: "/subject/create", element: <CreateClass /> },
+      { path: "subject/create", element: <AdminSubjectCreate /> },
       { path: "subject/:id", element: <AdminSubjectDetail /> },
 
       { path: "exercise", element: <AdminExerciseList /> },
+      { path: "exercise/edit/:id", element: <AdminEditExercise /> },
       { path: "exercise/create", element: <AdminCreateExercise /> },
+     
       { path: "student", element: <AdminStudentList /> },
     ],
   },

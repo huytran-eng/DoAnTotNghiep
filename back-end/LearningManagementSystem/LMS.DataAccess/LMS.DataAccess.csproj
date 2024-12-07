@@ -25,7 +25,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Folder Include="Repositories\IClassTopicOpenRepository\" />
+	  <Folder Include="Repositories\NewFolder\" />
 	</ItemGroup>
 
 </Project>

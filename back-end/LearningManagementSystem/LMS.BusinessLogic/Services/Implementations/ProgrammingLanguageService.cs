@@ -1,4 +1,5 @@
-﻿using LMS.BusinessLogic.DTOs.ResponseDTO;
+﻿using LMS.BusinessLogic.DTOs;
+using LMS.BusinessLogic.DTOs.ResponseDTO;
 using LMS.BusinessLogic.Services.Interfaces;
 using LMS.Core;
 using LMS.DataAccess.Models;
@@ -89,6 +90,46 @@ namespace LMS.BusinessLogic.Services.Implementations
             catch (Exception ex)
             {
                 return new CommonResult<List<SubjectProgrammingLanguageDTO>>
+                {
+                    IsSuccess = false,
+                    Code = 500,
+                    Message = "Error getting subject programming language" + ex.Message
+                };
+            }
+        }
+
+        public async Task<CommonResult<List<ProgrammingLanguageDTO>>> GetAllProgrammingLanguagesAsync()
+        {
+            try
+            {
+                var departments = await _programmingLanguageRepository.GetAllAsync();
+                if (departments == null || !departments.Any())
+                {
+                    return new CommonResult<List<ProgrammingLanguageDTO>>
+                    {
+                        IsSuccess = false,
+                        Code = 404,
+                        Message = "No departments found."
+                    };
+                }
+
+                var departmentDtos = departments.Select(d => new ProgrammingLanguageDTO
+                {
+                    Id = d.Id,
+                    Name = d.Name,
+                    // Map additional fields as necessary
+                }).ToList();
+
+                return new CommonResult<List<ProgrammingLanguageDTO>>
+                {
+                    IsSuccess = true,
+                    Code = 200,
+                    Data = departmentDtos
+                };
+            }
+            catch (Exception ex)
+            {
+                return new CommonResult<List<ProgrammingLanguageDTO>>
                 {
                     IsSuccess = false,
                     Code = 500,

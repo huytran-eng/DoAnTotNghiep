@@ -2,7 +2,7 @@
 
 namespace LMS.BusinessLogic.DTOs
 {
-    public class UpdateExerciseDto
+    public class UpdateExerciseDTO
     {
         public Guid Id { get; set; }
         public string Title { get; set; }
@@ -13,7 +13,7 @@ namespace LMS.BusinessLogic.DTOs
         public int SpaceLimit { get; set; }
 
         // Test cases to add to the Exercise
-        public List<TestCaseDTO> NewTestCases { get; set; } = new List<TestCaseDTO>();
+        public List<TestCaseDTO> TestCases { get; set; } = new List<TestCaseDTO>();
 
         public Guid? CurrentUserId { get; set; }
     }

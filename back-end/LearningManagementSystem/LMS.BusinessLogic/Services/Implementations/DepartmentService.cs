@@ -14,7 +14,6 @@ namespace LMS.BusinessLogic.Services.Implementations
     public class DepartmentService : IDepartmentService
     {
         private readonly IDepartmentRepository _departmentRepository;
-        private readonly IUniversityRepository _universityRepository;
         private readonly ITeacherRepository _teacherRepository;
         private readonly IUserRepository _userRepository;
         private readonly ISubjectRepository _subjectRepository;
@@ -26,7 +25,6 @@ namespace LMS.BusinessLogic.Services.Implementations
 
         public DepartmentService(
               IDepartmentRepository departmentRepository,
-              IUniversityRepository universityRepository,
               ITeacherRepository teacherRepository,
               IUserRepository userRepository,
               ISubjectRepository subjectRepository,
@@ -35,7 +33,6 @@ namespace LMS.BusinessLogic.Services.Implementations
             )
         {
             _departmentRepository = departmentRepository;
-            _universityRepository = universityRepository;
             _studentRepository = studentRepository;
             _classRepository = classRepository;
             _teacherRepository = teacherRepository;
@@ -90,6 +87,34 @@ namespace LMS.BusinessLogic.Services.Implementations
                     Message = $"Error when inserting to database {ex.Message}"
                 };
             }
+        }
+
+        public async Task<CommonResult<List<DepartmentDTO>>> GetAllDepartmentsAsync()
+        {
+            var departments = await _departmentRepository.GetAllAsync();
+            if (departments == null || !departments.Any())
+            {
+                return new CommonResult<List<DepartmentDTO>>
+                {
+                    IsSuccess = false,
+                    Code = 404,
+                    Message = "No departments found."
+                };
+            }
+
+            var departmentDtos = departments.Select(d => new DepartmentDTO
+            {
+                Id = d.Id,
+                Name = d.Name,
+                // Map additional fields as necessary
+            }).ToList();
+
+            return new CommonResult<List<DepartmentDTO>>
+            {
+                IsSuccess = true,
+                Code = 200,
+                Data = departmentDtos
+            };
         }
 
     }

@@ -164,6 +164,7 @@ const AdminSubjectDetail = () => {
 
   // Update new exercise data
   const handleExerciseChange = (id, field, value) => {
+    console.log(id, field, value);
     setExercises((prev) =>
       prev.map((ex) => (ex.id === id ? { ...ex, [field]: value } : ex))
     );
@@ -280,19 +281,19 @@ const AdminSubjectDetail = () => {
     },
   ];
   return (
-    <div
-      className="content-container"
-      style={{ padding: "20px", width: "80%", margin: "0 auto" }}
-    >
+    <div>
       <Typography variant="h5" component="h2" gutterBottom align="center">
         Chi tiết môn học
       </Typography>
       {/* Subject Details Box */}
-      <Grid container spacing={3}>
+      <Grid container spacing={3} sx={{ height: "100%" }}>
         <Grid item xs={12} sm={4}>
           <Box
-            className="mt-3"
             sx={{
+              display: "grid",
+              gridTemplateColumns: "150px auto", // First column fixed width, second auto
+              rowGap: 1.5, // Gap between rows
+              columnGap: 2,
               p: 2,
               mb: 3,
               border: "1px solid #ccc",
@@ -302,47 +303,65 @@ const AdminSubjectDetail = () => {
           >
             {subjectDetails ? (
               <>
-                <Typography variant="h6" gutterBottom>
-                  {subjectDetails.name}
+                <Box
+                  sx={{
+                    gridColumn: "1 / -1", // Span across all columns
+                    textAlign: "center", // Center text horizontally
+                    mb: 2, // Add margin below the title
+                  }}
+                >
+                  <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+                    {subjectDetails.name}
+                  </Typography>
+                </Box>
+                <Typography variant="body1" sx={{ fontWeight: "bold" }}>
+                  Số tín chỉ:
+                </Typography>
+                <Typography variant="body1">{subjectDetails.credit}</Typography>
+
+                <Typography variant="body1" sx={{ fontWeight: "bold" }}>
+                  Khoa:
                 </Typography>
                 <Typography variant="body1">
-                  <strong>Số tín chỉ:</strong> {subjectDetails.credit}
+                  {subjectDetails.departmentName}
+                </Typography>
+
+                <Typography variant="body1" sx={{ fontWeight: "bold" }}>
+                  Số lớp đang mở:
                 </Typography>
                 <Typography variant="body1">
-                  <strong>Khoa:</strong> {subjectDetails.departmentName}
-                </Typography>
-                <Typography variant="body1">
-                  <strong>Số lớp đang mở:</strong>{" "}
                   {subjectDetails.numberOfClasses}
                 </Typography>
-                <Typography variant="body1" sx={{ mt: 2 }}>
-                  <strong>Mô tả:</strong> {subjectDetails.description}
+
+                <Typography variant="body1" sx={{ fontWeight: "bold" }}>
+                  Mô tả:
                 </Typography>
-                <Typography
-                  variant="body1"
-                  sx={{ mt: 2, display: "flex", alignItems: "center" }}
-                >
-                  <strong>Danh sách chủ đề:</strong>
-                  <Box sx={{ ml: 2, minWidth: 300 }}>
-                    <Select
-                      size="small"
-                      fullWidth
-                      value={
-                        subjectDetails.topics.length > 0
-                          ? subjectDetails.topics[0].id
-                          : ""
-                      }
-                      onChange={() => {}}
-                      displayEmpty
-                    >
-                      {subjectDetails.topics.map((topic) => (
-                        <MenuItem value={topic.id} key={topic.id}>
-                          {topic.name}
-                        </MenuItem>
-                      ))}
-                    </Select>
-                  </Box>
+                <Typography variant="body1">
+                  {subjectDetails.description}
                 </Typography>
+
+                <Typography variant="body1" sx={{ fontWeight: "bold" }}>
+                  Danh sách chủ đề:
+                </Typography>
+                <Box>
+                  <Select
+                    size="small"
+                    fullWidth
+                    value={
+                      subjectDetails.topics.length > 0
+                        ? subjectDetails.topics[0].id
+                        : ""
+                    }
+                    onChange={() => {}}
+                    displayEmpty
+                  >
+                    {subjectDetails.topics.map((topic) => (
+                      <MenuItem value={topic.id} key={topic.id}>
+                        {topic.name}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </Box>
               </>
             ) : (
               <Typography>Loading subject details...</Typography>
@@ -379,16 +398,26 @@ const AdminSubjectDetail = () => {
 
             {activeTab === 1 && (
               <div>
-                <Button variant="contained" onClick={handleAddExercise}>
-                  Thêm bài tập cho môn học
+                <Button
+                  onClick={handleAddExercise}
+                  variant="contained"
+                  color="primary"
+                >
+                  Thêm bài tập
                 </Button>
+
                 <DataGrid
                   rows={exercises}
                   columns={exerciseColumns}
                   autoHeight // This makes the grid resize automatically based on its content
                   pageSize={5}
                   loading={loading}
-                  sx={{ minHeight: 400, maxHeight: "80vh", width: "100%" }} // Adjust height dynamically, with a max height of 80% of the viewport height
+                  sx={{
+                    mt: 2,
+                    minHeight: 400,
+                    maxHeight: "80vh",
+                    width: "100%",
+                  }} // Adjust height dynamically, with a max height of 80% of the viewport height
                 />
               </div>
             )}

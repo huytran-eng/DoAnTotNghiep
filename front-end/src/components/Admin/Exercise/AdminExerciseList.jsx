@@ -56,7 +56,7 @@ const AdminExerciseList = () => {
           </IconButton>
           <IconButton
             color="secondary"
-            onClick={() => handleUpdateExercise(params.row.id)}
+            onClick={() => handleEditExercise(params.row.id)}
           >
             <Edit /> {/* Edit icon */}
           </IconButton>
@@ -74,14 +74,14 @@ const AdminExerciseList = () => {
     navigate(`/admin/exercise/${id}`);
   };
 
-  // Navigate to Update Exercise page
-  const handleUpdateExercise = (id) => {
-    navigate(`/admin/exercise/update/${id}`);
+  // Navigate to Edit Exercise page
+  const handleEditExercise = (id) => {
+    navigate(`/admin/exercise/edit/${id}`);
   };
 
   return (
-    <div style={{ padding: "20px", width: "80%", margin: "0 auto" }}>
-      <Typography variant="h4" component="h2" sx={{ mb: 2 }}>
+    <div>
+      <Typography variant="h4" component="h2" gutterBottom align="center">
         Danh sách bài tập
       </Typography>
 
@@ -103,12 +103,10 @@ const AdminExerciseList = () => {
         >
           Tạo bài tập
         </Button>
-        <div style={{ height: 400, width: "100%" }}>
+        <div style={{ height: 600, width: "100%" }}>
           <DataGrid
             rows={exercises}
             columns={exerciseColumns}
-            pageSize={5}
-            getRowId={(row) => row.id}
             sx={{ minHeight: 400, width: "100%" }}
             loading={loading}
           />

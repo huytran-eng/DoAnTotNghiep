@@ -20,13 +20,15 @@ namespace LMS.BusinessLogic.Services.Implementations
         private readonly IUserRepository _userRepository;
         private readonly IClassExerciseRepository _classExerciseRepository;
 
+
         public ExerciseService(IExerciseRepository exerciseRepository,
             ITestCaseRepository testCaseRepository,
             ISubjectRepository subjectRepository,
             ITopicRepository topicRepository,
             ISubjectExerciseRepository subjectExerciseRepository,
              IUserRepository userRepository,
-             IClassExerciseRepository classExerciseRepository)
+             IClassExerciseRepository classExerciseRepository
+             )
         {
             _exerciseRepository = exerciseRepository;
             _testCaseRepository = testCaseRepository;
@@ -35,6 +37,7 @@ namespace LMS.BusinessLogic.Services.Implementations
             _subjectExerciseRepository = subjectExerciseRepository;
             _userRepository = userRepository;
             _classExerciseRepository = classExerciseRepository;
+
         }
 
         public async Task<CommonResult<ExerciseDTO>> GetExerciseDetail(Guid exerciseId, Guid userId)
@@ -80,6 +83,9 @@ namespace LMS.BusinessLogic.Services.Implementations
                     Difficulty = exercise.Difficulty,
                     CreatedAt = exercise.CreatedAt,
                     Description = exercise.Description,
+                    Requirements = exercise.Requirements,
+                    TimeLimit = exercise.TimeLimit,
+                    SpaceLimit = exercise.SpaceLimit,
                     TestCases = exercise.TestCases.Select(tc => new TestCaseDTO
                     {
                         Id = tc.Id,
@@ -220,7 +226,7 @@ namespace LMS.BusinessLogic.Services.Implementations
             }
         }
 
-        public async Task<CommonResult<Exercise>> UpdateExerciseAsync(UpdateExerciseDto updateExerciseDTO)
+        public async Task<CommonResult<Exercise>> UpdateExerciseAsync(UpdateExerciseDTO updateExerciseDTO)
         {
             if (updateExerciseDTO == null)
                 throw new ArgumentNullException(nameof(updateExerciseDTO));
@@ -248,10 +254,12 @@ namespace LMS.BusinessLogic.Services.Implementations
                 existingExercise.UpdatedAt = DateTime.Now;
                 existingExercise.UpdatedById = updateExerciseDTO.CurrentUserId;
 
+                await _testCaseRepository.DeleteRangeAsync(existingExercise.TestCases.ToList());
+
                 // Add new TestCases to the Exercise
-                if (updateExerciseDTO.NewTestCases != null && updateExerciseDTO.NewTestCases.Any())
+                if (updateExerciseDTO.TestCases != null && updateExerciseDTO.TestCases.Any())
                 {
-                    foreach (var testCaseDTO in updateExerciseDTO.NewTestCases)
+                    foreach (var testCaseDTO in updateExerciseDTO.TestCases)
                     {
                         var newTestCase = new TestCase
                         {
