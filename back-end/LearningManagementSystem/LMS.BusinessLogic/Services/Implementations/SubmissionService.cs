@@ -3,6 +3,7 @@ using LMS.BusinessLogic.DTOs.RequestDTO;
 using LMS.BusinessLogic.DTOs.ResponseDTO;
 using LMS.BusinessLogic.Services.Interfaces;
 using LMS.Core;
+using LMS.Core.Enums;
 using LMS.DataAccess.Models;
 using LMS.DataAccess.Repositories;
 using System.Net.Http.Headers;
@@ -15,12 +16,15 @@ namespace LMS.BusinessLogic.Services.Implementations
     {
         private readonly IClassExerciseRepository _classExerciseRepository;
         private readonly ISubjectProgrammingLanguageRepository _subjectProgrammingLanguageRepository;
+        private readonly IStudentSubmissonRepository _studentSubmissonRepository;
 
-
-        public SubmissionService(IClassExerciseRepository classExerciseRepository, ISubjectProgrammingLanguageRepository subjectProgrammingLanguageRepository)
+        public SubmissionService(IClassExerciseRepository classExerciseRepository,
+                                 ISubjectProgrammingLanguageRepository subjectProgrammingLanguageRepository,
+                                 IStudentSubmissonRepository studentSubmissonRepository)
         {
             _classExerciseRepository = classExerciseRepository;
             _subjectProgrammingLanguageRepository = subjectProgrammingLanguageRepository;
+            _studentSubmissonRepository = studentSubmissonRepository;
         }
 
         public async Task<CommonResult<StudentSubmissionResultDTO>> EvaluateSubmissionAsync(SubmitCodeDTO submissionDTO)
@@ -78,37 +82,57 @@ namespace LMS.BusinessLogic.Services.Implementations
                         }
                         var passedTestCases = result.TestCases.Count(r => r.Success);
                         var totalTestCases = result.TestCases.Count;
-                        var status = 0;
-                        if (result.IsSuccess == false)
+                        var highestExecutionTimeMs = result.TestCases.Max(tc => tc.ExecutionTime); // in ms
+                        var timeLimitMs = exercise.TimeLimit * 1000; // Convert time limit to ms
+
+                        StudentSubmissionStatus status;
+                        if (highestExecutionTimeMs > timeLimitMs)
                         {
-                            status = 2;
+                            status = StudentSubmissionStatus.TLE;
+                        }
+                        else if (!result.IsSuccess)
+                        {
+                            status = StudentSubmissionStatus.RE;
                         }
                         else
                         {
-                            status = passedTestCases == totalTestCases ? 0 : (result.TestCases.Any(r => r.Success == false) ? 1 : 2);
+                            status = passedTestCases == totalTestCases
+                                ? StudentSubmissionStatus.AC
+                                : StudentSubmissionStatus.WA;
                         }
-                        var message = "";
-                        if (status == 0)
-                        {
-                            message = $"Đã pass toàn bộ {passedTestCases}/{totalTestCases} test case";
-                        }
-                        else if (status == 1)
-                        {
-                            message = $"Đã pass {passedTestCases}/{totalTestCases} test case";
-                        }
-                        else { message = result.Message; }
 
+                        var message = status switch
+                        {
+                            StudentSubmissionStatus.AC => $"Đã pass toàn bộ {passedTestCases}/{totalTestCases} test case",
+                            StudentSubmissionStatus.WA => $"Đã pass {passedTestCases}/{totalTestCases} test case",
+                            StudentSubmissionStatus.TLE => "Vượt quá giới hạn thời gian cho phép",
+                            StudentSubmissionStatus.RE => result.Message,
+                            _ => "Unknown error"
+                        };
+
+                        var studentSubmission = new StudentSubmission
+                        {
+                            Id = Guid.NewGuid(),
+                            Status = status,
+                            Code = submissionDTO.Code,
+                            StudentId = submissionDTO.StudentId.Value,
+                            ClassExerciseId = submissionDTO.ClassExerciseId,
+                            SubjectProgrammingLanguageId = submissionDTO.SubjectProgrammingLanguageId
+                        };
+
+                        await _studentSubmissonRepository.AddAsync(studentSubmission);
+                        await _studentSubmissonRepository.SaveAsync();
                         return new CommonResult<StudentSubmissionResultDTO>
                         {
-                            IsSuccess = true, // Success if all test cases pass
-                            Code = 200, // Status code for success, failure, or error
+                            IsSuccess = true,
+                            Code = 200,
                             Message = message,
                             Data = new StudentSubmissionResultDTO
                             {
-                                Status = status,
+                                Status = (int)status,
                                 Message = message,
-                                TestCases = status == 2 ? 0 : passedTestCases,
-                                TotalTestCases = exercise.TestCases.Count
+                                TestCases = passedTestCases,
+                                TotalTestCases = totalTestCases
                             }
                         };
                     }
