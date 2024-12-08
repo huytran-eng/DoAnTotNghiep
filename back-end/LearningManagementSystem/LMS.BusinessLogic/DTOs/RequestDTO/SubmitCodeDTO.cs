@@ -5,5 +5,6 @@
         public string Code { get; set; }
         public Guid SubjectProgrammingLanguageId { get; set; }
         public Guid ClassExerciseId { get; set; }
+        public Guid? StudentId { get; set; }
     }
 }

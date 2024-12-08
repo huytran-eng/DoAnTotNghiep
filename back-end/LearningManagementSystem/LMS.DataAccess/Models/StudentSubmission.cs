@@ -1,11 +1,12 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using LMS.Core.Enums;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace LMS.DataAccess.Models
 {
     public class StudentSubmission
     {
         public Guid Id { get; set; }
-        public string Status { get; set; }
+        public StudentSubmissionStatus Status { get; set; }
         public string Code { get; set; }
         public Guid StudentId { get; set; }
         [ForeignKey("StudentId")]

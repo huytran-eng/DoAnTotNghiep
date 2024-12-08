@@ -1,6 +1,7 @@
 ﻿using LMS.BusinessLogic.DTOs;
 using LMS.BusinessLogic.Services.Interfaces;
 using LMS.DataAccess.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LMS.API.Controllers
@@ -17,11 +18,19 @@ namespace LMS.API.Controllers
 
 
         [HttpPost("submit-code")]
+        [Authorize(Roles = "Student")]
         public async Task<IActionResult> SubmitCode([FromBody] SubmitCodeDTO submitCodeDto)
         {
+           
             if (submitCodeDto == null)
                 return BadRequest("Invalid submission data.");
 
+            var userId = GetCurrentUserId();
+            if (userId == null)
+            {
+                return Unauthorized("UserId not found or invalid.");
+            }
+            submitCodeDto.StudentId = userId;
             var result = await _submissionService.EvaluateSubmissionAsync(submitCodeDto);
             if (result.IsSuccess)
             {
@@ -35,6 +44,11 @@ namespace LMS.API.Controllers
                     _ => StatusCode(500, result.Message)
                 };
             }
+        }
+        private Guid? GetCurrentUserId()
+        {
+            var userIdClaim = User.FindFirst("UserId")?.Value;
+            return Guid.TryParse(userIdClaim, out var userId) ? userId : (Guid?)null;
         }
     }
 }

@@ -27,6 +27,7 @@ namespace LMS.API
             services.AddScoped<IClassExerciseRepository, ClassExerciseRepository>();
             services.AddScoped<IProgrammingLanguageRepository, ProgrammingLanguageRepository>();
             services.AddScoped<IDepartmentRepository, DepartmentRepository>();
+            services.AddScoped<IStudentSubmissonRepository, StudentSubmissionRepository>();
 
 
             // Register services
