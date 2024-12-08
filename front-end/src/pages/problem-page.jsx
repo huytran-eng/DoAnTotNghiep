@@ -9,6 +9,7 @@ import loadingIcon from "../assets/image/loading.gif";
 import axios from "axios";
 import SubmitHistory from "../components/problem/submit-history";
 import SubmitResult from "../components/problem/submit-result";
+import {baseUrl} from "../util/constant";
 
 export default function ProblemPage() {
   const [activeTab, setActiveTab] = useState("description");
@@ -27,7 +28,7 @@ export default function ProblemPage() {
 
       try {
         const response = await axios.get(
-          `https://localhost:7104/api/class/exercise/${classExerciseId}`,
+          baseUrl+`lass/exercise/${classExerciseId}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,

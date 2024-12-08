@@ -4,7 +4,6 @@ import StudentLayout from "../../components/Student/Layout/StudentLayout"; // Ad
 
 const StudentPrivateRoute = () => {
   const userRole = IsAuthenticated(); // Directly get the user's role from the IsAuthenticated function
-  console.log(userRole)
   // If the user is not authenticated or the role is not 'Admin', redirect to login or Unauthorized page
   if (!userRole) {
     return <Navigate to="/login" replace />;

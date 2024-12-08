@@ -1,6 +1,6 @@
 import { useState } from "react";
 import axios from "axios";
-
+import {baseUrl} from "../util/constant";
 async function delay(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
@@ -18,13 +18,9 @@ async function executeCode(
       return;
     }
 
-    console.log("Code:", code);
-    console.log("SubjectProgrammingLanguageId:", subjectProgrammingLanguageId);
-    console.log("ClassExerciseId:", classExerciseId);
-
     // Make the POST request
     const response = await axios.post(
-      "https://localhost:7104/api/submission/submit-code",
+      baseUrl+"submission/submit-code",
       {
         code: code,
         subjectProgrammingLanguageId: subjectProgrammingLanguageId,

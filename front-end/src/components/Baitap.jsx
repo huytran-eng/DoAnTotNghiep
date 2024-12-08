@@ -6,6 +6,7 @@ import { Box, Typography, Button, IconButton } from "@mui/material";
 import moment from "moment";
 import { useNavigate } from "react-router-dom";
 import { Visibility, Edit } from "@mui/icons-material";
+import {baseUrl} from '../util/constant'
 const Exercises = () => {
   const [exercises, setExercises] = useState([]); // List of exercises
   const [loading, setLoading] = useState(false); // Loading state
@@ -19,7 +20,7 @@ const Exercises = () => {
   const fetchExercises = async () => {
     setLoading(true);
     try {
-      const response = await axios.get("https://localhost:7104/api/exercise", {
+      const response = await axios.get(baseUrl+"exercise", {
         headers: {
           Authorization: `Bearer ${token}`,
         },

@@ -4,6 +4,7 @@ import { NativeSelect } from "@mui/material";
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
+import {baseUrl} from "../../util/constant";
 
 const LanguageSelector = (props) => {
   const { setLanguage, setLanguageId } = props;
@@ -16,7 +17,7 @@ const LanguageSelector = (props) => {
     const fetchLanguages = async () => {
       try {
         const response = await axios.get(
-          `https://localhost:7104/api/class/${id}/languages`,
+          baseUrl+`class/${id}/languages`,
           {
             headers: {
               Authorization: `Bearer ${token}`,

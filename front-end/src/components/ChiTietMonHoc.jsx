@@ -12,7 +12,7 @@ import {
   Button,
 } from "@mui/material";
 import { useParams } from "react-router-dom";
-
+import baseUrl from "../util/constant";
 const SubjectDetail = () => {
   const [activeTab, setActiveTab] = useState(0); // Track active tab index
   const [subjectDetails, setSubjectDetails] = useState(null); // Subject details data
@@ -43,7 +43,7 @@ const SubjectDetail = () => {
   const fetchSubjectDetails = async () => {
     try {
       const response = await axios.get(
-        `https://localhost:7104/api/subject/${id}`,
+        `${baseUrl}+subject/${id}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -61,7 +61,7 @@ const SubjectDetail = () => {
     setLoading(true);
     try {
       const response = await axios.get(
-        `https://localhost:7104/api/subject/${id}/materials`,
+        `${baseUrl}+subject/${id}/materials`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -81,7 +81,7 @@ const SubjectDetail = () => {
     setLoading(true);
     try {
       const response = await axios.get(
-        `https://localhost:7104/api/subject/${id}/classes`,
+        `${baseUrl}+subject/${id}/classes`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -102,7 +102,7 @@ const SubjectDetail = () => {
     setLoading(true);
     try {
       const response = await axios.get(
-        `https://localhost:7104/api/subject/${id}/exercises`,
+        `${baseUrl}+subject/${id}/exercises`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -120,7 +120,7 @@ const SubjectDetail = () => {
   // Fetch all available exercises
   const fetchAllExercises = async () => {
     try {
-      const response = await axios.get(`https://localhost:7104/api/exercise`, {
+      const response = await axios.get(`${baseUrl}+exercise`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -139,7 +139,7 @@ const SubjectDetail = () => {
         TopicId: exercise.topicId, // Assuming exercise contains a `topicId` property
       };
       await axios.post(
-        `https://localhost:7104/api/subject/addExercise`,
+        `${baseUrl}+subject/addExercise`,
         addExerciseDTO,
         {
           headers: {

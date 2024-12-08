@@ -1,9 +1,11 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { DataGrid } from "@mui/x-data-grid";
 import { useNavigate } from "react-router-dom";
 import moment from "moment";
 import "../styles/homeStyles.css"; // Optional styles for the layout
+import { baseUrl } from "../util/constant";
 
 const Students = () => {
   const [students, setStudents] = useState([]);
@@ -19,7 +21,7 @@ const Students = () => {
   const fetchStudents = async () => {
     setLoading(true);
     try {
-      const response = await axios.get(`https://localhost:7104/api/student`, {
+      const response = await axios.get(baseUrl+`student`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -47,7 +49,7 @@ const Students = () => {
 
     try {
       const response = await axios.post(
-        `https://localhost:7104/api/student/import`,
+        baseUrl+`student/import`,
         formData,
         {
           headers: {

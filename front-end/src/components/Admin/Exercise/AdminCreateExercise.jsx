@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import {
@@ -14,6 +14,7 @@ import {
   InputLabel,
   FormControl,
 } from "@mui/material";
+import { baseUrl } from "../../../util/constant";
 
 const AdminCreateExercise = () => {
   const [formData, setFormData] = useState({
@@ -73,7 +74,7 @@ const AdminCreateExercise = () => {
       }
       console.log(formData);
       const headers = { Authorization: `Bearer ${token}` };
-      await axios.post("https://localhost:7104/api/exercise/create", formData, {
+      await axios.post(baseUrl+"exercise/create", formData, {
         headers,
       });
       alert("Exercise created successfully!");

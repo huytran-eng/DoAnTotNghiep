@@ -4,6 +4,7 @@ import axios from "axios"; // Use Axios for simplified HTTP requests
 import { DataGrid } from "@mui/x-data-grid";
 import "../styles/homeStyles.css"; // Optional styles for the layout
 import { useNavigate } from "react-router-dom";
+import { baseUrl } from "../util/constant";
 
 const Monhoc = () => {
   const [subjects, setSubjects] = useState([]);
@@ -21,7 +22,7 @@ const Monhoc = () => {
     console.log("here");
     setLoading(true);
     try {
-      const response = await axios.get(`https://localhost:7104/api/subject`, {
+      const response = await axios.get(baseUrl+`subject`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

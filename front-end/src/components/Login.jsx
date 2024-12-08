@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "../styles/formStyles.css"; // Ensure this file contains styles for the form
+import { baseUrl } from "../util/constant";
 
 const Login = () => {
   const [username, setUsername] = useState(""); // State for username
@@ -13,7 +14,7 @@ const Login = () => {
     setError(""); // Reset error message before new attempt
 
     try {
-      const response = await fetch("https://localhost:7104/api/User/login", {
+      const response = await fetch(baseUrl+"User/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username, password }),

@@ -5,7 +5,8 @@ import "../../../styles/homeStyles.css";
 import { useNavigate } from "react-router-dom";
 import moment from "moment";
 import { Typography, Box, Button } from "@mui/material";
-import { Visibility, Edit } from "@mui/icons-material";
+import { Visibility } from "@mui/icons-material";
+import { baseUrl } from "../../../util/constant";
 
 const AdminClassList = () => {
   const [classes, setClasses] = useState([]);
@@ -23,7 +24,7 @@ const AdminClassList = () => {
     setLoading(true);
     try {
       const response = await axios.get(
-        `https://localhost:7104/api/class/list`,
+        baseUrl+`class/list`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -80,7 +81,9 @@ const AdminClassList = () => {
   const handleCreateClass = () => {
     navigate("/admin/class/create");
   };
-
+  if (loading) {
+    return <div>Loading...</div>;
+  }
   return (
     <div className="content-container" style={{ padding: "20px" }}>
       <Typography variant="h4" component="h2" gutterBottom align="center">

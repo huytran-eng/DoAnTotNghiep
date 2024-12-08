@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
 import {
@@ -14,6 +14,7 @@ import {
   InputLabel,
   FormControl,
 } from "@mui/material";
+import { baseUrl } from "../../../util/constant";
 
 const AdminEditExercise = () => {
   const [formData, setFormData] = useState({
@@ -42,7 +43,7 @@ const AdminEditExercise = () => {
           throw new Error("User is not authenticated");
         }
         const headers = { Authorization: `Bearer ${token}` };
-        const response = await axios.get(`https://localhost:7104/api/exercise/${id}`, {
+        const response = await axios.get(baseUrl+`exercise/${id}`, {
           headers,
         });
         console.log(response.data)
@@ -98,7 +99,7 @@ const AdminEditExercise = () => {
         throw new Error("User is not authenticated");
       }
       const headers = { Authorization: `Bearer ${token}` };
-      await axios.post(`https://localhost:7104/api/exercise/edit/${id}`, formData, {
+      await axios.post(baseUrl+`exercise/edit/${id}`, formData, {
         headers,
       });
       alert("Exercise updated successfully!");

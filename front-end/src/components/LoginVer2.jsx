@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-
+import { baseUrl } from "../util/constant";
 const LoginVer2 = () => {
   const [username, setUsername] = useState(""); // State for username
   const [password, setPassword] = useState(""); // State for password
@@ -12,7 +12,7 @@ const LoginVer2 = () => {
     setError(""); // Reset error message before new attempt
 
     try {
-      const response = await fetch("https://localhost:7104/api/User/login", {
+      const response = await fetch(baseUrl+"User/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username, password }),

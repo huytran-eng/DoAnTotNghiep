@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useState, useEffect } from "react";
 import axios from "axios"; // Use Axios for simplified HTTP requests
 import { DataGrid } from "@mui/x-data-grid";
@@ -5,6 +6,8 @@ import "../../../styles/homeStyles.css";
 import { useNavigate } from "react-router-dom";
 import moment from "moment";
 import "../../../styles/studentClassList.css";
+import {baseUrl} from "../../../util/constant";
+
 const StudentClassList = () => {
   const [classes, setClasses] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -21,7 +24,7 @@ const StudentClassList = () => {
     setLoading(true);
     try {
       const response = await axios.get(
-        `https://localhost:7104/api/class/list`,
+        baseUrl+`class/list`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -93,7 +96,9 @@ const StudentClassList = () => {
   const handleViewDetails = (rowData) => {
     navigate(`/class/${rowData.id}`);
   };
-
+  if (loading) {
+    return <div>Loading...</div>;
+  }
   return (
     <div className="content-container" style={{ padding: "20px" }}>
       <h2 className="text-center display-6">Danh sách các lớp đang theo học</h2>

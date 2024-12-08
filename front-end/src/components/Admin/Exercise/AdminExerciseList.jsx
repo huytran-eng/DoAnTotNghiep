@@ -1,10 +1,13 @@
-import React, { useState, useEffect } from "react";
+/* eslint-disable react-hooks/exhaustive-deps */
+import { useState, useEffect } from "react";
 import axios from "axios";
 import { DataGrid } from "@mui/x-data-grid";
-import { Box, Typography, Tabs, Tab, Button, IconButton } from "@mui/material";
+import { Box, Typography, Button, IconButton } from "@mui/material";
 import moment from "moment";
-import { Navigate, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Visibility, Edit } from "@mui/icons-material";
+import { baseUrl } from "../../../util/constant";
+
 const AdminExerciseList = () => {
   const [exercises, setExercises] = useState([]); // List of exercises
   const [loading, setLoading] = useState(false); // Loading state
@@ -18,7 +21,7 @@ const AdminExerciseList = () => {
   const fetchExercises = async () => {
     setLoading(true);
     try {
-      const response = await axios.get("https://localhost:7104/api/exercise", {
+      const response = await axios.get(baseUrl+"exercise", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
