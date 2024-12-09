@@ -1,7 +1,6 @@
 /* eslint-disable react/prop-types */
 const SubmitResult = (props) => {
   const { output } = props;
-  console.log(output);
   
   return (
     <div

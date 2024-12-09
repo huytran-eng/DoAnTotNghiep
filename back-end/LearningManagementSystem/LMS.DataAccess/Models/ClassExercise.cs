@@ -11,5 +11,9 @@ namespace LMS.DataAccess.Models
         public Guid SubjectExerciseId { get; set; }
         [ForeignKey("SubjectExerciseId")]
         public virtual SubjectExercise SubjectExercise { get; set; }
+
+        public Guid ExerciseId { get; set; }
+        [ForeignKey("ExerciseId")]
+        public virtual Exercise Exercise { get; set; }
     }
 }

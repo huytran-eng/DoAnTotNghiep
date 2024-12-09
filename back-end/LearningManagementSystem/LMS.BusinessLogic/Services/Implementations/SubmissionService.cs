@@ -1,4 +1,5 @@
-﻿using LMS.BusinessLogic.DTOs;
+﻿using Azure;
+using LMS.BusinessLogic.DTOs;
 using LMS.BusinessLogic.DTOs.RequestDTO;
 using LMS.BusinessLogic.DTOs.ResponseDTO;
 using LMS.BusinessLogic.Services.Interfaces;
@@ -16,7 +17,7 @@ namespace LMS.BusinessLogic.Services.Implementations
     {
         private readonly IClassExerciseRepository _classExerciseRepository;
         private readonly ISubjectProgrammingLanguageRepository _subjectProgrammingLanguageRepository;
-        private readonly IStudentSubmissonRepository _studentSubmissonRepository;
+        private readonly IStudentSubmissonRepository _studentSubmissionRepository;
 
         public SubmissionService(IClassExerciseRepository classExerciseRepository,
                                  ISubjectProgrammingLanguageRepository subjectProgrammingLanguageRepository,
@@ -24,7 +25,7 @@ namespace LMS.BusinessLogic.Services.Implementations
         {
             _classExerciseRepository = classExerciseRepository;
             _subjectProgrammingLanguageRepository = subjectProgrammingLanguageRepository;
-            _studentSubmissonRepository = studentSubmissonRepository;
+            _studentSubmissionRepository = studentSubmissonRepository;
         }
 
         public async Task<CommonResult<StudentSubmissionResultDTO>> EvaluateSubmissionAsync(SubmitCodeDTO submissionDTO)
@@ -83,6 +84,7 @@ namespace LMS.BusinessLogic.Services.Implementations
                         var passedTestCases = result.TestCases.Count(r => r.Success);
                         var totalTestCases = result.TestCases.Count;
                         var highestExecutionTimeMs = result.TestCases.Max(tc => tc.ExecutionTime); // in ms
+                        var highestMemoryUsageMb = result.TestCases.Max(tc => tc.MemoryUsed);   
                         var timeLimitMs = exercise.TimeLimit * 1000; // Convert time limit to ms
 
                         StudentSubmissionStatus status;
@@ -117,11 +119,14 @@ namespace LMS.BusinessLogic.Services.Implementations
                             Code = submissionDTO.Code,
                             StudentId = submissionDTO.StudentId.Value,
                             ClassExerciseId = submissionDTO.ClassExerciseId,
+                            SubmitDate = DateTime.Now,
+                            ExecutionTime = highestExecutionTimeMs,
+                            MemoryUsed = highestMemoryUsageMb,
                             SubjectProgrammingLanguageId = submissionDTO.SubjectProgrammingLanguageId
                         };
 
-                        await _studentSubmissonRepository.AddAsync(studentSubmission);
-                        await _studentSubmissonRepository.SaveAsync();
+                        await _studentSubmissionRepository.AddAsync(studentSubmission);
+                        await _studentSubmissionRepository.SaveAsync();
                         return new CommonResult<StudentSubmissionResultDTO>
                         {
                             IsSuccess = true,
@@ -186,11 +191,61 @@ namespace LMS.BusinessLogic.Services.Implementations
             //};
         }
 
-        //private async Task<string> ExecuteUserCodeAsync(string userCode, string input)
-        //{
-        //    // Add actual code execution logic here
-        //    await Task.Delay(100);
-        //    return "PlaceholderOutput"; // Replace with actual execution result
-        //}
+
+        public async Task<CommonResult<IEnumerable<StudentSubmissionHistoryDTO>>> GetSubmissionsByClassExerciseAndStudentAsync(Guid classExerciseId, Guid studentId)
+        {
+            try
+            {
+                // Fetch submissions from the repository
+                var submissions = await _studentSubmissionRepository.GetSubmissionsByExerciseAndStudentAsync(classExerciseId, studentId);
+
+                if (submissions == null || !submissions.Any())
+                {
+                    return new CommonResult<IEnumerable<StudentSubmissionHistoryDTO>>
+                    {
+                        IsSuccess = false,
+                        Code = 404,
+                        Message = "Not found",
+                    };
+                }
+
+                // Map submissions to DTOs
+                var submissionDtos = submissions.Select(submission => new StudentSubmissionHistoryDTO
+                {
+                    SubmissionId = submission.Id,
+                    ExerciseId = submission.ClassExercise.ExerciseId,
+                    StudentId = submission.StudentId,
+                    SubmitDate = submission.SubmitDate,
+                    ExecutionTime = submission.ExecutionTime,
+                    MemoryUsed = submission.MemoryUsed,
+                    Status = (int)submission.Status,
+                    ProgrammingLanguage = submission.SubjectProgrammingLanguage.ProgrammingLanguage.Name,
+                    Code = submission.Code,
+                });
+
+                return new CommonResult<IEnumerable<StudentSubmissionHistoryDTO>>
+                {
+                    IsSuccess = true,
+                    Code = 200,
+                    Data = submissionDtos,
+                };
+            }
+            catch (Exception ex)
+            {
+                // Log exception (not shown for brevity)
+                return new CommonResult<IEnumerable<StudentSubmissionHistoryDTO>>
+                {
+                    IsSuccess = false,
+                    Code = 500,
+                    Message = "Server error",
+                };
+            }
+        }
+        private async Task<string> ExecuteUserCodeAsync(string userCode, string input)
+        {
+            // Add actual code execution logic here
+            await Task.Delay(100);
+            return "PlaceholderOutput"; // Replace with actual execution result
+        }
     }
 }

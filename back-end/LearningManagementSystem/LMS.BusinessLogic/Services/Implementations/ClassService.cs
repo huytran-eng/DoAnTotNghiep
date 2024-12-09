@@ -585,7 +585,8 @@ namespace LMS.BusinessLogic.Services.Implementations
                 {
                     Id = Guid.NewGuid(),
                     ClassTopicOpenId = classTopicOpen.Id,
-                    SubjectExerciseId = e.Id
+                    SubjectExerciseId = e.Id,
+                    ExerciseId = e.ExerciseId,
                 }).ToList();
 
                 await _classExerciseRepository.AddRangeAsync(classTopicExercises);

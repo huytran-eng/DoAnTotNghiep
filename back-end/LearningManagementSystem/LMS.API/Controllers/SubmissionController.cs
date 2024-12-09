@@ -45,6 +45,35 @@ namespace LMS.API.Controllers
                 };
             }
         }
+
+        [HttpGet("history/{classExerciseId:guid}")]
+        [Authorize(Roles = "Student")]
+        public async Task<IActionResult> GetSubmissionHistory(Guid classExerciseId)
+        {
+            // Validate that the user has access to view this data
+            var currentUserId = GetCurrentUserId();
+            if (currentUserId == null)
+            {
+                return Unauthorized("Access denied.");
+            }
+
+            // Retrieve the submission history
+            var result = await _submissionService.GetSubmissionsByClassExerciseAndStudentAsync(classExerciseId, currentUserId.Value);
+
+            // Handle the result
+            if (result.IsSuccess)
+            {
+                return Ok(result.Data);
+            }
+            return result.Code switch
+            {
+                400 => BadRequest(result.Message),
+                404 => NotFound(result.Message),
+                _ => StatusCode(500, result.Message)
+            };
+        }
+
+
         private Guid? GetCurrentUserId()
         {
             var userIdClaim = User.FindFirst("UserId")?.Value;

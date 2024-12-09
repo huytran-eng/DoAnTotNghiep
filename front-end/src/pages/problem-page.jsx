@@ -14,6 +14,7 @@ export default function ProblemPage() {
   const [activeTab, setActiveTab] = useState("description");
   const { classExerciseId } = useParams();
   const [problem, setProblem] = useState(null); // State for the fetched data
+  const [submissionHistory, setSubmitHistory] = useState(null);
   const [isLoading, setIsLoading] = useState(false); // State for the loading status
   const token = localStorage.getItem("token"); // Retrieve JWT token
   const [error, setError] = useState(null); // State for any errors
@@ -35,7 +36,6 @@ export default function ProblemPage() {
           }
         );
         setProblem(response.data); // Store the fetched data in state
-
       } catch (err) {
         setError(err.message || "Failed to fetch data."); // Handle any errors
       } finally {
@@ -45,6 +45,37 @@ export default function ProblemPage() {
 
     fetchData(); // Call the async function
   }, []);
+
+  useEffect(() => {
+    if (!classExerciseId) return; // Prevent fetching if no ID is provided
+
+    const fetchSubmissonData = async () => {
+      setIsLoading(true); // Set loading to true before fetching
+      setError(null); // Reset error state
+
+      try {
+        const response = await axios.get(
+          `https://localhost:7104/api/submission/history/${classExerciseId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        console.log(response.data);
+        setSubmitHistory(response.data); // Store the fetched data in state
+      } catch (err) {
+        setError(err.message || "Failed to fetch data."); // Handle any errors
+      } finally {
+        setIsLoading(false); // Set loading to false after fetching
+      }
+    };
+
+    if (activeTab === "submissions") {
+      fetchSubmissonData();
+    }
+  }, [activeTab]);
+
   const {
     code,
     language,
@@ -120,7 +151,17 @@ export default function ProblemPage() {
               ) : (
                 <div>Loading problem description...</div>
               ))}
-            {activeTab === "submissions" && <SubmitHistory />}
+
+            {activeTab === "submissions" &&
+              (isLoading === false ? (
+                submissionHistory && submissionHistory.length > 0 ? (
+                  <SubmitHistory submissionHistory={submissionHistory} />
+                ) : (
+                  <div>No submissions found</div>
+                )
+              ) : (
+                <div>Loading problem description...</div>
+              ))}
           </div>
         </div>
 
