@@ -4,12 +4,13 @@ import axios from "axios";
 import { Box, Typography, Button } from "@mui/material";
 import { useNavigate, useParams } from "react-router-dom";
 import moment from "moment";
-
+import { baseUrl } from "../util/constant";
 const ExerciseDetail = () => {
   const { id } = useParams(); // Get exercise ID from URL
   const [exercise, setExercise] = useState(null);
   const [loading, setLoading] = useState(false);
   const token = localStorage.getItem("token");
+
   const navigate = useNavigate();
 
   // Fetch exercise details
@@ -21,7 +22,7 @@ const ExerciseDetail = () => {
     setLoading(true);
     try {
       const response = await axios.get(
-        `https://localhost:7104/api/exercise/${id}`,
+        baseUrl+`exercise/${id}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,

@@ -1,10 +1,13 @@
-import React, { useState, useEffect } from "react";
+/* eslint-disable react-hooks/exhaustive-deps */
+import { useState, useEffect } from "react";
 import axios from "axios";
 import { DataGrid } from "@mui/x-data-grid";
 import { Box, Typography, Tabs, Tab, Grid } from "@mui/material";
 import { useParams, useNavigate } from "react-router-dom";
 import moment from "moment";
 import { DataGridPro } from "@mui/x-data-grid-pro";
+import {baseUrl} from "../../../util/constant";
+
 const StudentClassDetail = () => {
   const [activeTab, setActiveTab] = useState(0); // Track active tab index
   const [classDetails, setClassDetails] = useState(null); // Class details data
@@ -34,7 +37,7 @@ const StudentClassDetail = () => {
     try {
       console.log(id);
       const response = await axios.get(
-        `https://localhost:7104/api/class/${id}`,
+        baseUrl+`class/${id}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -51,7 +54,7 @@ const StudentClassDetail = () => {
     setLoading(true);
     try {
       const response = await axios.get(
-        `https://localhost:7104/api/class/${id}/students`,
+        baseUrl+`class/${id}/students`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -70,7 +73,7 @@ const StudentClassDetail = () => {
     setLoading(true);
     try {
       const response = await axios.get(
-        `https://localhost:7104/api/class/${id}/topics`,
+        baseUrl+`class/${id}/topics`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -100,7 +103,7 @@ const StudentClassDetail = () => {
     setLoading(true);
     try {
       // const response = await axios.get(
-      //   `https://localhost:7104/api/class/${id}/materials`,
+      //   baseUrl+`class/${id}/materials`,
       //   {
       //     headers: {
       //       Authorization: `Bearer ${token}`,

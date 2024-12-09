@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from "react";
+/* eslint-disable react-hooks/exhaustive-deps */
+import { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import {
@@ -9,8 +10,8 @@ import {
   TextField,
   Typography,
   CircularProgress,
-  FormControlLabel,
 } from "@mui/material";
+import { baseUrl } from "../../../util/constant";
 
 const CreateClass = () => {
   const [formData, setFormData] = useState({
@@ -37,8 +38,8 @@ const CreateClass = () => {
         const headers = { Authorization: `Bearer ${token}` };
 
         const [teacherResponse, subjectResponse] = await Promise.all([
-          axios.get("https://localhost:7104/api/teacher", { headers }),
-          axios.get("https://localhost:7104/api/subject", { headers }),
+          axios.get(baseUrl+"teacher", { headers }),
+          axios.get(baseUrl+"subject", { headers }),
         ]);
         setTeachers(teacherResponse.data);
         setSubjects(subjectResponse.data);
@@ -88,7 +89,7 @@ const CreateClass = () => {
         data.append("file", excelFile);
       }
       console.log(data);
-      await axios.post("https://localhost:7104/api/class/create", data, {
+      await axios.post(baseUrl+"class/create", data, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "multipart/form-data", // Make sure the content type is multipart

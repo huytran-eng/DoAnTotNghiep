@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from "react";
+/* eslint-disable react-hooks/exhaustive-deps */
+import { useState, useEffect } from "react";
 import axios from "axios"; // Use Axios for simplified HTTP requests
 import { DataGrid } from "@mui/x-data-grid";
 import { useNavigate } from "react-router-dom";
@@ -6,14 +7,11 @@ import "../../../styles/homeStyles.css";
 import {
   Box,
   Typography,
-  Tabs,
-  Tab,
-  Select,
-  MenuItem,
   Button,
-  Grid,
 } from "@mui/material";
-import { Visibility, Edit } from "@mui/icons-material";
+import { Visibility} from "@mui/icons-material";
+import {baseUrl} from "../../../util/constant";
+
 const AdminSubjectList = () => {
   const [subjects, setSubjects] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -31,7 +29,7 @@ const AdminSubjectList = () => {
     console.log("here");
     setLoading(true);
     try {
-      const response = await axios.get(`https://localhost:7104/api/subject`, {
+      const response = await axios.get(baseUrl+`subject`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from "react";
+/* eslint-disable react-hooks/exhaustive-deps */
+import { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import {
@@ -7,10 +8,9 @@ import {
   Typography,
   Select,
   MenuItem,
-  Grid,
   Box,
 } from "@mui/material";
-
+import {baseUrl} from "../../../util/constant";
 const AdminCreateSubject = () => {
   const [departments, setDepartments] = useState([]);
   const [programmingLanguages, setProgrammingLanguages] = useState([]);
@@ -35,7 +35,7 @@ const AdminCreateSubject = () => {
   const fetchDepartments = async () => {
     try {
       const response = await axios.get(
-        "https://localhost:7104/api/Department/GetAll",
+        baseUrl+"Department/GetAll",
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -55,7 +55,7 @@ const AdminCreateSubject = () => {
   const fetchProgrammingLanguages = async () => {
     try {
       const response = await axios.get(
-        "https://localhost:7104/api/ProgrammingLanguage/GetAll",
+        baseUrl+"ProgrammingLanguage/GetAll",
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -113,7 +113,7 @@ const AdminCreateSubject = () => {
     try {
       console.log("tao lop hoc");
       console.log(subject);
-      await axios.post("https://localhost:7104/api/subject/create", subject, {
+      await axios.post(baseUrl+"subject/create", subject, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

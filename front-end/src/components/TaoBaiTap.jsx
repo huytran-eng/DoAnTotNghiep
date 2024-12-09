@@ -12,6 +12,7 @@ import {
   FormControlLabel,
   Checkbox,
 } from "@mui/material";
+import { baseUrl } from "../util/constant";
 
 const CreateExercise = () => {
   const [formData, setFormData] = useState({
@@ -71,7 +72,7 @@ const CreateExercise = () => {
       }
       console.log(formData)
       const headers = { Authorization: `Bearer ${token}` };
-      await axios.post("https://localhost:7104/api/exercise/create", formData, {
+      await axios.post(baseUrl+"exercise/create", formData, {
         headers,
       });
       alert("Exercise created successfully!");
