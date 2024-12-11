@@ -29,7 +29,7 @@ export default function ProblemPage() {
 
       try {
         const response = await axios.get(
-          baseUrl+`lass/exercise/${classExerciseId}`,
+          baseUrl+`class/exercise/${classExerciseId}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -63,7 +63,6 @@ export default function ProblemPage() {
             },
           }
         );
-        console.log(response.data);
         setSubmitHistory(response.data); // Store the fetched data in state
       } catch (err) {
         setError(err.message || "Failed to fetch data."); // Handle any errors

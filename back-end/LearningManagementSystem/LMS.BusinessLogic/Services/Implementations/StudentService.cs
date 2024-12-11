@@ -1,10 +1,12 @@
 ﻿using LMS.BusinessLogic.DTOs;
+using LMS.BusinessLogic.DTOs.ResponseDTO;
 using LMS.BusinessLogic.Services.Interfaces;
 using LMS.Core;
 using LMS.Core.Enums;
 using LMS.Core.Helper;
 using LMS.DataAccess.Models;
 using LMS.DataAccess.Repositories;
+using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages.Manage;
 using OfficeOpenXml;
 using System.Globalization;
 using System.Text;
@@ -16,13 +18,15 @@ namespace LMS.BusinessLogic.Services.Implementations
         private readonly IStudentRepository _studentRepository;
         private readonly IUserRepository _userRepository;
         private readonly IClassRepository _classRepository;
+        private readonly IStudentSubmissonRepository _studentSubmissionRepository;
 
 
-        public StudentService(IStudentRepository studentRepository, IUserRepository userRepository, IClassRepository classRepository)
+        public StudentService(IStudentRepository studentRepository, IUserRepository userRepository, IClassRepository classRepository, IStudentSubmissonRepository studentSubmissionRepository)
         {
             _studentRepository = studentRepository;
             _userRepository = userRepository;
             _classRepository = classRepository;
+            _studentSubmissionRepository = studentSubmissionRepository;
         }
 
         public async Task<CommonResult<IEnumerable<ClassDTO>>> GetClassesForStudent(Guid studentId, string? search, string? sortBy, bool descending)
@@ -319,7 +323,7 @@ namespace LMS.BusinessLogic.Services.Implementations
             }
         }
 
-        public async Task<CommonResult<List<StudentDTO>>> GetStudentsForClass(Guid classId, Guid userId)
+        public async Task<CommonResult<List<StudentClassListDTO>>> GetStudentsForClass(Guid classId, Guid userId)
         {
             try
             {
@@ -327,7 +331,7 @@ namespace LMS.BusinessLogic.Services.Implementations
                 var currentUserInfo = await _userRepository.GetByIdAsync(userId);
                 if (currentUserInfo == null)
                 {
-                    return new CommonResult<List<StudentDTO>>
+                    return new CommonResult<List<StudentClassListDTO>>
                     {
                         IsSuccess = false,
                         Code = 404,
@@ -339,7 +343,7 @@ namespace LMS.BusinessLogic.Services.Implementations
 
                 if (students == null || students.Count() < 1)
                 {
-                    return new CommonResult<List<StudentDTO>>
+                    return new CommonResult<List<StudentClassListDTO>>
                     {
                         IsSuccess = false,
                         Code = 404,
@@ -348,34 +352,119 @@ namespace LMS.BusinessLogic.Services.Implementations
 
                 }
 
+                var studentListDTO = new List<StudentClassListDTO>();
 
-                var studentListDTO = students.Select(s => new StudentDTO
+                foreach (var student in students)
                 {
-                    Id = s.Id,
-                    StudentIdString = s.StudentIdString,
-                    Name = s.User.Name,
-                    BirthDate = s.User.BirthDate,
-                    Email = s.User.Email,
-                    Address = s.User.Address,
-                    Phone = s.User.Phone
-                }).ToList();
+                    var submissions = await _studentSubmissionRepository.GetSubmissionsByStudentIdAndClassIdAsync(student.Id, classId);
 
-                return new CommonResult<List<StudentDTO>>
+                    // Group submissions by ExerciseId
+                    var groupedSubmissions = submissions.GroupBy(s => s.ClassExercise.ExerciseId);
+
+                    var exercisesDone = groupedSubmissions.Count();
+                    var exercisesCorrect = groupedSubmissions.Count(g => g.Any(s => s.Status == 0));
+
+
+                    studentListDTO.Add(new StudentClassListDTO
+                    {
+                        Id = student.Id,
+                        StudentIdString = student.StudentIdString,
+                        Name = student.User.Name,
+                        ExercisesDone = exercisesDone,
+                        ExercisesCorrect = exercisesCorrect
+                    });
+                }
+
+                return new CommonResult<List<StudentClassListDTO>>
                 {
                     IsSuccess = true,
                     Code = 200,
                     Data = studentListDTO
                 };
-
-
             }
             catch (Exception e)
             {
-                return new CommonResult<List<StudentDTO>>
+                return new CommonResult<List<StudentClassListDTO>>
                 {
                     IsSuccess = false,
                     Code = 500,
                     Message = $"Error when getting students list {e}"
+                };
+            }
+        }
+
+        public async Task<CommonResult<StudentClassDetailDTO>> GetStudentForClass(Guid classId, Guid studentId, Guid userId)
+        {
+            try
+            {
+                // Get the user info
+                var currentUserInfo = await _userRepository.GetByIdAsync(userId);
+                if (currentUserInfo == null)
+                {
+                    return new CommonResult<StudentClassDetailDTO>
+                    {
+                        IsSuccess = false,
+                        Code = 404,
+                        Message = "User not found."
+                    };
+                }
+
+                // Get the student details by studentId and classId
+                var student = await _studentRepository.GetByIdAsync(studentId);
+
+                if (student == null)
+                {
+                    return new CommonResult<StudentClassDetailDTO>
+                    {
+                        IsSuccess = false,
+                        Code = 404,
+                        Message = "Student not found"
+                    };
+                }
+
+                var classDetails = await _classRepository.GetByIdAsync(classId); // Assuming _classRepository is your class repository
+                if (classDetails == null)
+                {
+                    return new CommonResult<StudentClassDetailDTO>
+                    {
+                        IsSuccess = false,
+                        Code = 404,
+                        Message = "Class not found."
+                    };
+                }
+
+                var submissions = await _studentSubmissionRepository.GetSubmissionsByStudentIdAndClassIdAsync(student.Id, classId);
+
+                // Group submissions by ExerciseId
+                var groupedSubmissions = submissions.GroupBy(s => s.ClassExercise.ExerciseId);
+
+                var exercisesDone = groupedSubmissions.Count();
+                var exercisesCorrect = groupedSubmissions.Count(g => g.Any(s => s.Status == 0));
+
+                var studentDTO = new StudentClassDetailDTO
+                {
+                    Id = student.Id,
+                    StudentIdString = student.StudentIdString,
+                    ExercisesDone = exercisesDone,
+                    ExercisesCorrect = exercisesCorrect,
+                    ClassName = classDetails.Name,
+                    SubjectName = classDetails.Subject.Name
+                };
+
+                return new CommonResult<StudentClassDetailDTO>
+                {
+                    IsSuccess = true,
+                    Code = 200,
+                    Data = studentDTO
+                };
+            }
+            catch (Exception e)
+            {
+                return new CommonResult<StudentClassDetailDTO>
+                {
+                    IsSuccess = false,
+                    Code = 500,
+                    Message = $"Error when getting student details: {e}"
                 };
             }
         }

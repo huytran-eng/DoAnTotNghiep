@@ -17,17 +17,20 @@ namespace LMS.API.Controllers
         private readonly IUserService _userService;
         private readonly IExerciseService _exerciseService;
         private readonly IProgrammingLanguageService _programmingLanguageService;
+        private readonly IStudentSubmissionService _studentSubmissionService;
         public ClassController(IClassService classService,
-            IUserService userService, 
-            IStudentService studentService, 
-            IExerciseService exerciseService, 
-            IProgrammingLanguageService programmingLanguageService)
+            IUserService userService,
+            IStudentService studentService,
+            IExerciseService exerciseService,
+            IProgrammingLanguageService programmingLanguageService,
+            IStudentSubmissionService studentSubmissionService)
         {
             _classService = classService;
             _userService = userService;
             _studentService = studentService;
             _exerciseService = exerciseService;
             _programmingLanguageService = programmingLanguageService;
+            _studentSubmissionService = studentSubmissionService;
         }
 
 
@@ -154,7 +157,7 @@ namespace LMS.API.Controllers
             }
         }
 
-        
+
 
         [Authorize]
         [HttpGet("{id}/topics")]
@@ -218,6 +221,39 @@ namespace LMS.API.Controllers
             }
         }
 
+       
+
+        [Authorize]
+        [HttpGet("{id}/student-submission/{studentId}")]
+        public async Task<IActionResult> GetStudentSubmissionsForClass(Guid id, Guid studentId)
+        {
+
+            var userId = GetCurrentUserId();
+            if (userId == null)
+            {
+                return Unauthorized("UserId not found or invalid.");
+            }
+
+            // Call the service method to open the class topic
+            var result = await _studentSubmissionService.GetSubmissionsByClassAndStudentAsync(id, studentId, userId.Value);
+
+            // Check if the result is successful
+            if (result.IsSuccess)
+            {
+                return Ok(result.Data);
+            }
+            else
+            {
+                return result.Code switch
+                {
+                    400 => BadRequest(result.Message),
+                    404 => BadRequest(result.Message),
+                    403 => BadRequest(result.Message),
+                    _ => StatusCode(500, result.Message)
+                };
+            }
+        }
+
         [Authorize(Roles = "Student")]
         [HttpGet("exercise/{id}")]
         public async Task<IActionResult> GetClassExerciseForStudent(Guid id)
@@ -231,6 +267,37 @@ namespace LMS.API.Controllers
 
             // Call the service method to open the class topic
             var result = await _exerciseService.GetClassExerciseForStudent(id, userId.Value);
+
+            // Check if the result is successful
+            if (result.IsSuccess)
+            {
+                return Ok(result.Data);
+            }
+            else
+            {
+                return result.Code switch
+                {
+                    400 => BadRequest(result.Message),
+                    404 => BadRequest(result.Message),
+                    403 => BadRequest(result.Message),
+                    _ => StatusCode(500, result.Message)
+                };
+            }
+        }
+
+        [Authorize(Roles = "Student")]
+        [HttpGet("{id}/student/{studentId}")]
+        public async Task<IActionResult> GetStudentDetailForClass(Guid id, Guid studentId)
+        {
+
+            var userId = GetCurrentUserId();
+            if (userId == null)
+            {
+                return Unauthorized("UserId not found or invalid.");
+            }
+
+            // Call the service method to open the class topic
+            var result = await _studentService.GetStudentForClass(id, studentId, userId.Value);
 
             // Check if the result is successful
             if (result.IsSuccess)

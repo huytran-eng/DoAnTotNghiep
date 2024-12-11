@@ -7,11 +7,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LMS.API", "LMS.API\LMS.API.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LMS.BusinessLogic", "LMS.BusinessLogic\LMS.BusinessLogic.csproj", "{99382AB7-1A81-45E6-9D0C-7B277CCAD84D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LMS.Core", "LMS.Core\LMS.Core.csproj", "{04312730-6670-499E-96BA-57A1CFA6C24B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LMS.Core", "LMS.Core\LMS.Core.csproj", "{04312730-6670-499E-96BA-57A1CFA6C24B}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LMS.DataAccess", "LMS.DataAccess\LMS.DataAccess.csproj", "{18442631-3515-4DB6-95B3-85B02D03A1A5}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{820AE5A4-9646-4949-A195-B0BC1A732DEF}"
+EndProject
+Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{73C61D18-490B-4A3E-ABE8-E0170D207BDA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -35,6 +37,10 @@ Global
 		{18442631-3515-4DB6-95B3-85B02D03A1A5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{18442631-3515-4DB6-95B3-85B02D03A1A5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{18442631-3515-4DB6-95B3-85B02D03A1A5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{73C61D18-490B-4A3E-ABE8-E0170D207BDA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{73C61D18-490B-4A3E-ABE8-E0170D207BDA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{73C61D18-490B-4A3E-ABE8-E0170D207BDA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{73C61D18-490B-4A3E-ABE8-E0170D207BDA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

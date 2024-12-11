@@ -5,9 +5,10 @@ using LMS.DataAccess.Models;
 
 namespace LMS.BusinessLogic.Services.Interfaces
 {
-    public interface ISubmissionService
+    public interface IStudentSubmissionService
     {
         Task<CommonResult<StudentSubmissionResultDTO>> EvaluateSubmissionAsync(SubmitCodeDTO submissionDTO);
         Task<CommonResult<IEnumerable<StudentSubmissionHistoryDTO>>> GetSubmissionsByClassExerciseAndStudentAsync(Guid exerciseId, Guid studentId);
+        Task<CommonResult<IEnumerable<StudentSubmissionHistoryDTO>>> GetSubmissionsByClassAndStudentAsync(Guid classId, Guid studentId, Guid userId);
     }
 }

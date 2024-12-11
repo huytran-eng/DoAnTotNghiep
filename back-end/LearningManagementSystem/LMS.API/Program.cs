@@ -1,9 +1,5 @@
 using LMS.API;
-using LMS.BusinessLogic.Services.Implementations;
-using LMS.BusinessLogic.Services.Interfaces;
-using LMS.Core.Enums;
 using LMS.DataAccess.Models;
-using LMS.DataAccess.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -91,6 +87,6 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
-
+app.MapGet("/docker-check", () => "Docker is working! This API is running in a container.");
 
 app.Run();

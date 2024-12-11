@@ -1,0 +1,23 @@
+services:
+  lms.api:
+    container_name: LMS-app
+    image: ${DOCKER_REGISTRY-}lmsapi
+    build:
+      context: .
+      dockerfile: LMS.API/Dockerfile
+    ports:
+        - 8001:80
+    depends_on:
+        - db
+  db:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: sqlserver-container
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=M@tkh4umo1
+    ports:
+      - "1433:1433"  # SQL Server port
+    volumes:
+      - sql_data:/var/opt/mssql
+volumes:
+  sql_data:

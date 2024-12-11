@@ -13,19 +13,23 @@ using System.Text.Json;
 
 namespace LMS.BusinessLogic.Services.Implementations
 {
-    public class SubmissionService : ISubmissionService
+    public class StudentSubmissionService : IStudentSubmissionService
     {
         private readonly IClassExerciseRepository _classExerciseRepository;
         private readonly ISubjectProgrammingLanguageRepository _subjectProgrammingLanguageRepository;
         private readonly IStudentSubmissonRepository _studentSubmissionRepository;
+        private readonly IUserRepository _userRepository;
 
-        public SubmissionService(IClassExerciseRepository classExerciseRepository,
+
+        public StudentSubmissionService(IClassExerciseRepository classExerciseRepository,
                                  ISubjectProgrammingLanguageRepository subjectProgrammingLanguageRepository,
-                                 IStudentSubmissonRepository studentSubmissonRepository)
+                                 IStudentSubmissonRepository studentSubmissonRepository,
+                                  IUserRepository userRepository)
         {
             _classExerciseRepository = classExerciseRepository;
             _subjectProgrammingLanguageRepository = subjectProgrammingLanguageRepository;
             _studentSubmissionRepository = studentSubmissonRepository;
+            _userRepository = userRepository;
         }
 
         public async Task<CommonResult<StudentSubmissionResultDTO>> EvaluateSubmissionAsync(SubmitCodeDTO submissionDTO)
@@ -84,7 +88,7 @@ namespace LMS.BusinessLogic.Services.Implementations
                         var passedTestCases = result.TestCases.Count(r => r.Success);
                         var totalTestCases = result.TestCases.Count;
                         var highestExecutionTimeMs = result.TestCases.Max(tc => tc.ExecutionTime); // in ms
-                        var highestMemoryUsageMb = result.TestCases.Max(tc => tc.MemoryUsed);   
+                        var highestMemoryUsageMb = result.TestCases.Max(tc => tc.MemoryUsed);
                         var timeLimitMs = exercise.TimeLimit * 1000; // Convert time limit to ms
 
                         StudentSubmissionStatus status;
@@ -168,27 +172,6 @@ namespace LMS.BusinessLogic.Services.Implementations
                     };
                 }
             }
-            //var testCaseResults = new List<TestCaseResult>();
-
-            //foreach (var testCase in exercise.TestCases)
-            //{
-            //    var actualOutput = await ExecuteUserCodeAsync(submission.UserCode, testCase.Input);
-
-            //    testCaseResults.Add(new TestCaseResult
-            //    {
-            //        Input = testCase.Input,
-            //        ExpectedOutput = testCase.ExpectedOutput,
-            //        ActualOutput = actualOutput,
-            //        Passed = actualOutput == testCase.ExpectedOutput
-            //    });
-            //}
-
-            //return new SubmissionResult
-            //{
-            //    ExerciseId = exercise.Id,
-            //    IsSuccessful = testCaseResults.All(t => t.Passed),
-            //    TestCaseResults = testCaseResults
-            //};
         }
 
 
@@ -241,11 +224,68 @@ namespace LMS.BusinessLogic.Services.Implementations
                 };
             }
         }
-        private async Task<string> ExecuteUserCodeAsync(string userCode, string input)
+
+        public async Task<CommonResult<IEnumerable<StudentSubmissionHistoryDTO>>> GetSubmissionsByClassAndStudentAsync(Guid classId, Guid studentId, Guid userId)
         {
-            // Add actual code execution logic here
-            await Task.Delay(100);
-            return "PlaceholderOutput"; // Replace with actual execution result
+            try
+            {
+                var currentUserInfo = await _userRepository.GetByIdAsync(userId);
+                if (currentUserInfo == null)
+                {
+                    return new CommonResult<IEnumerable<StudentSubmissionHistoryDTO>>
+                    {
+                        IsSuccess = false,
+                        Code = 404,
+                        Message = "User not found."
+                    };
+                }
+
+                bool isAdmin = currentUserInfo.Position == PositionEnum.Admin;
+
+                // Fetch submissions from the repository for the given classId and studentId
+                var submissions = await _studentSubmissionRepository.GetSubmissionsByStudentIdAndClassIdAsync(studentId, classId);
+
+                if (submissions == null || !submissions.Any())
+                {
+                    return new CommonResult<IEnumerable<StudentSubmissionHistoryDTO>>
+                    {
+                        IsSuccess = false,
+                        Code = 404,
+                        Message = "No submissions found for the given class and student.",
+                    };
+                }
+
+                // Map submissions to DTOs
+                var submissionDtos = submissions.Select(submission => new StudentSubmissionHistoryDTO
+                {
+                    SubmissionId = submission.Id,
+                    ExerciseId = submission.ClassExercise.ExerciseId,
+                    StudentId = submission.StudentId,
+                    SubmitDate = submission.SubmitDate,
+                    ExecutionTime = submission.ExecutionTime,
+                    MemoryUsed = submission.MemoryUsed,
+                    Status = (int)submission.Status,
+                    ProgrammingLanguage = submission.SubjectProgrammingLanguage.ProgrammingLanguage.Name,
+                    Code = isAdmin ? submission.Code : null, 
+                });
+
+                return new CommonResult<IEnumerable<StudentSubmissionHistoryDTO>>
+                {
+                    IsSuccess = true,
+                    Code = 200,
+                    Data = submissionDtos,
+                };
+            }
+            catch (Exception ex)
+            {
+                // Log exception (not shown for brevity)
+                return new CommonResult<IEnumerable<StudentSubmissionHistoryDTO>>
+                {
+                    IsSuccess = false,
+                    Code = 500,
+                    Message = "Server error occurred while retrieving submissions.",
+                };
+            }
         }
     }
 }

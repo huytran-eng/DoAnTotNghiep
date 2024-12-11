@@ -10,8 +10,8 @@ namespace LMS.API.Controllers
     [ApiController]
     public class SubmissionController : Controller
     {
-        private readonly ISubmissionService _submissionService;
-        public SubmissionController(ISubmissionService submissionService)
+        private readonly IStudentSubmissionService _submissionService;
+        public SubmissionController(IStudentSubmissionService submissionService)
         {
             _submissionService = submissionService;
         }

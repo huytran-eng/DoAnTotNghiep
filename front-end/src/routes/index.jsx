@@ -22,6 +22,8 @@ import AdminStudentList from "../components/Admin/Student/AdminStudentList";
 // Students components import
 import StudentClassList from "../components/Student/Class/StudentClassList";
 import StudentClassDetail from "../components/Student/Class/StudentClassDetail";
+import StudentDetailForClass from "../components/Student/Class/StudentDetailForClass";
+
 import UnauthorisedPage from "../pages/unauthorised-page";
 
 // import AdminDetail from "../components/Admin/Class/AdminClassDetail";
@@ -32,9 +34,10 @@ const paths = [
     path: "/",
     element: <StudentPrivateRoute />, // Protected routes for student
     children: [
-      { path: "/class", element: <StudentClassList /> },
-      { path: "/class/:id", element: <StudentClassDetail /> },
+      { path: "class", element: <StudentClassList /> },
+      { path: "class/:id", element: <StudentClassDetail /> },
       { path: "class/:id/exercise/:classExerciseId", element: <ProblemPage /> },
+      { path: "class/:id/student/:studentId", element: <StudentDetailForClass /> },
     ],
   },
   {

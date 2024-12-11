@@ -1,4 +1,5 @@
 ﻿using LMS.BusinessLogic.DTOs;
+using LMS.BusinessLogic.DTOs.ResponseDTO;
 using LMS.Core;
 
 namespace LMS.BusinessLogic.Services.Interfaces
@@ -14,6 +15,7 @@ namespace LMS.BusinessLogic.Services.Interfaces
            int page,
            int pageSize,
            Guid userId);
-        Task<CommonResult<List<StudentDTO>>> GetStudentsForClass(Guid classId, Guid userId);
+        Task<CommonResult<List<StudentClassListDTO>>> GetStudentsForClass(Guid classId, Guid userId);
+        Task<CommonResult<StudentClassDetailDTO>> GetStudentForClass(Guid classId, Guid studentId, Guid userId);
     }
 }

@@ -39,7 +39,7 @@ namespace LMS.API
             services.AddScoped<ISubjectService, SubjectService>();
             services.AddScoped<ITeacherService, TeacherService>();
             services.AddScoped<IProgrammingLanguageService, ProgrammingLanguageService>();
-            services.AddScoped<ISubmissionService, SubmissionService>();
+            services.AddScoped<IStudentSubmissionService, StudentSubmissionService>();
             services.AddScoped<IDepartmentService, DepartmentService>();
 
 
