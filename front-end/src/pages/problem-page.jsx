@@ -87,7 +87,7 @@ export default function ProblemPage() {
     setLanguageId,
   } = useCodeEditor();
   return (
-    <div className="h-screen max-h-screen flex flex-col overflow-hidden">
+    <div className="h-[calc(100vh-64px)] max-h-[calc(100vh-64px)] flex flex-col overflow-hidden">
       <div className=" flex-1 max-h-[calc(100vh-64px)] grid grid-cols-2 gap-2 p-3 bg-[rgb(240_240_240_/0.5)]">
         {/* Left Panel */}
         <div className="border flex flex-col border-gray-300 rounded-lg bg-white max-h-[calc(100vh-70px)] shadow-md">

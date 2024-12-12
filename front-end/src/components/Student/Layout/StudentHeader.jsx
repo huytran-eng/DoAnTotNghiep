@@ -2,21 +2,14 @@ import * as React from "react";
 import {
   AppBar,
   Toolbar,
-  IconButton,
-  Typography,
   Button,
   Menu,
   MenuItem,
   Box,
 } from "@mui/material";
 import { useEffect, useState } from "react";
-import {
-  Menu as MenuIcon,
-  ExitToApp as ExitToAppIcon,
-} from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import logoPtit from "../../../assets/image/logo/Logo_PTIT.jpg";
-import { red } from "@mui/material/colors";
 
 export function StudentHeader() {
   const navigate = useNavigate();
@@ -66,7 +59,6 @@ export function StudentHeader() {
           <img
             src={logoPtit}
             alt="logo"
-            className="w-20 h-20"
             style={{ maxWidth: "40px", maxHeight: "40px" }}
           />
         </Box>
