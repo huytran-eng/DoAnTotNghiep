@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "Q6y3SVa7G6c9hQ6IeZfywrZWof4QbIN+96jDbLIbIXD4Aiity70ufVX9/Q26PZz6MW2sap//g2Bj1esKzrVrTg==",
+  "dgSpecHash": "c/pabYysfcc=",
   "success": true,
-  "projectFilePath": "C:\\PTIT\\Đồ án\\code\\back-end\\LearningManagementSystem\\LMS.Core\\LMS.Core.csproj",
+  "projectFilePath": "C:\\DoAnTotNghiep\\back-end\\LearningManagementSystem\\LMS.Core\\LMS.Core.csproj",
   "expectedPackageFiles": [],
   "logs": []
 }
