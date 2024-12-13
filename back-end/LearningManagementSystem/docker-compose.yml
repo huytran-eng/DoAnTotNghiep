@@ -6,7 +6,8 @@ services:
       context: .
       dockerfile: LMS.API/Dockerfile
     ports:
-        - 8001:80
+        - "5000:5000"
+        - "5001:5001"
     depends_on:
         - db
   db:
@@ -16,7 +17,7 @@ services:
       - ACCEPT_EULA=Y
       - SA_PASSWORD=M@tkh4umo1
     ports:
-      - "1433:1433"  # SQL Server port
+      - "1433:1433" 
     volumes:
       - sql_data:/var/opt/mssql
 volumes:

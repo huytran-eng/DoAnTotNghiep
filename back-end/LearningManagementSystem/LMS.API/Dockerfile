@@ -5,6 +5,7 @@ FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
 USER app
 WORKDIR /app
 EXPOSE 5000
+EXPOSE 5001
 
 
 # This stage is used to build the service project
@@ -31,7 +32,4 @@ WORKDIR /app
 COPY --from=publish /app/publish .
 ENTRYPOINT ["dotnet", "LMS.API.dll"]
 
-
-COPY --from=publish /app/publish .
-ENV ASPNETCORE_URLS=http://+:5000
-ENTRYPOINT ["dotnet", "/app/API.dll","--server.urls","http://*/5000"]
+ 
