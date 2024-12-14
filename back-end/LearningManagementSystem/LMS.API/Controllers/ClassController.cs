@@ -285,7 +285,7 @@ namespace LMS.API.Controllers
             }
         }
 
-        [Authorize(Roles = "Student")]
+        [Authorize]
         [HttpGet("{id}/student/{studentId}")]
         public async Task<IActionResult> GetStudentDetailForClass(Guid id, Guid studentId)
         {

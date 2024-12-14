@@ -12,11 +12,13 @@ import {
   Button,
   TextField,
   MenuItem,
+  IconButton,
 } from "@mui/material";
 import { useParams, useNavigate } from "react-router-dom";
 import moment from "moment";
 import { DataGridPro } from "@mui/x-data-grid-pro";
 import { baseUrl } from "../../../util/constant";
+import { Visibility } from "@mui/icons-material";
 
 const AdminClassDetail = () => {
   const [activeTab, setActiveTab] = useState(0); // Track active tab index
@@ -46,32 +48,30 @@ const AdminClassDetail = () => {
 
   const fetchClassDetails = async () => {
     try {
-      console.log(id);
-      const response = await axios.get(
-        baseUrl+`class/${id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const response = await axios.get(baseUrl + `class/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       setClassDetails(response.data);
     } catch (error) {
       console.error("Error fetching class details:", error);
     }
   };
 
+  const handleViewStudent = (studentId) => {
+    console.log(`/class/${id}/student/${studentId}`)
+    navigate(`/class/${id}/student/${studentId}`);
+  };
+
   const fetchStudents = async () => {
     setLoading(true);
     try {
-      const response = await axios.get(
-        baseUrl+`class/${id}/students`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const response = await axios.get(baseUrl + `class/${id}/students`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       setStudents(response.data);
     } catch (error) {
       console.error("Error fetching students:", error);
@@ -82,14 +82,11 @@ const AdminClassDetail = () => {
   const fetchAllClassTopics = async () => {
     setLoading(true);
     try {
-      const response = await axios.get(
-        baseUrl+`class/${id}/alltopics`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const response = await axios.get(baseUrl + `class/${id}/alltopics`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       setAvailableTopics(response.data);
     } catch (error) {
       console.error("Error fetching topics:", error);
@@ -100,15 +97,11 @@ const AdminClassDetail = () => {
   const fetchTopics = async () => {
     setLoading(true);
     try {
-      const response = await axios.get(
-        baseUrl+`class/${id}/topics`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      console.log(response.data);
+      const response = await axios.get(baseUrl + `class/${id}/topics`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       setTopics(response.data);
     } catch (error) {
       console.error("Error fetching topics:", error);
@@ -162,17 +155,13 @@ const AdminClassDetail = () => {
 
   const handleSaveTopic = async (row) => {
     try {
-      console.log(availableTopics);
-      console.log("o save topic");
-      console.log(row);
       var formData = {
         classId: id,
         topicId: row.topicId,
         startDate: row.startDate,
         endDate: row.endDate,
       };
-      console.log(formData);
-      await axios.post(baseUrl+`class/opentopic`, formData, {
+      await axios.post(baseUrl + `class/opentopic`, formData, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -184,7 +173,6 @@ const AdminClassDetail = () => {
   };
 
   const handleEditRowChange = (id, field, value) => {
-    console.log(id, field, value);
     setTopics((prev) =>
       prev.map((topic) =>
         topic.id === id ? { ...topic, [field]: value } : topic
@@ -196,22 +184,21 @@ const AdminClassDetail = () => {
   const studentColumns = [
     { field: "studentIdString", headerName: "Mã sinh viên", flex: 1 },
     { field: "name", headerName: "Họ và tên", flex: 1.5 },
-    {
-      field: "birthDate",
-      headerName: "Ngày sinh",
-      flex: 1,
-      valueFormatter: (params) => moment(params?.value).format("DD/MM/YYYY"),
-    },
-    { field: "email", headerName: "Email", flex: 1 },
-    { field: "address", headerName: "Địa chỉ", flex: 1 },
-    { field: "phone", headerName: "Số điện thoại", flex: 1 },
+    { field: "exercisesDone", headerName: "Số bài tập đã làm", flex: 1.5 },
+    { field: "exercisesCorrect", headerName: "Số bài tập làm đúng", flex: 1.5 },
     {
       field: "action",
       headerName: "Action",
       flex: 1,
-      // renderCell: (params) => (
-      //   <button onClick={() => handleViewDetails(params.row)}>View</button>
-      // ),
+      renderCell: (params) => (
+        <IconButton
+          color="primary"
+          onClick={() => handleViewStudent(params.row.id)}
+          sx={{ mr: 1 }}
+        >
+          <Visibility /> {/* View icon */}
+        </IconButton>
+      ),
     },
   ];
 
