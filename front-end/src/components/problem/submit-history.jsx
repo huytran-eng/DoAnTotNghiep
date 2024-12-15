@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+/* eslint-disable react/prop-types */
+import { useState } from "react";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell, { tableCellClasses } from "@mui/material/TableCell";
@@ -10,6 +11,7 @@ import { Box, Modal, styled, Typography } from "@mui/material";
 import nullImage from "../../assets/image/null_light.png";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { vs as themeEditor } from "react-syntax-highlighter/dist/esm/styles/prism";
+import { sortSubmissionsByDateDescending } from "../../util/sortSubmision";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -48,8 +50,6 @@ export default function SubmitHistory({ submissionHistory }) {
   const [open, setOpen] = useState(false);
   console.log(submissionHistory);
   const [selectedRow, setSelectedRow] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
-
   const handleOpen = (row) => {
     setSelectedRow(row);
     setOpen(true);
@@ -134,49 +134,51 @@ export default function SubmitHistory({ submissionHistory }) {
               </TableRow>
             </TableHead>
             <TableBody>
-              {submissionHistory.map((row, index) => (
-                <StyledTableRow
-                  key={index}
-                  onClick={() => handleOpen(row)}
-                  sx={{ cursor: "pointer" }}
-                >
-                  <StyledTableCell
-                    align="center"
-                    sx={{
-                      color:
-                        row.status === 0
-                          ? "green" // AC status
-                          : row.status === 1 || row.status === 2
-                          ? "red" // WA and RE status
-                          : row.status === 3
-                          ? "yellow" // TLE status
-                          : "inherit", // Default color
-                    }}
+              {sortSubmissionsByDateDescending(submissionHistory).map(
+                (row, index) => (
+                  <StyledTableRow
+                    key={index}
+                    onClick={() => handleOpen(row)}
+                    sx={{ cursor: "pointer" }}
                   >
-                    {row.status === 0
-                      ? "AC"
-                      : row.status === 1
-                      ? "WA"
-                      : row.status === 2
-                      ? "RE"
-                      : row.status === 3
-                      ? "TLE"
-                      : "Unknown"}
-                  </StyledTableCell>
-                  <StyledTableCell align="center">
-                    {row.programmingLanguage}
-                  </StyledTableCell>
-                  <StyledTableCell align="center">
-                    {new Date(row.submitDate).toLocaleString()}
-                  </StyledTableCell>
-                  <StyledTableCell align="center">
-                    {row.executionTime} ms
-                  </StyledTableCell>
-                  <StyledTableCell align="center">
-                    {(row.memoryUsed / (1024 * 1024)).toFixed(2)} MB
-                  </StyledTableCell>
-                </StyledTableRow>
-              ))}
+                    <StyledTableCell
+                      align="center"
+                      sx={{
+                        color:
+                          row.status === 0
+                            ? "green" // AC status
+                            : row.status === 1 || row.status === 2
+                            ? "red" // WA and RE status
+                            : row.status === 3
+                            ? "yellow" // TLE status
+                            : "inherit", // Default color
+                      }}
+                    >
+                      {row.status === 0
+                        ? "AC"
+                        : row.status === 1
+                        ? "WA"
+                        : row.status === 2
+                        ? "RE"
+                        : row.status === 3
+                        ? "TLE"
+                        : "Unknown"}
+                    </StyledTableCell>
+                    <StyledTableCell align="center">
+                      {row.programmingLanguage}
+                    </StyledTableCell>
+                    <StyledTableCell align="center">
+                      {new Date(row.submitDate).toLocaleString()}
+                    </StyledTableCell>
+                    <StyledTableCell align="center">
+                      {row.executionTime} ms
+                    </StyledTableCell>
+                    <StyledTableCell align="center">
+                      {(row.memoryUsed / (1024 * 1024)).toFixed(2)} MB
+                    </StyledTableCell>
+                  </StyledTableRow>
+                )
+              )}
             </TableBody>
           </Table>
           <Modal
@@ -198,8 +200,6 @@ export default function SubmitHistory({ submissionHistory }) {
             </Box>
           </Modal>
         </TableContainer>
-      ) : isLoading ? (
-        <div>Loading...</div>
       ) : (
         <div className="w-full h-full flex flex-col justify-center items-center">
           <img className="w-[200px]" src={nullImage} alt="null" />

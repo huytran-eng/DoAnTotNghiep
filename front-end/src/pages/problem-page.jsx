@@ -154,11 +154,7 @@ export default function ProblemPage() {
 
             {activeTab === "submissions" &&
               (isLoading === false ? (
-                submissionHistory && submissionHistory.length > 0 ? (
                   <SubmitHistory submissionHistory={submissionHistory} />
-                ) : (
-                  <div>No submissions found</div>
-                )
               ) : (
                 <div>Loading problem description...</div>
               ))}
