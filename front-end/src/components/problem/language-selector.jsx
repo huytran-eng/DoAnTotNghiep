@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 import {baseUrl} from "../../util/constant";
+import { capitalizeFirstLetter } from "../../util/capitalizeFirstLetter ";
 
 const LanguageSelector = (props) => {
   const { setLanguage, setLanguageId } = props;
@@ -45,14 +46,10 @@ const LanguageSelector = (props) => {
   const handleLanguageChange = (e) => {
     const selectedLanguageId = e.target.value;
 
-    // You can add any additional logic here if needed
-    console.log("Selected language ID:", selectedLanguageId);
-
     // Update the state with the selected language's id
     const selectedLanguage = languages.find(
       (value) => value.id === selectedLanguageId
     );
-    console.log(selectedLanguage);
     setLanguage(selectedLanguage.name); // Get the name from the filtered result
     setLanguageId(selectedLanguageId);
   };
@@ -70,7 +67,7 @@ const LanguageSelector = (props) => {
       {languages && languages.length > 0 ? (
         languages.map((language) => (
           <option key={language.id} value={language.id}>
-            {language.name}      
+            {capitalizeFirstLetter(language.name)}      
           </option>
         ))
       ) : (

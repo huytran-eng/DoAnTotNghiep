@@ -48,7 +48,6 @@ const style = {
 
 export default function SubmitHistory({ submissionHistory }) {
   const [open, setOpen] = useState(false);
-  console.log(submissionHistory);
   const [selectedRow, setSelectedRow] = useState(null);
   const handleOpen = (row) => {
     setSelectedRow(row);
@@ -59,7 +58,6 @@ export default function SubmitHistory({ submissionHistory }) {
     setSelectedRow(null);
     setOpen(false);
   };
-
   return (
     <>
       {submissionHistory.length !== 0 ? (
