@@ -162,9 +162,6 @@ const AdminClassDetail = () => {
 
   const handleSaveTopic = async (row) => {
     try {
-      console.log(availableTopics);
-      console.log("o save topic");
-      console.log(row);
       var formData = {
         classId: id,
         topicId: row.topicId,
