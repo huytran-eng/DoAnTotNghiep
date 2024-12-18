@@ -50,7 +50,7 @@ const paths = [
       { path: "class/create", element: <CreateClass /> },
       { path: "class/:id", element: <AdminClassDetail /> },
 
-      { path: "subject", element: <AdminSubjectList /> },
+      { path: "subject", element: <AdminSubjectList />, },
       { path: "subject/create", element: <AdminSubjectCreate /> },
       { path: "subject/:id", element: <AdminSubjectDetail /> },
       { path: "subject/edit/:id", element: <AdminEditSubject /> },

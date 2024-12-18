@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import axios from "axios";
 import { DataGrid } from "@mui/x-data-grid";
 import moment from "moment";
@@ -209,6 +209,13 @@ const AdminSubjectDetail = () => {
       ),
     },
   ];
+  const unusedExercises = useMemo(() => {
+    return allExercises.filter((exercise) => {
+      return (
+        exercises.find((item) => item.title === exercise.title) === undefined
+      );
+    });
+  }, [allExercises, exercises]);
   const exerciseColumns = [
     {
       field: "title", // Replace "name" with "exerciseName"
@@ -224,12 +231,15 @@ const AdminSubjectDetail = () => {
             fullWidth
             size="small"
           >
-            {allExercises.map((exercise) => (
-              <MenuItem value={exercise.id} key={exercise.id}>
-                {exercise.title}{" "}
-                {/* Assuming the exercise name is in the 'title' field */}
-              </MenuItem>
-            ))}
+            {unusedExercises.length > 0 ? (
+              unusedExercises.map((exercise) => (
+                <MenuItem value={exercise.id} key={exercise.id}>
+                  {exercise.title}
+                </MenuItem>
+              ))
+            ) : (
+              <MenuItem disabled>Không có bài tập nào mới</MenuItem>
+            )}
           </Select>
         ) : (
           params.row.exerciseName // Display the exercise name if not added

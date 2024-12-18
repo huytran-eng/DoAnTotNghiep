@@ -78,8 +78,11 @@ const CreateClass = () => {
       };
       const data = new FormData();
       console.log(formData);
-
       // Append form data
+      if( formData.startDate > formData.endDate){
+        alert("Start date must be before end date");
+        return;
+      }
       Object.entries(formData).forEach(([key, value]) => {
         data.append(key, value);
       });
@@ -88,7 +91,6 @@ const CreateClass = () => {
       if (excelFile) {
         data.append("file", excelFile);
       }
-      console.log(data);
       await axios.post(baseUrl+"class/create", data, {
         headers: {
           Authorization: `Bearer ${token}`,

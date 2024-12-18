@@ -323,13 +323,7 @@ const LoginVer2 = () => {
             <div className="m-2 mb-0 flex items-center justify-center">
               <p className="text-red-500">{error}</p>
             </div>
-          )}
-          <div className="mt-4 text-sm text-gray-600 text-center">
-            <p>
-              Bạn chưa có tài khoản?{" "}
-              <span className="text-black hover:underline">Tạo tài khoản</span>
-            </p>
-          </div>
+          )}       
         </div>
       </div>
     </div>
