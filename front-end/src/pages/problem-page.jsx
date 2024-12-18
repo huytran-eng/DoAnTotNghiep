@@ -55,7 +55,7 @@ export default function ProblemPage() {
       setError(null); // Reset error state      
       try {
         const response = await axios.get(
-          baseUrl+`submission/history/${classExerciseId}`,
+           baseUrl + `submission/history/${classExerciseId}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,

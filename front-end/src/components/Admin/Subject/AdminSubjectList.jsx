@@ -4,13 +4,9 @@ import axios from "axios"; // Use Axios for simplified HTTP requests
 import { DataGrid } from "@mui/x-data-grid";
 import { useNavigate } from "react-router-dom";
 import "../../../styles/homeStyles.css";
-import {
-  Box,
-  Typography,
-  Button,
-} from "@mui/material";
-import { Visibility} from "@mui/icons-material";
-import {baseUrl} from "../../../util/constant";
+import { Box, Typography, Button, IconButton } from "@mui/material";
+import { Visibility, Edit } from "@mui/icons-material";
+import { baseUrl } from "../../../util/constant";
 
 const AdminSubjectList = () => {
   const [subjects, setSubjects] = useState([]);
@@ -29,7 +25,7 @@ const AdminSubjectList = () => {
     console.log("here");
     setLoading(true);
     try {
-      const response = await axios.get(baseUrl+`subject`, {
+      const response = await axios.get(baseUrl + `subject`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -52,27 +48,60 @@ const AdminSubjectList = () => {
     navigate("/admin/subject/create");
   };
 
+  const handleEditSubject = (id) => {
+    navigate(`/admin/subject/edit/${id}`);
+  };
+
   const columns = [
     { field: "name", headerName: "Tên Môn", flex: 1 },
     { field: "credit", headerName: "Số tín chỉ", flex: 1 },
     { field: "departmentName", headerName: "Tên khoa", flex: 1 },
     { field: "numberOfClasses", headerName: "Số lượng lớp", flex: 1 },
-
     {
       field: "action",
       headerName: "Action",
-      width: 150,
+      flex: 1,
       renderCell: (params) => (
-        <button onClick={() => handleViewDetails(params.row)}>
-          {" "}
-          <Visibility style={{ color: "#1976d2" }} />
-        </button>
+        <div>
+          <IconButton
+            color="primary"
+            onClick={() => handleViewDetails(params.row.id)}
+            sx={{ mr: 1 }}
+          >
+            <Visibility />
+          </IconButton>
+          <IconButton
+            color="secondary"
+            onClick={() => handleEditSubject(params.row.id)}
+          >
+            <Edit /> {/* Edit icon */}
+          </IconButton>
+        </div>
       ),
     },
+    // {
+    //   width: 150,
+    //   renderCell: (params) => (
+    //     <div>
+    //       <IconButton
+    //         color="primary"
+    //         onClick={() => h handleViewDetails(params.row)}
+    //         sx={{ mr: 1 }}
+    //       >
+    //         <Visibility /> {/* View icon */}
+    //       </IconButton>
+    //       <IconButton
+    //         color="secondary"
+    //         onClick={() => handleEditExercise(params.row.id)}
+    //       >
+    //         <Edit /> {/* Edit icon */}
+    //       </IconButton>
+    //     </div>
+    //   ),
   ];
 
-  const handleViewDetails = (rowData) => {
-    navigate(`/admin/subject/${rowData.id}`);
+  const handleViewDetails = (id) => {
+    navigate(`/admin/subject/${id}`);
   };
 
   return (

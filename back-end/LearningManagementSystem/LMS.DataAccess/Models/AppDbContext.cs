@@ -35,7 +35,7 @@ namespace LMS.DataAccess.Models
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             // Directly specify the connection string
-            string connectionString = "Server=db;Database=LearningManagementSystem;User=sa;Password=M@tkh4umo1;Encrypt=false;TrustServerCertificate=true";
+            string connectionString = "Server=DESKTOP-RKN1HKT\\MSSQLSERVER2022;Database=LearningManagementSystem;User=sa;Password=password;Encrypt=false";
 
             optionsBuilder.UseSqlServer(connectionString);
             optionsBuilder.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);

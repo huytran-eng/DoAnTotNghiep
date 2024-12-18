@@ -21,11 +21,12 @@ const AdminExerciseList = () => {
   const fetchExercises = async () => {
     setLoading(true);
     try {
-      const response = await axios.get(baseUrl+"exercise", {
+      const response = await axios.get(baseUrl + "exercise", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
+      console.log(response.data);
       setExercises(response.data);
     } catch (error) {
       console.error("Error fetching exercises:", error);
@@ -36,13 +37,20 @@ const AdminExerciseList = () => {
 
   // Columns for DataGrid
   const exerciseColumns = [
-    { field: "title", headerName: "Title", flex: 1 },
-    { field: "difficulty", headerName: "Difficulty", flex: 1 },
+    { field: "title", headerName: "Tiêu đề", flex: 1 },
+    { field: "difficulty", headerName: "Độ khó", flex: 1 },
     {
       field: "createdAt",
       headerName: "Ngày tạo",
       flex: 1,
-      valueFormatter: (params) => moment(params?.value).format("DD/MM/YYYY"),
+      valueGetter: (value) => {
+        console.log(value);
+        if (!value) {
+          return "N/A"
+        }
+        // Convert the decimal value to a percentage
+        return moment(value).format("DD/MM/YYYY");
+      },
     },
     {
       field: "action",

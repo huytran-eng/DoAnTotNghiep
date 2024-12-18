@@ -6,7 +6,7 @@ import "../../../styles/homeStyles.css";
 import { useNavigate } from "react-router-dom";
 import moment from "moment";
 import "../../../styles/studentClassList.css";
-import {baseUrl} from "../../../util/constant";
+import { baseUrl } from "../../../util/constant";
 
 const StudentClassList = () => {
   const [classes, setClasses] = useState([]);
@@ -23,14 +23,11 @@ const StudentClassList = () => {
   const fetchClasses = async () => {
     setLoading(true);
     try {
-      const response = await axios.get(
-        baseUrl+`class/list`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const response = await axios.get(baseUrl + `class/list`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       setClasses(response.data);
     } catch (error) {
       console.error("Error fetching classes:", error);
@@ -73,14 +70,24 @@ const StudentClassList = () => {
       headerName: "Ngày bắt đầu",
       flex: 1,
       headerClassName: "datagrid-header",
-      valueFormatter: (params) => moment(params?.value).format("DD/MM/YYYY"),
+      valueGetter: (value) => {
+        if (!value) {
+          return "N/A";
+        }
+        return moment(value).format("DD/MM/YYYY");
+      },
     },
     {
       field: "endDate",
       headerName: "Ngày kết thúc",
       flex: 1,
       headerClassName: "datagrid-header",
-      valueFormatter: (params) => moment(params?.value).format("DD/MM/YYYY"),
+      valueGetter: (value) => {
+        if (!value) {
+          return "N/A";
+        }
+        return moment(value).format("DD/MM/YYYY");
+      },
     },
     {
       field: "action",

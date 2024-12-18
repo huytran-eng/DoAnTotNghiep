@@ -12,9 +12,14 @@ import {
   MenuItem,
   Button,
   Grid,
+  List,
+  ListItem,
+  ListItemText,
 } from "@mui/material";
 import { useParams } from "react-router-dom";
-import {baseUrl} from "../../../util/constant";
+import { baseUrl } from "../../../util/constant";
+import { useNavigate } from "react-router-dom";
+import { Visibility } from "@mui/icons-material";
 
 const AdminSubjectDetail = () => {
   const [activeTab, setActiveTab] = useState(0); // Track active tab index
@@ -26,6 +31,7 @@ const AdminSubjectDetail = () => {
   const [allExercises, setAllExercises] = useState([]); // All available exercises
   const token = localStorage.getItem("token"); // Retrieve JWT token
   const { id } = useParams();
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchSubjectDetails();
@@ -45,14 +51,11 @@ const AdminSubjectDetail = () => {
   // Fetch subject details
   const fetchSubjectDetails = async () => {
     try {
-      const response = await axios.get(
-        baseUrl+`subject/${id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const response = await axios.get(baseUrl + `subject/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       setSubjectDetails(response.data);
     } catch (error) {
       console.error("Error fetching subject details:", error);
@@ -63,14 +66,11 @@ const AdminSubjectDetail = () => {
   const fetchMaterials = async () => {
     setLoading(true);
     try {
-      const response = await axios.get(
-        baseUrl+`subject/${id}/materials`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const response = await axios.get(baseUrl + `subject/${id}/materials`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       setMaterials(response.data);
     } catch (error) {
       console.error("Error fetching materials:", error);
@@ -83,14 +83,11 @@ const AdminSubjectDetail = () => {
   const fetchClasses = async () => {
     setLoading(true);
     try {
-      const response = await axios.get(
-        baseUrl+`subject/${id}/classes`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const response = await axios.get(baseUrl + `subject/${id}/classes`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       console.log(response);
       setClasses(response.data);
     } catch (error) {
@@ -104,14 +101,11 @@ const AdminSubjectDetail = () => {
   const fetchExercises = async () => {
     setLoading(true);
     try {
-      const response = await axios.get(
-        baseUrl+`subject/${id}/exercises`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const response = await axios.get(baseUrl + `subject/${id}/exercises`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       setExercises(response.data);
     } catch (error) {
       console.error("Error fetching exercises:", error);
@@ -123,7 +117,7 @@ const AdminSubjectDetail = () => {
   // Fetch all available exercises
   const fetchAllExercises = async () => {
     try {
-      const response = await axios.get(baseUrl+`exercise`, {
+      const response = await axios.get(baseUrl + `exercise`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -141,15 +135,11 @@ const AdminSubjectDetail = () => {
         ExerciseId: exercise.exerciseId, // Assuming exercise contains an `exerciseId` property
         TopicId: exercise.topicId, // Assuming exercise contains a `topicId` property
       };
-      await axios.post(
-        baseUrl+`subject/addExercise`,
-        addExerciseDTO,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      await axios.post(baseUrl + `subject/addExercise`, addExerciseDTO, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       fetchExercises();
     } catch (error) {
       console.error("Error saving exercise:", error);
@@ -166,10 +156,13 @@ const AdminSubjectDetail = () => {
 
   // Update new exercise data
   const handleExerciseChange = (id, field, value) => {
-    console.log(id, field, value);
     setExercises((prev) =>
       prev.map((ex) => (ex.id === id ? { ...ex, [field]: value } : ex))
     );
+  };
+
+  const handleViewClassDetails = (rowData) => {
+    navigate(`/admin/class/${rowData.id}`);
   };
 
   // Columns for DataGrid
@@ -189,20 +182,30 @@ const AdminSubjectDetail = () => {
       field: "startDate",
       headerName: "Ngày bắt đầu",
       flex: 1,
-      valueFormatter: (params) => moment(params?.value).format("DD/MM/YYYY"),
+      valueGetter: (value) => {
+        if (!value) {
+          return "N/A";
+        }
+        return moment(value).format("DD/MM/YYYY");
+      },
     },
     {
       field: "endDate",
       headerName: "Ngày kết thúc",
       flex: 1,
-      valueFormatter: (params) => moment(params?.value).format("DD/MM/YYYY"),
+      valueGetter: (value) => {
+        if (!value) {
+          return "N/A";
+        }
+        return moment(value).format("DD/MM/YYYY");
+      },
     },
     {
-      field: "action",
-      headerName: "Action",
       flex: 1,
       renderCell: (params) => (
-        <button onClick={() => handleViewDetails(params.row)}>View</button>
+        <button onClick={() => handleViewClassDetails(params.row)}>
+          <Visibility style={{ color: "#1976d2" }} />
+        </button>
       ),
     },
   ];
@@ -265,11 +268,14 @@ const AdminSubjectDetail = () => {
       field: "addedDate",
       headerName: "Ngày thêm",
       flex: 1,
-      valueFormatter: (params) => moment(params?.value).format("DD/MM/YYYY"),
+      valueGetter: (value) => {
+        if (!value) {
+          return "N/A";
+        }
+        return moment(value).format("DD/MM/YYYY");
+      },
     },
     {
-      field: "action",
-      headerName: "Action",
       renderCell: (params) =>
         params.row.added ? (
           <Button
@@ -307,9 +313,9 @@ const AdminSubjectDetail = () => {
               <>
                 <Box
                   sx={{
-                    gridColumn: "1 / -1", // Span across all columns
-                    textAlign: "center", // Center text horizontally
-                    mb: 2, // Add margin below the title
+                    gridColumn: "1 / -1",
+                    textAlign: "center",
+                    mb: 2,
                   }}
                 >
                   <Typography variant="h6" sx={{ fontWeight: "bold" }}>
@@ -346,23 +352,13 @@ const AdminSubjectDetail = () => {
                   Danh sách chủ đề:
                 </Typography>
                 <Box>
-                  <Select
-                    size="small"
-                    fullWidth
-                    value={
-                      subjectDetails.topics.length > 0
-                        ? subjectDetails.topics[0].id
-                        : ""
-                    }
-                    onChange={() => {}}
-                    displayEmpty
-                  >
+                  <List disablePadding>
                     {subjectDetails.topics.map((topic) => (
-                      <MenuItem value={topic.id} key={topic.id}>
-                        {topic.name}
-                      </MenuItem>
+                      <ListItem key={topic.id} disablePadding>
+                        <ListItemText primary={`- ${topic.name}`} />
+                      </ListItem>
                     ))}
-                  </Select>
+                  </List>
                 </Box>
               </>
             ) : (

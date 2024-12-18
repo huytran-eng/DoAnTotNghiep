@@ -155,8 +155,8 @@ namespace LMS.API.Controllers
                 {
                     return result.Code switch
                     {
-                        400 => BadRequest(result),
-                        _ => StatusCode(500, result)
+                        400 => BadRequest(result.Message),
+                        _ => StatusCode(500, result.Message)
                     };
                 }
             }

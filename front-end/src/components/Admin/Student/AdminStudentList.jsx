@@ -74,7 +74,12 @@ const AdminStudentList = () => {
       field: "birthDate",
       headerName: "Ngày sinh",
       flex: 1,
-      valueFormatter: (params) => moment(params?.value).format("DD/MM/YYYY"),
+      valueGetter: (value) => {
+        if (!value) {
+          return "N/A"
+        }
+        return moment(value).format("DD/MM/YYYY");
+      },
     },
     { field: "email", headerName: "Email", flex: 1 },
     { field: "address", headerName: "Địa chỉ", flex: 1 },

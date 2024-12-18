@@ -15,13 +15,14 @@ import {
   FormControl,
 } from "@mui/material";
 import { baseUrl } from "../../../util/constant";
+import Swal from "sweetalert2";
 
 const AdminCreateExercise = () => {
   const [formData, setFormData] = useState({
     title: "",
     description: "",
     difficulty: "",
-    testCases: [{ input: "", expectedOutput: "" }],
+    testCases: [{ input: "", expectedOutput: "", isHidden: false }],
   });
 
   const [loading, setLoading] = useState(false);
@@ -53,7 +54,7 @@ const AdminCreateExercise = () => {
   const addTestCase = () => {
     setFormData((prevData) => ({
       ...prevData,
-      testCases: [...prevData.testCases, { input: "", expetedOutput: "" }],
+      testCases: [...prevData.testCases, { input: "", expectedOutput: "", isHidden: false }],
     }));
   };
 
@@ -72,173 +73,234 @@ const AdminCreateExercise = () => {
       if (!token) {
         throw new Error("User is not authenticated");
       }
-      console.log(formData);
       const headers = { Authorization: `Bearer ${token}` };
-      await axios.post(baseUrl+"exercise/create", formData, {
+
+      const response = await axios.post(baseUrl + "exercise/create", formData, {
         headers,
       });
-      alert("Exercise created successfully!");
-      navigate("/baitap"); // Redirect to the exercise list or detail page
+
+      console.log(response);
+
+      // Check if the response is successful
+      if (response.status === 200 || response.status === 201) {
+        Swal.fire({
+          title: "Thành công",
+          text: "Tạo bài tập thành công!",
+          icon: "success",
+          confirmButtonText: "OK",
+        }).then(() => {
+          navigate("/admin/exercise"); // Redirect to the exercise list
+        });
+      } else {
+        // Handle other non-success statuses
+        Swal.fire({
+          title: "Có lỗi xảy ra!",
+          text: ".",
+          icon: "error",
+          confirmButtonText: "OK",
+        });
+      }
     } catch (error) {
       console.error("Error creating exercise:", error);
-      alert("Failed to create exercise. Please try again.");
+
+      // Handle API error response and display appropriate message
+      const errorMessage =
+        error.response?.data?.message || // Custom message returned from API
+        "Đã có lỗi xảy ra khi tạo bài tập.";
+
+      const statusCode = error.response?.status;
+
+      // Show SweetAlert popup with error message based on status code
+      if (statusCode === 400) {
+        Swal.fire({
+          title: "Bad Request",
+          text: errorMessage,
+          icon: "warning",
+          confirmButtonText: "OK",
+        });
+      } else if (statusCode === 401) {
+        Swal.fire({
+          title: "Unauthorized",
+          text: "You are not authorized. Please log in again.",
+          icon: "error",
+          confirmButtonText: "OK",
+        });
+      } else {
+        Swal.fire({
+          title: "Lỗi hệ thống",
+          text: errorMessage,
+          icon: "error",
+          confirmButtonText: "OK",
+        });
+      }
     } finally {
       setLoading(false);
     }
   };
 
-  if (loading) {
-    return (
+  return (
+    <Box sx={{ position: "relative", minHeight: "100vh" }}>
+      {/* Loading Spinner */}
+      {loading && (
+        <Box
+          sx={{
+            position: "fixed", // Fixed to the viewport
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+            backgroundColor: "rgba(0, 0, 0, 0.5)", // Semi-transparent background
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            zIndex: 9999, // Ensure it appears on top of other elements
+            pointerEvents: "none", // Prevent interaction with any other elements behind the spinner
+          }}
+        >
+          <CircularProgress />
+        </Box>
+      )}
       <Box
+        component="form"
+        onSubmit={handleSubmit}
         sx={{
           display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          height: "100vh",
+          flexDirection: "column",
+          gap: 2,
+          width: "80%",
+          margin: "auto",
+          mt: 4,
+          p: 3,
+          border: "1px solid #ccc",
+          borderRadius: 2,
         }}
       >
-        <CircularProgress />
-      </Box>
-    );
-  }
+        <Typography variant="h5" textAlign="center">
+          Tạo bài tập
+        </Typography>
 
-  return (
-    <Box
-      component="form"
-      onSubmit={handleSubmit}
-      sx={{
-        display: "flex",
-        flexDirection: "column",
-        gap: 2,
-        width: "80%",
-        margin: "auto",
-        mt: 4,
-        p: 3,
-        border: "1px solid #ccc",
-        borderRadius: 2,
-      }}
-    >
-      <Typography variant="h5" textAlign="center">
-        Tạo bài tập
-      </Typography>
-
-      <TextField
-        label="Tiêu đề"
-        name="title"
-        value={formData.title}
-        onChange={handleChange}
-        fullWidth
-        required
-      />
-
-      <TextField
-        label="Đề bài"
-        name="description"
-        value={formData.description}
-        onChange={handleChange}
-        fullWidth
-        multiline
-        rows={6}
-        required
-      />
-      <TextField
-        label="Yêu cầu"
-        name="requirements"
-        value={formData.requirements}
-        onChange={handleChange}
-        fullWidth
-        required
-      />
-      <FormControl fullWidth>
-        <InputLabel id="difficulty-label">Độ khó</InputLabel>
-        <Select
-          labelId="difficulty-label"
-          id="difficulty"
-          label="Độ khó"
+        <TextField
+          label="Tiêu đề"
+          name="title"
+          value={formData.title}
           onChange={handleChange}
-          name="difficulty"
-        >
-          {difficultyLevels.map((level) => (
-            <MenuItem key={level.value} value={level.value}>
-              {level.label}
-            </MenuItem>
-          ))}
-        </Select>
-      </FormControl>
-      <TextField
-        label="Giới hạn thời gian (giây)"
-        name="timeLimit"
-        value={formData.timeLimit}
-        onChange={handleChange}
-        fullWidth
-        required
-      />
+          fullWidth
+          required
+        />
 
-      <TextField
-        label="Giới hạn không gian (kB)"
-        name="spaceLimit"
-        value={formData.spaceLimit}
-        onChange={handleChange}
-        fullWidth
-        required
-      />
-
-      <Typography variant="h6">Test case</Typography>
-
-      {formData.testCases.map((testCase, index) => (
-        <Box key={index} sx={{ display: "flex", gap: 2 }}>
-          <TextField
-            label="Đầu vào"
-            name={`input-${index}`}
-            value={testCase.input}
-            onChange={(e) =>
-              handleTestCaseChange(index, "input", e.target.value)
-            }
-            fullWidth
-            required
-          />
-          <TextField
-            label="Đầu ra"
-            name={`expectedOutput-${index}`}
-            value={testCase.output}
-            onChange={(e) =>
-              handleTestCaseChange(index, "expectedOutput", e.target.value)
-            }
-            fullWidth
-            required
-          />
-
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={testCase.hidden}
-                onChange={(e) =>
-                  handleTestCaseChange(index, "hidden", e.target.checked)
-                }
-              />
-            }
-            label="Ẩn"
-            sx={{ alignSelf: "center" }}
-          />
-
-          <Button
-            variant="outlined"
-            color="error"
-            onClick={() => removeTestCase(index)}
-            sx={{ alignSelf: "flex-end" }}
+        <TextField
+          label="Đề bài"
+          name="description"
+          value={formData.description}
+          onChange={handleChange}
+          fullWidth
+          multiline
+          rows={6}
+          required
+        />
+        <TextField
+          label="Yêu cầu"
+          name="requirements"
+          value={formData.requirements}
+          onChange={handleChange}
+          fullWidth
+          required
+        />
+        <FormControl fullWidth>
+          <InputLabel id="difficulty-label">Độ khó</InputLabel>
+          <Select
+            labelId="difficulty-label"
+            id="difficulty"
+            label="Độ khó"
+            onChange={handleChange}
+            name="difficulty"
           >
-            Hủy
-          </Button>
-        </Box>
-      ))}
+            {difficultyLevels.map((level) => (
+              <MenuItem key={level.value} value={level.value}>
+                {level.label}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+        <TextField
+          label="Giới hạn thời gian (giây)"
+          name="timeLimit"
+          value={formData.timeLimit}
+          onChange={handleChange}
+          fullWidth
+          required
+        />
 
-      <Button variant="outlined" onClick={addTestCase} sx={{ mb: 2 }}>
-        Thêm test case
-      </Button>
+        <TextField
+          label="Giới hạn không gian (kB)"
+          name="spaceLimit"
+          value={formData.spaceLimit}
+          onChange={handleChange}
+          fullWidth
+          required
+        />
 
-      <Button type="submit" variant="contained" color="primary" fullWidth>
-        {loading ? "Creating..." : "Create Exercise"}
-      </Button>
+        <Typography variant="h6">Test case</Typography>
+
+        {formData.testCases.map((testCase, index) => (
+          <Box key={index} sx={{ display: "flex", gap: 2 }}>
+            <TextField
+              label="Đầu vào"
+              name={`input-${index}`}
+              value={testCase.input}
+              onChange={(e) =>
+                handleTestCaseChange(index, "input", e.target.value)
+              }
+              fullWidth
+              multiline
+              rows={4}
+              required
+            />
+            <TextField
+              label="Đầu ra"
+              name={`expectedOutput-${index}`}
+              value={testCase.output}
+              onChange={(e) =>
+                handleTestCaseChange(index, "expectedOutput", e.target.value)
+              }
+              fullWidth
+              multiline
+              rows={4}
+              required
+            />
+
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={testCase.isHidden}
+                  onChange={(e) =>
+                    handleTestCaseChange(index, "isHidden", e.target.checked)
+                  }
+                />
+              }
+              label="Ẩn"
+              sx={{ alignSelf: "center" }}
+            />
+
+            <Button
+              variant="outlined"
+              color="error"
+              onClick={() => removeTestCase(index)}
+              sx={{ alignSelf: "flex-end" }}
+            >
+              Hủy
+            </Button>
+          </Box>
+        ))}
+
+        <Button variant="outlined" onClick={addTestCase} sx={{ mb: 2 }}>
+          Thêm test case
+        </Button>
+
+        <Button type="submit" variant="contained" color="primary" fullWidth>
+          {loading ? "Creating..." : "Create Exercise"}
+        </Button>
+      </Box>
     </Box>
   );
 };

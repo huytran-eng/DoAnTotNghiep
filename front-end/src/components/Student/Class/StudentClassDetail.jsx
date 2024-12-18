@@ -145,13 +145,23 @@ const StudentClassDetail = () => {
       field: "startDate",
       headerName: "ngày mở",
       flex: 1,
-      valueFormatter: (params) => moment(params?.value).format("DD/MM/YYYY"),
+      valueGetter: (value) => {
+        if (!value) {
+          return "N/A";
+        }
+        return moment(value).format("DD/MM/YYYY");
+      },
     },
     {
       field: "endDate",
       headerName: "ngày đóng",
       flex: 1,
-      valueFormatter: (params) => moment(params?.value).format("DD/MM/YYYY"),
+      valueGetter: (value) => {
+        if (!value) {
+          return "N/A";
+        }
+        return moment(value).format("DD/MM/YYYY");
+      },
     },
   ];
 
@@ -178,7 +188,12 @@ const StudentClassDetail = () => {
       field: "uploadedOn",
       headerName: "Uploaded On",
       width: 200,
-      valueFormatter: (params) => moment(params.value).format("DD/MM/YYYY"),
+      valueGetter: (value) => {
+        if (!value) {
+          return "N/A";
+        }
+        return moment(value).format("DD/MM/YYYY");
+      },
     },
   ];
 

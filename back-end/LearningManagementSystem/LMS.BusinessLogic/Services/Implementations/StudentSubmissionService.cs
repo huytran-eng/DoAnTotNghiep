@@ -65,7 +65,7 @@ namespace LMS.BusinessLogic.Services.Implementations
                 try
                 {
                     // Configure the HttpClient
-                    client.BaseAddress = new Uri("http://localhost:8080");
+                    client.BaseAddress = new Uri("http://36.50.135.228:8080");
                     client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
                     // Make the POST request to the external service
@@ -123,7 +123,7 @@ namespace LMS.BusinessLogic.Services.Implementations
                             Code = submissionDTO.Code,
                             StudentId = submissionDTO.StudentId.Value,
                             ClassExerciseId = submissionDTO.ClassExerciseId,
-                            SubmitDate = DateTime.Now,
+                            SubmitDate = DateTime.UtcNow.AddHours(7),
                             ExecutionTime = highestExecutionTimeMs,
                             MemoryUsed = highestMemoryUsageMb,
                             SubjectProgrammingLanguageId = submissionDTO.SubjectProgrammingLanguageId
