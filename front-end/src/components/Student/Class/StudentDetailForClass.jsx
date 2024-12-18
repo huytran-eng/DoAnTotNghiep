@@ -98,6 +98,7 @@ const StudentDetailForClass = () => {
         }
       );
       if (response.data) {
+        console.log(response.data)
         setSubmissionHistory(response.data);
       }
     } catch (error) {

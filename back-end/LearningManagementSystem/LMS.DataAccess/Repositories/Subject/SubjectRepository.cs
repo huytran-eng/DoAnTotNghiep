@@ -22,6 +22,8 @@ namespace LMS.DataAccess.Repositories
             return await _context.Subjects
                         .Include(subject => subject.Department)
                         .Include(subject => subject.Classes)   
+                        .Include(subject => subject.SubjectProgrammingLanguages)
+                        .ThenInclude(spl => spl.ProgrammingLanguage)
                .Include(s => s.Topics)
                         .FirstOrDefaultAsync(subject => subject.Id == id);
         }

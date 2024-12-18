@@ -53,17 +53,27 @@ const AdminClassList = () => {
       field: "startDate",
       headerName: "Ngày bắt đầu",
       flex: 1,
-      valueFormatter: (params) => moment(params?.value).format("DD/MM/YYYY"),
+      valueGetter: (value) => {
+        if (!value) {
+          return "N/A"
+        }
+        // Convert the decimal value to a percentage
+        return moment(value).format("DD/MM/YYYY");
+      },
     },
     {
       field: "endDate",
       headerName: "Ngày kết thúc",
       flex: 1,
-      valueFormatter: (params) => moment(params?.value).format("DD/MM/YYYY"),
+      valueGetter: (value) => {
+        if (!value) {
+          return "N/A"
+        }
+        // Convert the decimal value to a percentage
+        return moment(value).format("DD/MM/YYYY");
+      },
     },
     {
-      field: "action",
-      headerName: "Action",
       flex: 1,
       renderCell: (params) => (
         <button onClick={() => handleViewDetails(params.row)}>

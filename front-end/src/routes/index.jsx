@@ -14,11 +14,13 @@ import AdminStudentDetailForClass from "../components/Admin/Class/AdminStudentDe
 import AdminSubjectList from "../components/Admin/Subject/AdminSubjectList";
 import AdminSubjectDetail from "../components/Admin/Subject/AdminSubjectDetail";
 import AdminSubjectCreate from "../components/Admin/Subject/AdminSubjectCreate";
+import AdminEditSubject from "../components/Admin/Subject/AdminEditSubject";
 
 
 import AdminExerciseList from "../components/Admin/Exercise/AdminExerciseList";
 import AdminCreateExercise from "../components/Admin/Exercise/AdminCreateExercise";
 import AdminEditExercise from "../components/Admin/Exercise/AdminEditExercise";
+import AdminExerciseDetail from "../components/Admin/Exercise/AdminExerciseDetail";
 
 import AdminStudentList from "../components/Admin/Student/AdminStudentList";
 // Students components import
@@ -54,10 +56,13 @@ const paths = [
       { path: "subject", element: <AdminSubjectList /> },
       { path: "subject/create", element: <AdminSubjectCreate /> },
       { path: "subject/:id", element: <AdminSubjectDetail /> },
+      { path: "subject/edit/:id", element: <AdminEditSubject /> },
 
       { path: "exercise", element: <AdminExerciseList /> },
       { path: "exercise/edit/:id", element: <AdminEditExercise /> },
       { path: "exercise/create", element: <AdminCreateExercise /> },
+      { path: "exercise/:id", element: <AdminExerciseDetail /> },
+
      
       { path: "student", element: <AdminStudentList /> },
     ],

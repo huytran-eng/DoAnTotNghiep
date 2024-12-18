@@ -1,6 +1,5 @@
-﻿using LMS.BusinessLogic.DTOs.ResponseDTO;
-
-namespace LMS.BusinessLogic.DTOs.RequestDTO
+﻿
+namespace LMS.BusinessLogic.DTOs
 {
     public class CreateSubjectDTO
     {

@@ -1,5 +1,4 @@
 ﻿using LMS.BusinessLogic.DTOs;
-using LMS.BusinessLogic.DTOs.RequestDTO;
 using LMS.BusinessLogic.Services.Interfaces;
 using LMS.Core;
 using LMS.Core.Enums;
@@ -137,6 +136,7 @@ namespace LMS.BusinessLogic.Services.Implementations
                 Name = subject.Name,
                 Credit = subject.Credit,
                 DepartmentName = subject.Department.Name,
+                DepartmentId = subject.DepartmentId,
                 NumberOfClasses = subject.Classes.Count,
                 Description = subject.Description,
                 Topics = subject.Topics.Select(t => new TopicDTO
@@ -144,6 +144,11 @@ namespace LMS.BusinessLogic.Services.Implementations
                     Id = t.Id,
                     Name = t.Name,
                     Description = t.Description,
+                }).ToList(),
+                subjectProgrammingLanguageDTOs = subject.SubjectProgrammingLanguages.Select(spl => new SubjectProgrammingLanguageDTO
+                {
+                    Id = spl.Id,
+                    ProgrammingLanguageId = spl.ProgrammingLanguageId
                 }).ToList()
             };
 

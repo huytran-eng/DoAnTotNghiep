@@ -176,7 +176,7 @@ namespace LMS.BusinessLogic.Services.Implementations
                     TeacherId = createClassRequest.TeacherId,
                     SubjectId = createClassRequest.SubjectId,
                     StudentClasses = new List<StudentClass>(),
-                    CreatedAt = DateTime.Now,
+                    CreatedAt = DateTime.UtcNow.AddHours(7),
                     CreatedById = createClassRequest.CurrentUserId,
                 };
 
@@ -576,7 +576,7 @@ namespace LMS.BusinessLogic.Services.Implementations
                     TopicId = openClassTopicDTO.TopicId,
                     StartDate = openClassTopicDTO.StartDate,
                     EndDate = openClassTopicDTO.EndDate,
-                    CreatedDate = DateTime.Now
+                    CreatedDate = DateTime.UtcNow.AddHours(7)
                 };
 
                 await _classTopicRepository.AddAsync(classTopicOpen);

@@ -56,7 +56,7 @@ export default function ProblemPage() {
 
       try {
         const response = await axios.get(
-          `https://localhost:7104/api/submission/history/${classExerciseId}`,
+           baseUrl + `submission/history/${classExerciseId}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,

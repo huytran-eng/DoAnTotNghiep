@@ -90,7 +90,8 @@ namespace LMS.BusinessLogic.Services.Implementations
                     {
                         Id = tc.Id,
                         Input = tc.Input,
-                        ExpectedOutput = tc.ExpectedOutput
+                        ExpectedOutput = tc.ExpectedOutput,
+                        IsHidden = tc.IsHidden
                     }).ToList()
                 };
 
@@ -191,7 +192,7 @@ namespace LMS.BusinessLogic.Services.Implementations
                     Difficulty = exerciseDto.Difficulty,
                     TimeLimit = exerciseDto.TimeLimit,
                     SpaceLimit = exerciseDto.SpaceLimit,
-                    CreatedAt = DateTime.Now,
+                    CreatedAt = DateTime.UtcNow.AddHours(7),
                     CreatedById = exerciseDto.CurrentUserId.Value,
                     TestCases = exerciseDto.TestCases.Select(tc => new TestCase
                     {
@@ -199,7 +200,7 @@ namespace LMS.BusinessLogic.Services.Implementations
                         ExpectedOutput = tc.ExpectedOutput,
                         Description = tc.Description,
                         IsHidden = tc.IsHidden,
-                        CreatedAt = DateTime.Now,
+                        CreatedAt = DateTime.UtcNow.AddHours(7),
                         CreatedById = exerciseDto.CurrentUserId.Value
                     }).ToList()
                 };
@@ -251,7 +252,7 @@ namespace LMS.BusinessLogic.Services.Implementations
                 existingExercise.Difficulty = updateExerciseDTO.Difficulty;
                 existingExercise.TimeLimit = updateExerciseDTO.TimeLimit;
                 existingExercise.SpaceLimit = updateExerciseDTO.SpaceLimit;
-                existingExercise.UpdatedAt = DateTime.Now;
+                existingExercise.UpdatedAt = DateTime.UtcNow.AddHours(7);
                 existingExercise.UpdatedById = updateExerciseDTO.CurrentUserId;
 
                 await _testCaseRepository.DeleteRangeAsync(existingExercise.TestCases.ToList());
@@ -268,7 +269,7 @@ namespace LMS.BusinessLogic.Services.Implementations
                             Description = testCaseDTO.Description,
                             IsHidden = testCaseDTO.IsHidden,
                             ExerciseId = existingExercise.Id,
-                            CreatedAt = DateTime.Now,
+                            CreatedAt = DateTime.UtcNow.AddHours(7),
                             CreatedById = updateExerciseDTO.CurrentUserId.Value
                         };
 
@@ -332,7 +333,7 @@ namespace LMS.BusinessLogic.Services.Implementations
                     SubjectId = addExercuseToSubjectDTO.SubjectId,
                     ExerciseId = addExercuseToSubjectDTO.ExerciseId,
                     TopicId = addExercuseToSubjectDTO.TopicId,
-                    AddedDate = DateTime.Now,
+                    AddedDate = DateTime.UtcNow.AddHours(7),
                 };
 
                 await _subjectExerciseRepository.AddAsync(subjectExercise);

@@ -43,10 +43,10 @@ const AdminEditExercise = () => {
           throw new Error("User is not authenticated");
         }
         const headers = { Authorization: `Bearer ${token}` };
-        const response = await axios.get(baseUrl+`exercise/${id}`, {
+        const response = await axios.get(baseUrl + `exercise/${id}`, {
           headers,
         });
-        console.log(response.data)
+        console.log(response.data);
         setFormData(response.data); // Populate form with existing data
       } catch (error) {
         console.error("Error fetching exercise data:", error);
@@ -55,7 +55,7 @@ const AdminEditExercise = () => {
         setLoading(false);
       }
     };
-    
+
     fetchExerciseData();
   }, [id, token]);
 
@@ -99,7 +99,7 @@ const AdminEditExercise = () => {
         throw new Error("User is not authenticated");
       }
       const headers = { Authorization: `Bearer ${token}` };
-      await axios.post(baseUrl+`exercise/edit/${id}`, formData, {
+      await axios.post(baseUrl + `exercise/edit/${id}`, formData, {
         headers,
       });
       alert("Exercise updated successfully!");
@@ -221,6 +221,8 @@ const AdminEditExercise = () => {
               handleTestCaseChange(index, "input", e.target.value)
             }
             fullWidth
+            multiline
+            rows={4}
             required
           />
           <TextField
@@ -231,15 +233,17 @@ const AdminEditExercise = () => {
               handleTestCaseChange(index, "expectedOutput", e.target.value)
             }
             fullWidth
+            multiline
+            rows={4}
             required
           />
 
           <FormControlLabel
             control={
               <Checkbox
-                checked={testCase.hidden}
+                checked={testCase.isHidden}
                 onChange={(e) =>
-                  handleTestCaseChange(index, "hidden", e.target.checked)
+                  handleTestCaseChange(index, "isHidden", e.target.checked)
                 }
               />
             }

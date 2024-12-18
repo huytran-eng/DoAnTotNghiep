@@ -60,7 +60,6 @@ const AdminClassDetail = () => {
   };
 
   const handleViewStudent = (studentId) => {
-    console.log(`/class/${id}/student/${studentId}`)
     navigate(`/class/${id}/student/${studentId}`);
   };
 
@@ -315,7 +314,12 @@ const AdminClassDetail = () => {
       field: "uploadedOn",
       headerName: "Uploaded On",
       width: 200,
-      valueFormatter: (params) => moment(params.value).format("DD/MM/YYYY"),
+      valueGetter: (value) => {
+        if (!value) {
+          return "N/A";
+        }
+        return moment(value).format("DD/MM/YYYY");
+      },
     },
   ];
 

@@ -15,6 +15,7 @@ namespace LMS.DataAccess.Models
         public ICollection<Topic> Topics { get; set; }
         public ICollection<SubjectExercise> SubjectExercises { get; set; }
         public ICollection<Class> Classes { get; set; }
+        public ICollection<SubjectProgrammingLanguage> SubjectProgrammingLanguages { get; set; }
 
     }
 }

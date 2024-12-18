@@ -111,8 +111,6 @@ const AdminCreateSubject = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      console.log("tao lop hoc");
-      console.log(subject);
       await axios.post(baseUrl+"subject/create", subject, {
         headers: {
           Authorization: `Bearer ${token}`,

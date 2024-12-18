@@ -61,7 +61,7 @@ namespace LMS.BusinessLogic.Services.Implementations
                 Name = departmentCreateDTO.Name,
                 Description = departmentCreateDTO.Description,
                 UniversityId = university.Id,
-                CreatedAt = DateTime.Now,
+                CreatedAt = DateTime.UtcNow.AddHours(7),
                 CreatedById = departmentCreateDTO.CurrentUserId,
             };
             try
