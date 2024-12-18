@@ -119,7 +119,7 @@ const AdminCreateSubject = () => {
         },
       });
       alert("Subject created successfully!");
-      navigate("/admin/subjects");
+      navigate("/admin/subject");
     } catch (error) {
       console.error("Error creating subject:", error);
       alert("Failed to create subject.");
