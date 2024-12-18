@@ -1,0 +1,9 @@
+diff a/back-end/LearningManagementSystem/LMS.API/Controllers/ClassController.cs b/back-end/LearningManagementSystem/LMS.API/Controllers/ClassController.cs	(rejected hunks)
+@@ -285,6 +285,7 @@
+             }
+         }
+ 
++        [Authorize]
+         [HttpGet("{id}/student/{studentId}")]
+         public async Task<IActionResult> GetStudentDetailForClass(Guid id, Guid studentId)
+         {

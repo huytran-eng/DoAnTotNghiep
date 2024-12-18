@@ -52,8 +52,7 @@ export default function ProblemPage() {
 
     const fetchSubmissonData = async () => {
       setIsLoading(true); // Set loading to true before fetching
-      setError(null); // Reset error state
-
+      setError(null); // Reset error state      
       try {
         const response = await axios.get(
            baseUrl + `submission/history/${classExerciseId}`,
@@ -75,7 +74,10 @@ export default function ProblemPage() {
       fetchSubmissonData();
     }
   }, [activeTab]);
-
+  const switchTab = (tab) => {
+    setActiveTab(tab);
+    setError(null);
+  }
   const {
     code,
     language,
@@ -96,7 +98,7 @@ export default function ProblemPage() {
               className={`px-4 py-2 rounded flex justify-center items-center w-[110px] text-sm ${
                 activeTab === "description" ? "font-medium" : "opacity-40 "
               }`}
-              onClick={() => setActiveTab("description")}
+              onClick={() => switchTab("description")}
             >
               <svg
                 className="size-4 mr-2 text-blue-500"
@@ -119,7 +121,7 @@ export default function ProblemPage() {
               className={`px-4 py-2 rounded flex justify-center items-center w-[145px] text-sm ${
                 activeTab === "submissions" ? "font-medium" : "opacity-40 "
               }`}
-              onClick={() => setActiveTab("submissions")}
+              onClick={() => switchTab("submissions")}
             >
               <svg
                 className="size-4 mr-2 text-blue-500"
@@ -153,14 +155,14 @@ export default function ProblemPage() {
               ))}
 
             {activeTab === "submissions" &&
-              (isLoading === false ? (
-                submissionHistory && submissionHistory.length > 0 ? (
+              (submissionHistory ? (
                   <SubmitHistory submissionHistory={submissionHistory} />
-                ) : (
-                  <div>No submissions found</div>
-                )
               ) : (
-                <div>Loading problem description...</div>
+                error ? (
+                  <div>{error}</div>
+                ) : (
+                <div>Loading submission History...</div>
+                )
               ))}
           </div>
         </div>

@@ -8,8 +8,6 @@ import StudentPrivateRoute from "../util/PrivateRoutes/StudentPrivateRoutes";
 import AdminClassList from "../components/Admin/Class/AdminClassList";
 import CreateClass from "../components/Admin/Class/CreateClass";
 import AdminClassDetail from "../components/Admin/Class/AdminClassDetail";
-import AdminStudentDetailForClass from "../components/Admin/Class/AdminStudentDetailForClass";
-
 
 import AdminSubjectList from "../components/Admin/Subject/AdminSubjectList";
 import AdminSubjectDetail from "../components/Admin/Subject/AdminSubjectDetail";
@@ -51,7 +49,6 @@ const paths = [
       { path: "class", element: <AdminClassList /> },
       { path: "class/create", element: <CreateClass /> },
       { path: "class/:id", element: <AdminClassDetail /> },
-      { path: "class/:id/student/:studentId", element: <AdminStudentDetailForClass /> },
 
       { path: "subject", element: <AdminSubjectList /> },
       { path: "subject/create", element: <AdminSubjectCreate /> },
