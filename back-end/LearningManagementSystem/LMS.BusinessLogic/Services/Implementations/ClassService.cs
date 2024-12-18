@@ -646,8 +646,7 @@ namespace LMS.BusinessLogic.Services.Implementations
                     };
                 }
 
-                // Get topics that are associated with the class but not opened yet
-                var topics = await _topicRepository.FindListAsync(t => t.SubjectId == classExists.SubjectId);
+                var topics = await _topicRepository.FindListAsync(t => t.SubjectId == classExists.SubjectId && t.IsDeleted == false);
                 var topicDTOs = topics.Select(t => new TopicDTO
                 {
                     Id = t.Id,

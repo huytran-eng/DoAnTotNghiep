@@ -12,11 +12,12 @@ namespace LMS.DataAccess.Repositories
         public override async Task<IEnumerable<Class>> GetAllAsync()
         {
             return await _context.Classes
+                .Where(c => c.IsDeleted == false && c.Subject.IsDeleted == false)
                .Include(c => c.Teacher)
                .ThenInclude(t => t.User)
                .Include(c => c.Subject)
                .Include(c => c.StudentClasses)
-               .Include(c => c.Topics)
+               .Include(c => c.Topics.Where(t => t.IsDeleted == false))
                .ToListAsync();
         }
 

@@ -258,6 +258,93 @@ namespace LMS.BusinessLogic.Services.Implementations
             }
         }
 
+        public async Task<CommonResult<SubjectDTO>> EditSubjectAsync(Guid subjectId, EditSubjectDTO dto, Guid userId)
+        {
+            try
+            {
+                var currentUserInfo = await _userRepository.GetByIdAsync(userId);
+                if (currentUserInfo == null)
+                {
+                    return new CommonResult<SubjectDTO>
+                    {
+                        IsSuccess = false,
+                        Code = 404,
+                        Message = "User not found."
+                    };
+                }
+
+                var subject = await _subjectRepository.GetByIdAsync(subjectId);
+                if (subject == null)
+                {
+                    return new CommonResult<SubjectDTO>
+                    {
+                        IsSuccess = false,
+                        Code = 404,
+                        Message = "Subject not found."
+                    };
+                }
+
+                // Update subject fields
+                subject.Name = dto.Name ?? subject.Name;
+                subject.Description = dto.Description ?? subject.Description;
+                subject.Credit = dto.Credit;
+                subject.DepartmentId = dto.DepartmentId;
+                subject.UpdatedAt = DateTime.UtcNow.AddHours(7);
+                subject.UpdatedById = userId;
+
+                await _topicRepository.DeleteRangeAsync(subject.Topics.ToList());
+
+                // Update topics
+                if (dto.Topics != null && dto.Topics.Any())
+                {
+
+                    var updatedTopics = dto.Topics.Select(topicDTO => new Topic
+                    {
+                        Name = topicDTO.Name,
+                        Description = topicDTO.Description,
+                        SubjectId = subjectId,
+                        CreatedAt = DateTime.UtcNow.AddHours(7),
+                        CreatedById = userId
+                    }).ToList();
+
+                    await _topicRepository.AddRangeAsync(updatedTopics);
+                }
+
+                await _subjectProgrammingLanguageRepository.DeleteRangeAsync(subject.SubjectProgrammingLanguages.ToList());
+
+
+                // Update programming languages
+                if (dto.ProgrammingLanguageIds != null && dto.ProgrammingLanguageIds.Any())
+                {
+                    var newRelations = dto.ProgrammingLanguageIds.Select(programmingLanguageId => new SubjectProgrammingLanguage
+                    {
+                        SubjectId = subjectId,
+                        ProgrammingLanguageId = programmingLanguageId,
+                        CreatedAt = DateTime.UtcNow,
+                        CreatedById = userId
+                    }).ToList();
+
+                    await _subjectProgrammingLanguageRepository.AddRangeAsync(newRelations);
+                }
+
+                await _subjectRepository.SaveAsync();
+                return new CommonResult<SubjectDTO>
+                {
+                    IsSuccess = true,
+                    Code = 200,
+                    Message = "Subject updated successfully."
+                };
+            }
+            catch (Exception ex)
+            {
+                return new CommonResult<SubjectDTO>
+                {
+                    IsSuccess = false,
+                    Code = 500,
+                    Message = $"Error when editing subject: {ex.Message}"
+                };
+            }
+        }
 
     }
 }

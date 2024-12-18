@@ -14,7 +14,7 @@ namespace LMS.DataAccess.Repositories
             return await _context.ClassExercises
                         .Include(ce => ce.SubjectExercise)
                         .ThenInclude(se => se.Exercise)
-                        .ThenInclude(e => e.TestCases)
+                        .ThenInclude(e => e.TestCases.Where(tc =>  tc.IsDeleted == false))
                         .FirstOrDefaultAsync(ce => ce.Id == classExerciseId);
         }
 
@@ -23,7 +23,7 @@ namespace LMS.DataAccess.Repositories
             return await _context.ClassExercises
                         .Include(ce => ce.SubjectExercise)
                         .ThenInclude(se => se.Exercise)
-                        .ThenInclude(e => e.TestCases.Where(tc => tc.IsHidden == false))
+                        .ThenInclude(e => e.TestCases.Where(tc => tc.IsHidden == false && tc.IsDeleted == false))
                         .FirstOrDefaultAsync(ce => ce.Id == classExerciseId);
         }
 

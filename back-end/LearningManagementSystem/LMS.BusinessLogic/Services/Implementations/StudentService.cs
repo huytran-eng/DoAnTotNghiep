@@ -468,5 +468,84 @@ namespace LMS.BusinessLogic.Services.Implementations
                 };
             }
         }
+
+        public async Task<CommonResult<StudentDTO>> GetStudentDetails(Guid id)
+        {
+            try
+            {
+                var student = await _studentRepository.GetByIdAsync(id);
+                if (student == null)
+                {
+                    return new CommonResult<StudentDTO>
+                    {
+                        IsSuccess = false,
+                        Code = 404,
+                        Message = "Student not found."
+                    };
+                }
+
+                var studentDetailsDto = new StudentDTO
+                {
+                    Id = student.Id,
+                    StudentIdString = student.StudentIdString,
+                    Name = student.User.Name,
+                    BirthDate = student.User.BirthDate,
+                    Email = student.User.Email,
+                    Address = student.User.Address,
+                    Phone = student.User.Phone,
+                };
+
+                return new CommonResult<StudentDTO>
+                {
+                    IsSuccess = true,
+                    Code = 200,
+                    Data = studentDetailsDto
+                };
+            }
+            catch (Exception e)
+            {
+                return new CommonResult<StudentDTO>
+                {
+                    IsSuccess = false,
+                    Code = 500,
+                    Message = $"Error when getting student details: {e}"
+                };
+            }
+        }
+
+        public async Task<CommonResult<List<ClassListDTO>>> GetStudentClasses(Guid id)
+        {
+            try
+            {
+                var classes = await _classRepository.GetClassesByStudentIdAsync(id);
+
+                var classListDTO = classes.Select(c => new ClassListDTO
+                {
+                    Id = c.Id,
+                    Name = c.Name,
+                    StartDate = c.StartDate,
+                    EndDate = c.EndDate,
+                    TeacherName = c.Teacher.User.Name,
+                    SubjectName = c.Subject.Name,
+                    NumberOfStudent = c.StudentClasses.Count()
+                }).ToList();
+
+                return new CommonResult<List<ClassListDTO>>
+                {
+                    IsSuccess = true,
+                    Code = 200,
+                    Data = classListDTO
+                };
+            }
+            catch (Exception e)
+            {
+                return new CommonResult<List<ClassListDTO>>
+                {
+                    IsSuccess = false,
+                    Code = 500,
+                    Message = $"Error when getting student classes: {e}"
+                };
+            }
+        }
     }
 }

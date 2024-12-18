@@ -14,5 +14,6 @@ namespace LMS.DataAccess.Repositories
         public UserRepository(AppDbContext context) : base(context)
         {
         }
+
     }
 }

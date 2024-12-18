@@ -26,7 +26,7 @@ namespace LMS.DataAccess.Repositories
         public async Task<IEnumerable<ClassTopicOpen>> GetAllClassTopicAsync(Guid classId)
         {
             return await _context.ClassTopicOpens
-                                 .Where(cto => cto.ClassId == classId
+                                 .Where(cto => cto.ClassId == classId && cto.Topic.IsDeleted == false
                                  )
                                  .Include(cto => cto.Class)
                                  .Include(cto => cto.Topic)

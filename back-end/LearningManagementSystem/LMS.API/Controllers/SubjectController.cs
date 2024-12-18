@@ -216,6 +216,40 @@ namespace LMS.API.Controllers
                 return StatusCode(500, new { Message = "An error occurred while creating the subject.", Error = ex.Message });
             }
         }
+        [Authorize(Roles = "Admin")]
+        [HttpPost("edit/{id}")]
+        public async Task<IActionResult> EditSubject(Guid id, [FromBody] EditSubjectDTO dto)
+        {
+            var userId = GetCurrentUserId();
+            if (userId == null)
+            {
+                return Unauthorized("UserId not found or invalid.");
+            }
+
+            try
+            {
+                var result = await _subjectService.EditSubjectAsync(id, dto, userId.Value);
+
+                if (result.IsSuccess)
+                {
+                    return Ok(result.Data);
+                }
+                else
+                {
+                    return result.Code switch
+                    {
+                        400 => BadRequest(result.Message),
+                        404 => NotFound(result.Message),
+                        _ => StatusCode(500, result.Message)
+                    };
+                }
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { Message = "An error occurred while editing the subject.", Error = ex.Message });
+            }
+        }
+
 
         private Guid? GetCurrentUserId()
         {

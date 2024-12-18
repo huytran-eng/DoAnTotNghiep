@@ -21,12 +21,14 @@ namespace LMS.DataAccess.Repositories
         {
             return await _context.Subjects
                         .Include(subject => subject.Department)
-                        .Include(subject => subject.Classes)   
-                        .Include(subject => subject.SubjectProgrammingLanguages)
-                        .ThenInclude(spl => spl.ProgrammingLanguage)
-               .Include(s => s.Topics)
-                        .FirstOrDefaultAsync(subject => subject.Id == id);
+                        .Include(subject => subject.Classes.Where(cls => !cls.IsDeleted))
+                             // Filter Classes
+                        .Include(subject => subject.SubjectProgrammingLanguages.Where(spl => !spl.IsDeleted))
+                            .ThenInclude(spl => spl.ProgrammingLanguage)
+                        .Include(s => s.Topics.Where(topic => !topic.IsDeleted))
+                        .FirstOrDefaultAsync(subject => subject.Id == id && !subject.IsDeleted); // Ensure the subject is not deleted
         }
+
 
         public async Task<IEnumerable<Subject>> GetSubjectsByStudentIdAsync(Guid studentId)
         {

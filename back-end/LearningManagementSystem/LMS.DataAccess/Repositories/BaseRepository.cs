@@ -17,12 +17,12 @@ namespace LMS.DataAccess.Repositories
 
         public virtual async Task<IEnumerable<T>> GetAllAsync()
         {
-            return await Task.FromResult(_dbSet);
+            return await Task.FromResult(_dbSet.Where(entity => EF.Property<bool>(entity, "IsDeleted") == false));
         }
 
         public virtual async Task<T> GetByIdAsync(Guid id)
         {
-            return await _dbSet.FindAsync(id); 
+            return await _dbSet.FirstOrDefaultAsync(entity => EF.Property<Guid>(entity, "Id") == id && !EF.Property<bool>(entity, "IsDeleted"));
         }
 
         public virtual async Task<T> FindAsync(Expression<Func<T, bool>> expression)
@@ -52,12 +52,17 @@ namespace LMS.DataAccess.Repositories
 
         public virtual async Task DeleteAsync(T entity)
         {
-            if (_context.Entry(entity).State == EntityState.Detached)
+            var property = typeof(T).GetProperty("IsDeleted");
+            if (property != null)
             {
-                _dbSet.Attach(entity); 
+                property.SetValue(entity, true); // Set IsDeleted to true
+                _dbSet.Update(entity); // Mark entity as updated
+                await Task.CompletedTask; // Simulate async behavior
             }
-            _dbSet.Remove(entity); 
-            await Task.CompletedTask; 
+            else
+            {
+                throw new InvalidOperationException("Entity does not have an IsDeleted property.");
+            }
         }
 
         public virtual async Task SaveAsync()
@@ -67,8 +72,21 @@ namespace LMS.DataAccess.Repositories
 
         public virtual async Task DeleteRangeAsync(List<T> entities)
         {
-            _dbSet.RemoveRange(entities);
-            await Task.CompletedTask; 
+            foreach (var entity in entities)
+            {
+                var property = typeof(T).GetProperty("IsDeleted");
+                if (property != null)
+                {
+                    property.SetValue(entity, true); // Set IsDeleted to true for each entity
+                    _dbSet.Update(entity); // Mark entity as updated
+                }
+                else
+                {
+                    throw new InvalidOperationException("Entity does not have an IsDeleted property.");
+                }
+            }
+
+            await Task.CompletedTask; // Simulate async behavior
         }
 
         public virtual async Task DetachAsync(T entity)

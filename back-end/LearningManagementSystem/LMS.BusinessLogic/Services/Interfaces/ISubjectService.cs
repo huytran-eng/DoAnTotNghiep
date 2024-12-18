@@ -14,5 +14,6 @@ namespace LMS.BusinessLogic.Services.Interfaces
 
         Task<CommonResult<SubjectDetailDTO>> GetSubjectDetailForUser(Guid subjectId, Guid userId);
         Task<CommonResult<SubjectDTO>> CreateSubjectAsync(CreateSubjectDTO dto, Guid userId);
+        Task<CommonResult<SubjectDTO>> EditSubjectAsync(Guid subjectId, EditSubjectDTO dto, Guid userId);
     }
 }

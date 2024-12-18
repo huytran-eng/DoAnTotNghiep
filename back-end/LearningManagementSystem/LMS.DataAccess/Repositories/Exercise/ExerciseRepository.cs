@@ -12,7 +12,7 @@ namespace LMS.DataAccess.Repositories
         public async Task<Exercise> GetByIdWithTestCasesAsync(Guid Id)
         {
             return await _context.Exercises
-                .Include(c => c.TestCases)
+                .Include(c => c.TestCases.Where(tc => tc.IsDeleted == false))
                 .FirstOrDefaultAsync(c => c.Id == Id);
         }
 
@@ -21,7 +21,7 @@ namespace LMS.DataAccess.Repositories
             return await _context.ClassExercises
                 .Where(ce => ce.Id == classExerciseId)
                 .Select(ce => ce.SubjectExercise.Exercise)
-                .Include(e => e.TestCases)
+                .Include(e => e.TestCases.Where(tc => tc.IsDeleted == false))
                 .FirstOrDefaultAsync();
         }
 

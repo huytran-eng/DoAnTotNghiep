@@ -29,5 +29,7 @@ namespace LMS.DataAccess.Models
         public string Phone { get; set; }
         public string? Note { get; set; }
         public PositionEnum Position { get; set; }
+
+        public bool IsDeleted { get; set; }
     }
 }

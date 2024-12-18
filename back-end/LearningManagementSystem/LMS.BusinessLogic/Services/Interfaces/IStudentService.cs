@@ -17,5 +17,7 @@ namespace LMS.BusinessLogic.Services.Interfaces
            Guid userId);
         Task<CommonResult<List<StudentClassListDTO>>> GetStudentsForClass(Guid classId, Guid userId);
         Task<CommonResult<StudentClassDetailDTO>> GetStudentForClass(Guid classId, Guid studentId, Guid userId);
+        Task<CommonResult<StudentDTO>> GetStudentDetails(Guid id);
+        Task<CommonResult<List<ClassListDTO>>> GetStudentClasses(Guid id);
     }
 }
