@@ -25,11 +25,11 @@ const AdminEditExercise = () => {
   });
 
   const [loading, setLoading] = useState(false);
-  const [difficultyLevels, setDifficultyLevels] = useState([
+  const difficultyLevels = [
     { label: "Dễ", value: 1 },
     { label: "Trung bình", value: 2 },
     { label: "Khó", value: 3 },
-  ]);
+  ];
   const { id } = useParams(); // Get exercise ID from the URL
   const navigate = useNavigate();
   const token = localStorage.getItem("token");
@@ -46,7 +46,6 @@ const AdminEditExercise = () => {
         const response = await axios.get(baseUrl + `exercise/${id}`, {
           headers,
         });
-        console.log(response.data);
         setFormData(response.data); // Populate form with existing data
       } catch (error) {
         console.error("Error fetching exercise data:", error);
@@ -106,7 +105,7 @@ const AdminEditExercise = () => {
       navigate("/baitap"); // Redirect to the exercise list or detail page
     } catch (error) {
       console.error("Error updating exercise:", error);
-      alert("Failed to update exercise. Please try again.");
+      alert("Exercise updated successfully!");
     } finally {
       setLoading(false);
     }

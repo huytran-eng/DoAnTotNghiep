@@ -10,7 +10,7 @@ import {
   MenuItem,
   Box,
 } from "@mui/material";
-import {baseUrl} from "../../../util/constant";
+import { baseUrl } from "../../../util/constant";
 const AdminCreateSubject = () => {
   const [departments, setDepartments] = useState([]);
   const [programmingLanguages, setProgrammingLanguages] = useState([]);
@@ -34,14 +34,11 @@ const AdminCreateSubject = () => {
 
   const fetchDepartments = async () => {
     try {
-      const response = await axios.get(
-        baseUrl+"Department/GetAll",
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const response = await axios.get(baseUrl + "Department/GetAll", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       setDepartments(response.data);
     } catch (error) {
       console.error("Error fetching departments:", error);
@@ -54,14 +51,11 @@ const AdminCreateSubject = () => {
 
   const fetchProgrammingLanguages = async () => {
     try {
-      const response = await axios.get(
-        baseUrl+"ProgrammingLanguage/GetAll",
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const response = await axios.get(baseUrl + "ProgrammingLanguage/GetAll", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       setProgrammingLanguages(response.data);
     } catch (error) {
       console.error("Error fetching programming languages:", error);
@@ -111,7 +105,7 @@ const AdminCreateSubject = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      await axios.post(baseUrl+"subject/create", subject, {
+      await axios.post(baseUrl + "subject/create", subject, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -161,6 +155,7 @@ const AdminCreateSubject = () => {
         type="number"
         value={subject.credit}
         onChange={handleInputChange}
+        inputProps={{ min: 1 }}
         fullWidth
         required
       />

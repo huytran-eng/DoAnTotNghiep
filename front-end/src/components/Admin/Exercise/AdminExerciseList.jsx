@@ -44,7 +44,6 @@ const AdminExerciseList = () => {
       headerName: "Ngày tạo",
       flex: 1,
       valueGetter: (value) => {
-        console.log(value);
         if (!value) {
           return "N/A"
         }
