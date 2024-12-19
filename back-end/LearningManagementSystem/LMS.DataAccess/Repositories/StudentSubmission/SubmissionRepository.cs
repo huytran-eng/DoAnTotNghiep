@@ -35,9 +35,13 @@ namespace LMS.DataAccess.Repositories
         {
             return await _context.StudentSubmissions
               .Include(s => s.ClassExercise)
-              .ThenInclude(ce => ce.Exercise)
+                .ThenInclude(ce => ce.Exercise)
+              .Include(s => s.ClassExercise)
+                .ThenInclude(ce => ce.ClassTopicOpen)
+                    .ThenInclude(cto => cto.Class)
+                        .ThenInclude(c => c.Subject)
               .Include(ce => ce.SubjectProgrammingLanguage)
-              .ThenInclude(spl => spl.ProgrammingLanguage)
+                .ThenInclude(spl => spl.ProgrammingLanguage)
               .Where(s => s.StudentId == studentId)
               .ToListAsync();
         }
