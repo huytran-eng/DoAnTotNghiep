@@ -174,11 +174,11 @@ namespace LMS.BusinessLogic.Services.Implementations
             }
         }
 
-
         public async Task<CommonResult<IEnumerable<StudentSubmissionHistoryDTO>>> GetSubmissionsByClassExerciseAndStudentAsync(Guid classExerciseId, Guid studentId)
         {
             try
             {
+
                 // Fetch submissions from the repository
                 var submissions = await _studentSubmissionRepository.GetSubmissionsByExerciseAndStudentAsync(classExerciseId, studentId);
 
@@ -267,6 +267,74 @@ namespace LMS.BusinessLogic.Services.Implementations
                     Status = (int)submission.Status,
                     ProgrammingLanguage = submission.SubjectProgrammingLanguage.ProgrammingLanguage.Name,
                     Code = isAdmin ? submission.Code : null, 
+                });
+
+                return new CommonResult<IEnumerable<StudentSubmissionHistoryDTO>>
+                {
+                    IsSuccess = true,
+                    Code = 200,
+                    Data = submissionDtos,
+                };
+            }
+            catch (Exception ex)
+            {
+                // Log exception (not shown for brevity)
+                return new CommonResult<IEnumerable<StudentSubmissionHistoryDTO>>
+                {
+                    IsSuccess = false,
+                    Code = 500,
+                    Message = "Server error occurred while retrieving submissions.",
+                };
+            }
+        }
+
+        public async Task<CommonResult<IEnumerable<StudentSubmissionHistoryDTO>>> GetStudentSubmissionByStudentId( Guid studentId, Guid userId)
+        {
+            try
+            {
+                var currentUserInfo = await _userRepository.GetByIdAsync(userId);
+                if (currentUserInfo == null)
+                {
+                    return new CommonResult<IEnumerable<StudentSubmissionHistoryDTO>>
+                    {
+                        IsSuccess = false,
+                        Code = 404,
+                        Message = "User not found."
+                    };
+                }
+
+                bool isAllowed = currentUserInfo.Position == PositionEnum.Admin ||
+                      currentUserInfo.Position == PositionEnum.Teacher ||
+                      studentId == userId;
+
+                // Fetch submissions from the repository for the given classId and studentId
+                var submissions = await _studentSubmissionRepository.GetSubmissionsByStudentIdAsync(studentId);
+
+                if (submissions == null || !submissions.Any())
+                {
+                    return new CommonResult<IEnumerable<StudentSubmissionHistoryDTO>>
+                    {
+                        IsSuccess = false,
+                        Code = 404,
+                        Message = "No submissions found for the given class and student.",
+                    };
+                }
+
+                // Map submissions to DTOs
+                var submissionDtos = submissions.Select(submission => new StudentSubmissionHistoryDTO
+                {
+                    Id = submission.Id,
+                    ExerciseId = submission.ClassExercise.ExerciseId,
+                    StudentId = submission.StudentId,
+                    SubmitDate = submission.SubmitDate,
+                    ExecutionTime = submission.ExecutionTime,
+                    MemoryUsed = submission.MemoryUsed,
+                    Status = (int)submission.Status,
+                    ProgrammingLanguage = submission.SubjectProgrammingLanguage.ProgrammingLanguage.Name,
+                    Code = isAllowed ? submission.Code : null,
+                    ExerciseTitle = submission.ClassExercise.Exercise.Title,
+                    SubjectName = submission.ClassExercise.ClassTopicOpen.Class.Subject.Name,
+                    ClassName = submission.ClassExercise.ClassTopicOpen.Class.Name
                 });
 
                 return new CommonResult<IEnumerable<StudentSubmissionHistoryDTO>>

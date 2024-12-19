@@ -741,6 +741,42 @@ namespace LMS.BusinessLogic.Services.Implementations
             }
         }
 
+        public async Task<CommonResult<List<ClassListDTO>>> GetStudentClasses(Guid id)
+        {
+            try
+            {
+                var classes = await _classRepository.GetClassesByStudentIdAsync(id);
+
+                var classListDTO = classes.Select(c => new ClassListDTO
+                {
+                    Id = c.Id,
+                    Name = c.Name,
+                    StartDate = c.StartDate,
+                    EndDate = c.EndDate,
+                    TeacherName = c.Teacher.User.Name,
+                    SubjectName = c.Subject.Name,
+                    NumberOfStudent = c.StudentClasses.Count()
+                }).ToList();
+
+                return new CommonResult<List<ClassListDTO>>
+                {
+                    IsSuccess = true,
+                    Code = 200,
+                    Data = classListDTO
+                };
+            }
+            catch (Exception e)
+            {
+                return new CommonResult<List<ClassListDTO>>
+                {
+                    IsSuccess = false,
+                    Code = 500,
+                    Message = $"Error when getting student classes: {e}"
+                };
+            }
+        }
+
+
 
         /// <summary>
         /// method to get all exercises that has opened inside a class

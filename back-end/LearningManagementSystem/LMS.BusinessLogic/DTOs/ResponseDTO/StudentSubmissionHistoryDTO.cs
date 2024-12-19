@@ -2,6 +2,7 @@ namespace LMS.BusinessLogic.DTOs.ResponseDTO
 {
     public class StudentSubmissionHistoryDTO
     {
+        public Guid Id { get; set; }
         public Guid SubmissionId { get; set; }
         public Guid ExerciseId { get; set; }
         public Guid StudentId { get; set; }
@@ -12,6 +13,9 @@ namespace LMS.BusinessLogic.DTOs.ResponseDTO
         public DateTime SubmitDate { get; set; }
         public int ExecutionTime { get; set; }
         public int MemoryUsed { get; set; }
+        public string SubjectName { get; set; }
+        public string ExerciseTitle { get; set; }
+        public string ClassName { get; set; }
 
     }
 }

@@ -21,6 +21,7 @@ import AdminEditExercise from "../components/Admin/Exercise/AdminEditExercise";
 import AdminExerciseDetail from "../components/Admin/Exercise/AdminExerciseDetail";
 
 import AdminStudentList from "../components/Admin/Student/AdminStudentList";
+import AdminStudentDetail from "../components/Admin/Student/AdminStudentDetail";
 // Students components import
 import StudentClassList from "../components/Student/Class/StudentClassList";
 import StudentClassDetail from "../components/Student/Class/StudentClassDetail";
@@ -62,6 +63,7 @@ const paths = [
 
      
       { path: "student", element: <AdminStudentList /> },
+      { path: "student/:id", element: <AdminStudentDetail /> },
     ],
   },
   {

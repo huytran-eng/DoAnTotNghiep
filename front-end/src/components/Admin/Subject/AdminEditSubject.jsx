@@ -130,7 +130,7 @@ const AdminEditSubject = () => {
     setLoading(true);
     try {
       console.log(subject)
-      await axios.put(baseUrl + `subject/update/${id}`, subject, {
+      await axios.post(baseUrl + `subject/edit/${id}`, subject, {
         headers: { Authorization: `Bearer ${token}` },
       });
       alert("Subject updated successfully!");

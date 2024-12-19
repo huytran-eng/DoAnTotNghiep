@@ -10,10 +10,16 @@ namespace LMS.API.Controllers
     public class StudentController : Controller
     {
         private readonly IStudentService _studentService;
+        private readonly IStudentSubmissionService _studentSubmissionService;
+        private readonly IClassService _classService;
 
-        public StudentController(IStudentService studentService)
+
+
+        public StudentController(IStudentService studentService, IStudentSubmissionService studentSubmissionService, IClassService classService)
         {
             _studentService = studentService;
+            _studentSubmissionService = studentSubmissionService;
+            _classService = classService;
         }
 
         [Authorize(Roles = "Admin")]
@@ -113,7 +119,7 @@ namespace LMS.API.Controllers
             try
             {
                 // Fetch student classes using the student service
-                var studentClassesResult = await _studentService.GetStudentClasses(id);
+                var studentClassesResult = await _classService.GetStudentClasses(id);
 
                 if (studentClassesResult.IsSuccess)
                 {
@@ -134,33 +140,34 @@ namespace LMS.API.Controllers
             }
         }
 
-        //[Authorize]
-        //[HttpGet("{id}/submissions")]
-        //public async Task<IActionResult> GetStudentSubmissions(Guid id)
-        //{
-        //    try
-        //    {
-        //        // Fetch student submissions using the student service
-        //        var studentSubmissionsResult = await _studentService.GetStudentSubmissions(id);
+        [Authorize]
+        [HttpGet("{id}/submissions")]
+        public async Task<IActionResult> GetStudentSubmissions(Guid id)
+        {
+            try
+            {
+                var userId = GetCurrentUserId();
+                // Fetch student submissions using the student service
+                var studentSubmissionsResult = await _studentSubmissionService.GetStudentSubmissionByStudentId(id, userId.Value);
 
-        //        if (studentSubmissionsResult.IsSuccess)
-        //        {
-        //            return Ok(studentSubmissionsResult.Data);
-        //        }
-        //        else
-        //        {
-        //            return studentSubmissionsResult.Code switch
-        //            {
-        //                400 => BadRequest(studentSubmissionsResult.Message),
-        //                _ => StatusCode(500, studentSubmissionsResult.Message)
-        //            };
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return StatusCode(500, new { Message = "An error occurred while fetching student submissions", Error = ex.Message });
-        //    }
-        //}
+                if (studentSubmissionsResult.IsSuccess)
+                {
+                    return Ok(studentSubmissionsResult.Data);
+                }
+                else
+                {
+                    return studentSubmissionsResult.Code switch
+                    {
+                        400 => BadRequest(studentSubmissionsResult.Message),
+                        _ => StatusCode(500, studentSubmissionsResult.Message)
+                    };
+                }
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { Message = "An error occurred while fetching student submissions", Error = ex.Message });
+            }
+        }
 
         private Guid? GetCurrentUserId()
         {

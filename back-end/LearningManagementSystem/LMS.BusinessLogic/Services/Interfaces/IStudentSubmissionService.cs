@@ -10,5 +10,6 @@ namespace LMS.BusinessLogic.Services.Interfaces
         Task<CommonResult<StudentSubmissionResultDTO>> EvaluateSubmissionAsync(SubmitCodeDTO submissionDTO);
         Task<CommonResult<IEnumerable<StudentSubmissionHistoryDTO>>> GetSubmissionsByClassExerciseAndStudentAsync(Guid exerciseId, Guid studentId);
         Task<CommonResult<IEnumerable<StudentSubmissionHistoryDTO>>> GetSubmissionsByClassAndStudentAsync(Guid classId, Guid studentId, Guid userId);
+        Task<CommonResult<IEnumerable<StudentSubmissionHistoryDTO>>> GetStudentSubmissionByStudentId(Guid studentId, Guid userId);
     }
 }

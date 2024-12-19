@@ -95,7 +95,7 @@ const AdminStudentList = () => {
   ];
 
   const handleViewDetails = (rowData) => {
-    navigate(`/admin/student/${rowData.studentId}`);
+    navigate(`/admin/student/${rowData.id}`);
   };
 
   return (

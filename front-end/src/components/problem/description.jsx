@@ -32,12 +32,16 @@ export default function ProblemDescription(props) {
         <h3 className="font-bold">Ví dụ:</h3>
         {problem.testCases.map((testCase, index) => (
           <div key={index} className="bg-gray-50 p-4 rounded">
-            <p>
-              <strong>Input:</strong> {testCase.input}
-            </p>
-            <p>
-              <strong>Output:</strong> {testCase.expectedOutput}
-            </p>
+            <div className="mb-2">
+              <strong>Input:</strong>
+              <div className="whitespace-pre-wrap">{testCase.input}</div>
+            </div>
+            <div className="mb-2">
+              <strong>Output:</strong>
+              <div className="whitespace-pre-wrap">
+                {testCase.expectedOutput}
+              </div>
+            </div>
           </div>
         ))}
       </div>

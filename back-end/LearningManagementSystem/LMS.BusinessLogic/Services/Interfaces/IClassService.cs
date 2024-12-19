@@ -24,6 +24,8 @@ namespace LMS.BusinessLogic.Services.Interfaces
 
         Task<CommonResult<List<ClassTopicOpenListDTO>>> GetOpenClassTopicAsync(Guid classId, Guid userId);
         Task<CommonResult<List<TopicDTO>>> GetAvailableClassTopicAsync(Guid classId, Guid userId);
+        Task<CommonResult<List<ClassListDTO>>> GetStudentClasses(Guid id);
+
 
     }
 }

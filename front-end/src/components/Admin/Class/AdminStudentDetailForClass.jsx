@@ -20,6 +20,7 @@ import {
   TableContainer,
   Paper,
   Modal,
+  Button,
 } from "@mui/material";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { useParams, useNavigate } from "react-router-dom";
@@ -123,6 +124,10 @@ const AdminStudentDetailForClass = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleGoBack = () => {
+    navigate(`/admin/class/${id}`); // Navigate back to the class view
   };
 
   return (
@@ -323,6 +328,15 @@ const AdminStudentDetailForClass = () => {
           )}
         </Grid>
       </Grid>
+
+      <Button
+        variant="contained"
+        color="primary"
+        onClick={handleGoBack}
+        sx={{ marginBottom: 2 }}
+      >
+        Quay lại lớp học
+      </Button>
     </div>
   );
 };
