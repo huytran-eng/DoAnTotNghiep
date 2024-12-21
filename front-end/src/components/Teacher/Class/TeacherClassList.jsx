@@ -1,16 +1,14 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import { useState, useEffect } from "react";
 import axios from "axios"; // Use Axios for simplified HTTP requests
 import { DataGrid } from "@mui/x-data-grid";
 import "../../../styles/homeStyles.css";
 import { useNavigate } from "react-router-dom";
 import moment from "moment";
-import "../../../styles/studentClassList.css";
-import { baseUrl } from "../../../util/constant";
-import { Box, Typography, Button, IconButton } from "@mui/material";
+import { Typography, Box, Button } from "@mui/material";
 import { Visibility } from "@mui/icons-material";
+import { baseUrl } from "../../../util/constant";
 
-const StudentClassList = () => {
+const TeacherClassList = () => {
   const [classes, setClasses] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
@@ -25,11 +23,14 @@ const StudentClassList = () => {
   const fetchClasses = async () => {
     setLoading(true);
     try {
-      const response = await axios.get(baseUrl + `class/list`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await axios.get(
+        baseUrl+`class/list`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
       setClasses(response.data);
     } catch (error) {
       console.error("Error fetching classes:", error);
@@ -43,34 +44,19 @@ const StudentClassList = () => {
   };
 
   const columns = [
-    {
-      field: "name",
-      headerName: "Tên lớp",
-      flex: 1,
-    },
-    {
-      field: "subjectName",
-      headerName: "Tên môn học",
-      flex: 1.5,
-    },
-    {
-      field: "teacherName",
-      headerName: "Tên giáo viên",
-      flex: 1,
-    },
-    {
-      field: "numberOfStudent",
-      headerName: "Sĩ số",
-      flex: 0.5,
-    },
+    { field: "name", headerName: "Tên lớp", flex: 1 },
+    { field: "subjectName", headerName: "Tên môn học", flex: 1.5 },
+    { field: "teacherName", headerName: "Tên giáo viên", flex: 1 },
+    { field: "numberOfStudent", headerName: "Sĩ số", flex: 0.5 },
     {
       field: "startDate",
       headerName: "Ngày bắt đầu",
       flex: 1,
       valueGetter: (value) => {
         if (!value) {
-          return "N/A";
+          return "N/A"
         }
+        // Convert the decimal value to a percentage
         return moment(value).format("DD/MM/YYYY");
       },
     },
@@ -80,34 +66,35 @@ const StudentClassList = () => {
       flex: 1,
       valueGetter: (value) => {
         if (!value) {
-          return "N/A";
+          return "N/A"
         }
+        // Convert the decimal value to a percentage
         return moment(value).format("DD/MM/YYYY");
       },
     },
     {
-      field: "status",
-      headerName: "Tình trạng",
+      field: 'status',
+      headerName: 'Tình trạng',
       width: 150,
       renderCell: (params) => {
         let color;
         let text;
         switch (params.row.status) {
           case 0:
-            color = "yellow";
-            text = "Chưa bắt đầu";
+            color = 'yellow';
+            text = 'Chưa bắt đầu';
             break;
           case 1:
-            color = "green";
-            text = "Đang mở";
+            color = 'green';
+            text = 'Đang mở';
             break;
           case 2:
-            color = "red";
-            text = "Đã kết thúc";
+            color = 'red';
+            text = 'Đã kết thúc';
             break;
           default:
-            color = "black";
-            text = "";
+            color = 'black';
+            text = '';
         }
         return <span style={{ color }}>{text}</span>;
       },
@@ -115,29 +102,26 @@ const StudentClassList = () => {
     {
       flex: 1,
       renderCell: (params) => (
-        <div>
-          <IconButton
-            color="primary"
-            onClick={() => handleViewDetails(params.row)}
-            sx={{ mr: 1 }}
-          >
-            <Visibility />
-          </IconButton>
-        </div>
+        <button onClick={() => handleViewDetails(params.row)}>
+          {" "}
+          <Visibility style={{ color: "#1976d2" }} />
+        </button>
       ),
     },
   ];
 
   const handleViewDetails = (rowData) => {
-    navigate(`/class/${rowData.id}`);
+    navigate(`/teacher/class/${rowData.id}`);
   };
+
+  
   if (loading) {
     return <div>Loading...</div>;
   }
   return (
-    <div>
+    <div className="content-container" style={{ padding: "20px" }}>
       <Typography variant="h4" component="h2" gutterBottom align="center">
-        Danh sách các lớp đang theo học
+        Danh sách các lớp giảng dạy
       </Typography>
       <Box
         sx={{
@@ -150,7 +134,6 @@ const StudentClassList = () => {
       >
         <div style={{ height: 600, width: "100%" }}>
           <DataGrid
-            mt-2
             rows={classes}
             columns={columns}
             pageSizeOptions={[5, 10, 25, { value: -1, label: "All" }]}
@@ -161,4 +144,4 @@ const StudentClassList = () => {
   );
 };
 
-export default StudentClassList;
+export default TeacherClassList;

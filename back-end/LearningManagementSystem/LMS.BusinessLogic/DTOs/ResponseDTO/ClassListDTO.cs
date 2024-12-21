@@ -9,5 +9,6 @@
         public int NumberOfStudent { get; set; }
         public string? TeacherName { get; set; }
         public string? SubjectName { get; set; }
+        public int Status { get; set; }
     }
 }

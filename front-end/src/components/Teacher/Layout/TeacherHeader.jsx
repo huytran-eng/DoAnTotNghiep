@@ -17,7 +17,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import logoPtit from "../../../assets/image/logo/Logo_PTIT.jpg";
 import "./homeStyles.css"
-export function AdminHeader() {
+export function TeacherHeader() {
   const navigate = useNavigate();
   const user = JSON.parse(localStorage.getItem("userInfo"));
   const [anchorEl, setAnchorEl] = React.useState(null);
@@ -74,16 +74,16 @@ export function AdminHeader() {
         <Box
           sx={{ flexGrow: 1, display: "flex", justifyContent: "flex-start" }}
         >
-          <Button color="inherit" onClick={() => navigate("/admin/subject")}>
+          <Button color="inherit" onClick={() => navigate("/teacher/subject")}>
             Môn học
           </Button>
-          <Button color="inherit" onClick={() => navigate("/admin/class")}>
+          <Button color="inherit" onClick={() => navigate("/teacher/class")}>
             Lớp học
           </Button>
-          <Button color="inherit" onClick={() => navigate("/admin/exercise")}>
+          <Button color="inherit" onClick={() => navigate("/teacher/exercise")}>
             Bài tập
           </Button>
-          <Button color="inherit" onClick={() => navigate("/admin/student")}>
+          <Button color="inherit" onClick={() => navigate("/teacher/student")}>
             Sinh viên
           </Button>
         </Box>
@@ -108,4 +108,4 @@ export function AdminHeader() {
   );
 }
 
-export default AdminHeader;
+export default TeacherHeader;

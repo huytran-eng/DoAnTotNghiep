@@ -60,7 +60,7 @@ namespace LMS.API.Controllers
             }
         }
 
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin, Teacher")]
         [HttpGet("")]
         public async Task<IActionResult> GetStudentsListForAdmin(string? studentName, string? sortBy, bool isDescending = false, int page = 1, int pageSize = 10)
         {
@@ -69,7 +69,7 @@ namespace LMS.API.Controllers
             {
                 return Unauthorized("UserId not found or invalid.");
             }
-            var studentsResult = await _studentService.GetStudentsForAdmin(studentName, sortBy, isDescending, page, pageSize, userId.Value);
+            var studentsResult = await _studentService.GetStudents(studentName, sortBy, isDescending, page, pageSize, userId.Value);
             if (studentsResult.IsSuccess)
             {
                 return Ok(studentsResult.Data);

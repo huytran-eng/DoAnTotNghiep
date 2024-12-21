@@ -3,6 +3,8 @@ import LoginVer2 from "../components/LoginVer2";
 import ProblemPage from "../pages/problem-page";
 import AdminPrivateRoute from "../util/PrivateRoutes/AdminPrivateRoutes";
 import StudentPrivateRoute from "../util/PrivateRoutes/StudentPrivateRoutes";
+import TeacherPrivateRoute from "../util/PrivateRoutes/TeacherPrivateRoutes";
+
 
 // Admin components import
 import AdminClassList from "../components/Admin/Class/AdminClassList";
@@ -27,9 +29,21 @@ import StudentClassList from "../components/Student/Class/StudentClassList";
 import StudentClassDetail from "../components/Student/Class/StudentClassDetail";
 import StudentDetailForClass from "../components/Student/Class/StudentDetailForClass";
 
-import UnauthorisedPage from "../pages/unauthorised-page";
+// Teacher components import
+import TeacherClassList from "../components/Teacher/Class/TeacherClassList";
+import TeacherClassDetail from "../components/Teacher/Class/TeacherClassDetail";
 
-// import AdminDetail from "../components/Admin/Class/AdminClassDetail";
+import TeacherSubjectList from "../components/Teacher/Subject/TeacherSubjectList";
+import TeacherSubjectDetail from "../components/Teacher/Subject/TeacherSubjectDetail";
+
+import TeacherExerciseList from "../components/Teacher/Exercise/TeacherExerciseList";
+import TeacherExerciseDetail from "../components/Teacher/Exercise/TeacherExerciseDetail";
+
+import TeacherStudentList from "../components/Teacher/Student/TeacherStudentList";
+import TeacherStudentDetail from "../components/Teacher/Student/TeacherStudentDetail";
+import UnauthorisedPage from "../pages/unauthorised-page";
+import TeacherStudentDetailForClass from "../components/Teacher/Class/TeacherStudentDetailForClass";
+
 
 const paths = [
   { path: "/login", element: <LoginVer2 /> },
@@ -45,7 +59,7 @@ const paths = [
   },
   {
     path: "/admin",
-    element: <AdminPrivateRoute />, // Protected routes for Admin
+    element: <AdminPrivateRoute />,
     children: [
       { path: "class", element: <AdminClassList /> },
       { path: "class/create", element: <CreateClass /> },
@@ -64,6 +78,25 @@ const paths = [
      
       { path: "student", element: <AdminStudentList /> },
       { path: "student/:id", element: <AdminStudentDetail /> },
+    ],
+  },
+  {
+    path: "/teacher",
+    element: <TeacherPrivateRoute />, // Protected routes for Teacher
+    children: [
+      { path: "class", element: <TeacherClassList /> },
+      { path: "class/:id", element: <TeacherClassDetail /> },
+      { path: "class/:id/student/:studentId", element: <TeacherStudentDetailForClass /> },
+
+
+      { path: "subject", element: <TeacherSubjectList />, },
+      { path: "subject/:id", element: <TeacherSubjectDetail /> },
+
+      { path: "exercise", element: <TeacherExerciseList /> },
+      { path: "exercise/:id", element: <TeacherExerciseDetail /> },
+
+      { path: "student", element: <TeacherStudentList /> },
+      { path: "student/:id", element: <TeacherStudentDetail /> },
     ],
   },
   {

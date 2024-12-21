@@ -124,7 +124,7 @@ namespace LMS.BusinessLogic.Services.Implementations
                     Message = "User not found."
                 };
             }
-            if (currentUserInfo.Position != PositionEnum.Admin)
+            if (currentUserInfo.Position != PositionEnum.Admin&& currentUserInfo.Position != PositionEnum.Teacher)
             {
                 return new CommonResult<List<ExerciseListDTO>>
                 {

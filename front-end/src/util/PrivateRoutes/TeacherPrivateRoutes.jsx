@@ -1,32 +1,27 @@
-import { Navigate, Outlet } from "react-router-dom";
-import { IsAuthenticated } from "./auth"; // Assuming IsAuthenticated checks if the user is logged in
-import { useState, useEffect } from "react";
-import TeacherLayout from "../components/Layout/TeacherLayout"; // Assuming you have a Teacher layout
+import { Navigate, Outlet, useLocation } from "react-router-dom";
+import { IsAuthenticated } from "../auth"; // Assuming IsAuthenticated checks if the user is logged in
+import TeacherLayout from "../../components/Teacher/Layout/TeacherLayout"; 
+
 
 const TeacherPrivateRoute = () => {
-  const isAuthenticated = IsAuthenticated();
-  const [userRole, setUserRole] = useState("");
-
-  useEffect(() => {
-    const userInfo = JSON.parse(localStorage.getItem("userInfo"));
-    setUserRole(userInfo?.position); // Assuming position is the role (e.g., Admin, Teacher, Student)
-  }, []);
-
-  // If the user is not authenticated, redirect to login
-  if (!isAuthenticated) {
+  const userRole = IsAuthenticated(); // Directly get the user's role from the IsAuthenticated function
+  // If the user is not authenticated or the role is not 'Admin', redirect to login or Unauthorized page
+  const local = useLocation();
+  if (!userRole) {
     return <Navigate to="/login" replace />;
-  }
-
-  // If the user is not a Teacher, redirect to Unauthorized page
+  }  
+  console.log(userRole)
   if (userRole !== "Teacher") {
     return <Navigate to="/unauthorized" replace />;
+  } // Redirect to the default route for Admin
+  if(local.pathname === "/teacher") {
+    return <Navigate to="/teacher/class" replace />;
   }
-
   return (
     <TeacherLayout>
       <Outlet />
     </TeacherLayout>
   );
 };
-
 export default TeacherPrivateRoute;
+

@@ -8,7 +8,7 @@ import { Box, Typography, Button, IconButton } from "@mui/material";
 import { Visibility, Edit } from "@mui/icons-material";
 import { baseUrl } from "../../../util/constant";
 
-const AdminSubjectList = () => {
+const TeacherSubjectList = () => {
   const [subjects, setSubjects] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [loading, setLoading] = useState(true);
@@ -43,22 +43,13 @@ const AdminSubjectList = () => {
     }
   };
 
-  const handleCreateSubject = () => {
-    navigate("/admin/subject/create");
-  };
-
-  const handleEditSubject = (id) => {
-    navigate(`/admin/subject/edit/${id}`);
-  };
-
+ 
   const columns = [
     { field: "name", headerName: "Tên Môn", flex: 1 },
     { field: "credit", headerName: "Số tín chỉ", flex: 1 },
     { field: "departmentName", headerName: "Tên khoa", flex: 1 },
     { field: "numberOfClasses", headerName: "Số lượng lớp", flex: 1 },
     {
-      field: "action",
-      headerName: "Action",
       flex: 1,
       renderCell: (params) => (
         <div>
@@ -69,19 +60,32 @@ const AdminSubjectList = () => {
           >
             <Visibility />
           </IconButton>
-          <IconButton
-            color="secondary"
-            onClick={() => handleEditSubject(params.row.id)}
-          >
-            <Edit /> {/* Edit icon */}
-          </IconButton>
         </div>
       ),
     },
+    // {
+    //   width: 150,
+    //   renderCell: (params) => (
+    //     <div>
+    //       <IconButton
+    //         color="primary"
+    //         onClick={() => h handleViewDetails(params.row)}
+    //         sx={{ mr: 1 }}
+    //       >
+    //         <Visibility /> {/* View icon */}
+    //       </IconButton>
+    //       <IconButton
+    //         color="secondary"
+    //         onClick={() => handleEditExercise(params.row.id)}
+    //       >
+    //         <Edit /> {/* Edit icon */}
+    //       </IconButton>
+    //     </div>
+    //   ),
   ];
 
   const handleViewDetails = (id) => {
-    navigate(`/admin/subject/${id}`);
+    navigate(`/teacher/subject/${id}`);
   };
 
   return (
@@ -99,14 +103,6 @@ const AdminSubjectList = () => {
           backgroundColor: "#f9f9f9",
         }}
       >
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={handleCreateSubject}
-          sx={{ mb: 3 }}
-        >
-          Tạo môn học
-        </Button>
         <div style={{ height: 400, width: "100%" }}>
           <DataGrid
             rows={subjects} // The data for the table
@@ -119,4 +115,4 @@ const AdminSubjectList = () => {
   );
 };
 
-export default AdminSubjectList;
+export default TeacherSubjectList;

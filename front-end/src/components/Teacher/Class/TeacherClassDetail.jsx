@@ -2,20 +2,32 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { DataGrid } from "@mui/x-data-grid";
-import { Box, Typography, Tabs, Tab, Grid, IconButton } from "@mui/material";
+import {
+  Box,
+  Typography,
+  Tabs,
+  Tab,
+  Grid,
+  Select,
+  Button,
+  TextField,
+  MenuItem,
+  IconButton
+} from "@mui/material";
 import { useParams, useNavigate } from "react-router-dom";
 import moment from "moment";
 import { DataGridPro } from "@mui/x-data-grid-pro";
 import { baseUrl } from "../../../util/constant";
 import { Visibility } from "@mui/icons-material";
 
-const StudentClassDetail = () => {
+const TeacherClassDetail = () => {
   const [activeTab, setActiveTab] = useState(0); // Track active tab index
   const [classDetails, setClassDetails] = useState(null); // Class details data
   const [students, setStudents] = useState([]); // Students data
   const [topics, setTopics] = useState([]); // Opened topics data
   const [materials, setMaterials] = useState([]); // Class study materials
   const [loading, setLoading] = useState(false); // Loading state
+  const [availableTopics, setAvailableTopics] = useState([]);
   const token = localStorage.getItem("token"); // Retrieve JWT token
   const { id } = useParams(); // Get class ID from URL
   const user = JSON.parse(localStorage.getItem("userInfo"));
@@ -36,25 +48,37 @@ const StudentClassDetail = () => {
 
   const fetchClassDetails = async () => {
     try {
-      const response = await axios.get(baseUrl + `class/${id}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      console.log(id);
+      const response = await axios.get(
+        baseUrl+`class/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
       setClassDetails(response.data);
     } catch (error) {
       console.error("Error fetching class details:", error);
     }
   };
 
+  const handleViewStudent = (studentId) => {
+    navigate(`/teacher/class/${id}/student/${studentId}`);
+  };
+
+
   const fetchStudents = async () => {
     setLoading(true);
     try {
-      const response = await axios.get(baseUrl + `class/${id}/students`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await axios.get(
+        baseUrl+`class/${id}/students`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
       setStudents(response.data);
     } catch (error) {
       console.error("Error fetching students:", error);
@@ -62,15 +86,35 @@ const StudentClassDetail = () => {
       setLoading(false);
     }
   };
-
+  const fetchAllClassTopics = async () => {
+    setLoading(true);
+    try {
+      const response = await axios.get(
+        baseUrl+`class/${id}/alltopics`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      setAvailableTopics(response.data);
+    } catch (error) {
+      console.error("Error fetching topics:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
   const fetchTopics = async () => {
     setLoading(true);
     try {
-      const response = await axios.get(baseUrl + `class/${id}/topics`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await axios.get(
+        baseUrl+`class/${id}/topics`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
       console.log(response.data);
       setTopics(response.data);
     } catch (error) {
@@ -90,10 +134,6 @@ const StudentClassDetail = () => {
     }
   };
 
-  const handleViewStudent = (studentId) => {
-    navigate(`/class/${id}/student/${studentId}`);
-  };
-
   const fetchMaterials = async () => {
     setLoading(true);
     try {
@@ -111,6 +151,49 @@ const StudentClassDetail = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleOpenTopic = () => {
+    fetchAllClassTopics();
+    setTopics((prev) => [
+      ...prev,
+      {
+        id: Date.now(),
+        name: "",
+        startDate: null,
+        endDate: null,
+        isNew: true, // Mark as new for editing
+      },
+    ]);
+  };
+
+  const handleSaveTopic = async (row) => {
+    try {
+      var formData = {
+        classId: id,
+        topicId: row.topicId,
+        startDate: row.startDate,
+        endDate: row.endDate,
+      };
+      console.log(formData);
+      await axios.post(baseUrl+`class/opentopic`, formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      fetchTopics();
+    } catch (error) {
+      console.error("Error saving topic:", error);
+    }
+  };
+
+  const handleEditRowChange = (id, field, value) => {
+    console.log(id, field, value);
+    setTopics((prev) =>
+      prev.map((topic) =>
+        topic.id === id ? { ...topic, [field]: value } : topic
+      )
+    );
   };
 
   // Columns for DataGrid
@@ -135,46 +218,107 @@ const StudentClassDetail = () => {
     },
   ];
 
+
   const topicColumns = [
     {
       field: "name",
       headerName: "Tên chủ đề",
       flex: 1,
+      renderCell: (params) => {
+        if (params.row.isNew) {
+          return (
+            <Select
+              value={params.row.topicId || ""}
+              onChange={(e) =>
+                handleEditRowChange(params.row.id, "topicId", e.target.value)
+              }
+              fullWidth
+              size="small"
+            >
+              {availableTopics.map((topic) => (
+                <MenuItem key={topic.id} value={topic.id}>
+                  {topic.name}
+                </MenuItem>
+              ))}
+            </Select>
+          );
+        }
+        return params.value;
+      },
     },
     {
       field: "startDate",
       headerName: "Ngày mở",
       flex: 1,
-      valueGetter: (value) => {
-        if (!value) {
-          return "N/A";
+      renderCell: (params) => {
+        if (params.row.isNew) {
+          return (
+            <TextField
+              type="date"
+              value={params.row.startDate || ""}
+              onChange={(e) =>
+                handleEditRowChange(params.row.id, "startDate", e.target.value)
+              }
+              fullWidth
+              size="small"
+            />
+          );
         }
-        return moment(value).format("DD/MM/YYYY");
+        return moment(params.value).format("DD/MM/YYYY");
       },
     },
     {
       field: "endDate",
       headerName: "Ngày đóng",
       flex: 1,
-      valueGetter: (value) => {
-        if (!value) {
-          return "N/A";
+      renderCell: (params) => {
+        if (params.row.isNew) {
+          return (
+            <TextField
+              type="date"
+              value={params.row.endDate || ""}
+              onChange={(e) =>
+                handleEditRowChange(params.row.id, "endDate", e.target.value)
+              }
+              fullWidth
+              size="small"
+            />
+          );
         }
-        return moment(value).format("DD/MM/YYYY");
+        return moment(params.value).format("DD/MM/YYYY");
+      },
+    },
+    {
+      field: "action",
+      headerName: "Action",
+      flex: 1,
+      renderCell: (params) => {
+        if (params.row.isNew) {
+          return (
+            <Button
+              onClick={() => handleSaveTopic(params.row)}
+              variant="contained"
+              color="primary"
+            >
+              Save
+            </Button>
+          );
+        }
+        return null;
       },
     },
   ];
 
   const exerciseColumns = [
-    { field: "title", headerName: "Title", flex: 1 },
-    { field: "difficulty", headerName: "Difficulty", flex: 1 },
+    { field: "title", headerName: "Tên bài tập", flex: 1 },
+    { field: "difficulty", headerName: "Độ khó", flex: 1 },
     {
       field: "action",
       headerName: "Action",
       flex: 1,
       renderCell: (params) => (
         <button onClick={() => handleExerciseClick(params.row.id)}>
-          View Exercises
+          Xem thông tin bài tập
         </button>
       ),
     },
@@ -198,10 +342,7 @@ const StudentClassDetail = () => {
   ];
 
   return (
-    <div
-      className="content-container"
-      style={{ padding: "20px", width: "80%", margin: "0 auto" }}
-    >
+    <div>
       <Typography variant="h5" component="h2" gutterBottom align="center">
         Chi tiết lớp học
       </Typography>
@@ -274,24 +415,54 @@ const StudentClassDetail = () => {
             )}
 
             {activeTab === 1 && (
-              <DataGridPro
-                rows={topics}
-                columns={topicColumns}
-                autoHeight
-                pageSize={5}
-                loading={loading}
-                getRowId={(row) => row.id} // Ensure unique row IDs
-                getDetailPanelContent={({ row }) => (
-                  <Box sx={{ padding: 2 }}>
-                    <DataGrid
-                      rows={row.classExerciseListDTOs || []}
-                      columns={exerciseColumns}
-                      autoHeight
-                      pageSize={5}
-                    />
-                  </Box>
-                )}
-              />
+              <div>
+                <Button
+                  onClick={handleOpenTopic}
+                  variant="contained"
+                  color="primary"
+                >
+                  Mở chủ đề
+                </Button>
+                <Box sx={{ mt: 3 }}>
+                  <DataGridPro
+                    rows={topics}
+                    columns={topicColumns}
+                    autoHeight
+                    pageSize={5}
+                    loading={loading}
+                    getRowId={(row) => row.id} // Ensure unique row IDs
+                    getDetailPanelContent={({ row }) => (
+                      <Box sx={{ padding: 2 }}>
+                        <DataGrid
+                          rows={row.classExerciseListDTOs || []}
+                          columns={exerciseColumns}
+                          autoHeight
+                          pageSize={5}
+                        />
+                      </Box>
+                    )}
+                  />
+                </Box>
+              </div>
+
+              // <DataGridPro
+              //   rows={topics}
+              //   columns={topicColumns}
+              //   autoHeight
+              //   pageSize={5}
+              //   loading={loading}
+              //   getRowId={(row) => row.id} // Ensure unique row IDs
+              //   getDetailPanelContent={({ row }) => (
+              //     <Box sx={{ padding: 2 }}>
+              //       <DataGrid
+              //         rows={row.classExerciseListDTOs || []}
+              //         columns={exerciseColumns}
+              //         autoHeight
+              //         pageSize={5}
+              //       />
+              //     </Box>
+              //   )}
+              // />
             )}
 
             {activeTab === 2 && (
@@ -309,4 +480,4 @@ const StudentClassDetail = () => {
     </div>
   );
 };
-export default StudentClassDetail;
+export default TeacherClassDetail;

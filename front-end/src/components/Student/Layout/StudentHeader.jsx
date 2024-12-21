@@ -83,9 +83,8 @@ export function StudentHeader() {
             open={Boolean(anchorEl)}
             onClose={handleMenuClose}
           >
-            <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
-            <MenuItem onClick={handleMenuClose}>Account</MenuItem>
-            <MenuItem onClick={handleLogout}>Logout</MenuItem>
+            <MenuItem onClick={handleMenuClose}>Thông tin tài khoản</MenuItem>
+            <MenuItem onClick={handleLogout}>Đăng xuất</MenuItem>
           </Menu>
         </Box>
       </Toolbar>

@@ -1,0 +1,110 @@
+/* src/styles/homeStyles.css */
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
+.header nav ul {
+  list-style-type: none; /* Bỏ dấu đầu dòng */
+  padding: 0; /* Bỏ padding */
+  margin: 0; /* Bỏ margin */
+  display: flex; /* Sử dụng flexbox để hiển thị hàng ngang */
+  align-items: center; /* Căn giữa theo chiều dọc */
+}
+
+.header nav ul li {
+  margin: 0 1rem; /* Khoảng cách giữa các mục */
+}
+
+.header_navbar-item {
+  text-decoration: none; /* Bỏ gạch chân */
+  color: white; /* Đảm bảo chữ màu trắng */
+}
+
+.header {
+  width: 100%;
+  background-color: #bb2019; /* Màu nền cho header */
+  padding: 1rem;
+  color: white;
+  font-size: medium;
+  font-weight: 500;
+}
+
+.header nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center; /* Căn giữa theo chiều dọc */
+}
+
+.header_navbar-item {
+  color: white; /* Đảm bảo chữ màu trắng */
+}
+
+.content {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  width: 100%; /* Đảm bảo chiếm toàn bộ chiều rộng */
+}
+
+.table-container {
+  width: 90%; /* Chiều rộng bảng */
+  max-width: 800px; /* Đặt chiều rộng tối đa cho bảng */
+  margin: 20px auto; /* Đặt ở giữa */
+  background-color: white; /* Màu nền trắng */
+  border-radius: 8px; /* Bo góc */
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Đổ bóng */
+}
+
+.subject-table {
+  width: 100%; /* Chiều rộng bảng */
+  border-collapse: collapse; /* Gộp các đường viền */
+}
+
+.subject-table th,
+.subject-table td {
+  border: 1px solid #ccc; /* Đường viền cho ô */
+  padding: 10px; /* Padding cho ô */
+  text-align: left; /* Căn trái nội dung */
+}
+
+.subject-table th {
+  background-color: #eb8b7f; /* Màu nền cho header */
+  color: white; /* Màu chữ trắng */
+}
+
+.action-button {
+  margin-right: 5px; /* Khoảng cách giữa các button */
+  background-color: #eb8b7f; /* Màu nền cho button */
+  color: white; /* Màu chữ trắng */
+  border: none; /* Không có đường viền */
+  padding: 5px 10px; /* Padding cho button */
+  border-radius: 5px; /* Bo góc cho button */
+  cursor: pointer; /* Con trỏ khi hover */
+  transition: background-color 0.3s ease; /* Hiệu ứng chuyển màu */
+}
+
+.action-button:hover {
+  background-color: #180705; /* Màu nền khi hover */
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .header {
+    font-size: small; /* Giảm kích thước chữ cho header trên màn hình nhỏ */
+  }
+
+  .content {
+    padding: 1rem; /* Giảm padding cho nội dung trên màn hình nhỏ */
+  }
+
+  .table-container {
+    width: 95%; /* Chiều rộng tối đa cho bảng trên màn hình nhỏ */
+  }
+}

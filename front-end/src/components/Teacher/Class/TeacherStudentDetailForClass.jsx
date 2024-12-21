@@ -32,7 +32,7 @@ const style = {
   overflowY: "auto",
 };
 
-const AdminStudentDetailForClass = () => {
+const TeacherStudentDetailForClass = () => {
   const [loading, setLoading] = useState(false); // Loading state
   const [submissionHistory, setSubmissionHistory] = useState([]);
   const [studentDetails, setStudentDetails] = useState(null);
@@ -267,4 +267,4 @@ const AdminStudentDetailForClass = () => {
     </div>
   );
 };
-export default AdminStudentDetailForClass;
+export default TeacherStudentDetailForClass;

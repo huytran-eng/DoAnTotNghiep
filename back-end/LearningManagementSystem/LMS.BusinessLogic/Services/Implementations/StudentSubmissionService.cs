@@ -240,7 +240,9 @@ namespace LMS.BusinessLogic.Services.Implementations
                     };
                 }
 
-                bool isAdmin = currentUserInfo.Position == PositionEnum.Admin;
+                bool isAllowed = currentUserInfo.Position == PositionEnum.Admin ||
+                     currentUserInfo.Position == PositionEnum.Teacher ||
+                     studentId == userId;
 
                 // Fetch submissions from the repository for the given classId and studentId
                 var submissions = await _studentSubmissionRepository.GetSubmissionsByStudentIdAndClassIdAsync(studentId, classId);
@@ -266,7 +268,7 @@ namespace LMS.BusinessLogic.Services.Implementations
                     MemoryUsed = submission.MemoryUsed,
                     Status = (int)submission.Status,
                     ProgrammingLanguage = submission.SubjectProgrammingLanguage.ProgrammingLanguage.Name,
-                    Code = isAdmin ? submission.Code : null, 
+                    Code = isAllowed ? submission.Code : null, 
                 });
 
                 return new CommonResult<IEnumerable<StudentSubmissionHistoryDTO>>

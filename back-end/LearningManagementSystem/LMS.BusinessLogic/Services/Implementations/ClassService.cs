@@ -262,7 +262,7 @@ namespace LMS.BusinessLogic.Services.Implementations
             {
                 classes = classes.Where(c => c.Subject.Name.Equals(subject, StringComparison.OrdinalIgnoreCase));
             }
-
+            var currentDate = DateTime.Now;
             // Apply sorting
             //classes = sortBy.ToLower() switch
             //{
@@ -280,22 +280,12 @@ namespace LMS.BusinessLogic.Services.Implementations
                 EndDate = c.EndDate,
                 TeacherName = c.Teacher.User.Name,
                 SubjectName = c.Subject.Name,
-                NumberOfStudent = c.StudentClasses.Count()
+                NumberOfStudent = c.StudentClasses.Count(),
+                Status = c.StartDate > currentDate ? 0 :
+                 (c.StartDate <= currentDate && c.EndDate >= currentDate) ? 1 : 2
             }).ToList();
 
-            //// Apply pagination
-            //int totalRecords = classes.Count();
-            //var paginatedClasses = classesDTO.Skip((page - 1) * pageSize).Take(pageSize).ToList();
-
-            //// Prepare the paginated result
-            //var paginatedResult = new List<ClassDTO>
-            //{
-            //    Items = paginatedClasses,
-            //    Page = page,
-            //    PageSize = pageSize,
-            //    TotalRecords = totalRecords
-            //};
-
+          
             return new CommonResult<List<ClassListDTO>>
             {
                 IsSuccess = true,

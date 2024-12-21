@@ -1,10 +1,10 @@
-import StudentHeader from "./StudentHeader";
+import TeacherHeader from "./TeacherHeader";
 
-const StudentLayout = ({ children }) => {
+const TeacherLayout = ({ children }) => {
   return (
     <div style={{ display: "flex" }}>
       <div style={{ flexGrow: 1 }}>
-        <StudentHeader />
+        <TeacherHeader />
         <div style={{ padding: "20px", width: "80%", margin: "0 auto" }}>
           {children}
         </div>
@@ -13,4 +13,4 @@ const StudentLayout = ({ children }) => {
   );
 };
 
-export default StudentLayout;
+export default TeacherLayout;

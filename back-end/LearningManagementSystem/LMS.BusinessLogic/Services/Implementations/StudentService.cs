@@ -254,7 +254,7 @@ namespace LMS.BusinessLogic.Services.Implementations
             }
         }
 
-        public async Task<CommonResult<List<StudentDTO>>> GetStudentsForAdmin(
+        public async Task<CommonResult<List<StudentDTO>>> GetStudents(
            string? studentName,
            string sortBy,
            bool isDescending,
@@ -444,6 +444,7 @@ namespace LMS.BusinessLogic.Services.Implementations
                 var studentDTO = new StudentClassDetailDTO
                 {
                     Id = student.Id,
+                    Name = student.User.Name,
                     StudentIdString = student.StudentIdString,
                     ExercisesDone = exercisesDone,
                     ExercisesCorrect = exercisesCorrect,

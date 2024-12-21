@@ -8,7 +8,7 @@ import { Box, Typography, IconButton } from "@mui/material";
 import { baseUrl } from "../../../util/constant";
 import { Visibility } from "@mui/icons-material";
 
-const AdminStudentList = () => {
+const TeacherStudentList = () => {
   const [students, setStudents] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
@@ -40,30 +40,6 @@ const AdminStudentList = () => {
     }
   };
 
-  // Handle import of Excel file
-  const handleImportExcel = async (e) => {
-    const file = e.target.files[0]; // Get the file from the input
-    if (!file) return;
-
-    const formData = new FormData();
-    formData.append("file", file);
-
-    try {
-      const response = await axios.post(baseUrl + `student/import`, formData, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "multipart/form-data", // Make sure the content type is multipart
-        },
-      });
-      console.log(response);
-      alert("Students imported successfully!");
-      fetchStudents(); // Re-fetch students after import
-    } catch (error) {
-      console.error("Error importing students:", error);
-      alert("Failed to import students.");
-    }
-  };
-
   const columns = [
     { field: "studentIdString", headerName: "Mã sinh viên", flex: 1 },
     { field: "name", headerName: "Họ và tên", flex: 1.5 },
@@ -89,14 +65,14 @@ const AdminStudentList = () => {
           onClick={() => handleViewDetails(params.row)}
           sx={{ mr: 1 }}
         >
-          <Visibility /> 
+          <Visibility /> {/* View icon */}
         </IconButton>
       ),
     },
   ];
 
   const handleViewDetails = (rowData) => {
-    navigate(`/admin/student/${rowData.id}`);
+    navigate(`/teacher/student/${rowData.id}`);
   };
 
   return (
@@ -113,35 +89,6 @@ const AdminStudentList = () => {
           backgroundColor: "#f9f9f9",
         }}
       >
-        <div style={{ marginBottom: "20px", textAlign: "right" }}>
-          <label
-            htmlFor="import-students-file"
-            style={{
-              display: "inline-block",
-              padding: "10px 20px",
-              backgroundColor: "#28a745",
-              color: "white",
-              border: "none",
-              borderRadius: "5px",
-              cursor: "pointer",
-              fontSize: "14px",
-            }}
-          >
-            Tải danh sách sinh viên (Excel)
-          </label>
-          <input
-            id="import-students-file"
-            type="file"
-            accept=".xlsx, .xls"
-            onChange={handleImportExcel}
-            style={{
-              display: "none", // Hide the default file input
-            }}
-          />
-          <p style={{ fontSize: "12px", color: "#6c757d", marginTop: "5px" }}>
-            Tải lên file excel chứa thông tin danh sách sinh viên
-          </p>
-        </div>
         <div style={{ height: 600, width: "100%" }}>
           <DataGrid
             rows={students}
@@ -155,4 +102,4 @@ const AdminStudentList = () => {
   );
 };
 
-export default AdminStudentList;
+export default TeacherStudentList;

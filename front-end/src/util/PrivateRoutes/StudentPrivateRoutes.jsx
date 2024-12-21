@@ -11,6 +11,9 @@ const StudentPrivateRoute = () => {
   if (userRole == "Admin") {
     return <Navigate to="/admin" replace />;
   }
+  if (userRole == "Teacher") {
+    return <Navigate to="/teacher" replace />;
+  }
   if (userRole !== "Student") {
     return <Navigate to="/unauthorized" replace />;
   }
