@@ -8,29 +8,28 @@ import {
   Tabs,
   Tab,
   Grid,
+  Select,
   Button,
-  Accordion,
-  AccordionSummary,
-  AccordionDetails,
+  TextField,
+  MenuItem,
 } from "@mui/material";
 import { useParams, useNavigate } from "react-router-dom";
 import moment from "moment";
+import { DataGridPro } from "@mui/x-data-grid-pro";
 import { baseUrl } from "../../../util/constant";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
 const AdminClassDetail = () => {
   const [activeTab, setActiveTab] = useState(0); // Track active tab index
   const [classDetails, setClassDetails] = useState(null); // Class details data
   const [students, setStudents] = useState([]); // Students data
   const [topics, setTopics] = useState([]); // Opened topics data
+  const [materials, setMaterials] = useState([]); // Class study materials
   const [loading, setLoading] = useState(false); // Loading state
   const [availableTopics, setAvailableTopics] = useState([]);
   const token = localStorage.getItem("token"); // Retrieve JWT token
   const { id } = useParams(); // Get class ID from URL
   const user = JSON.parse(localStorage.getItem("userInfo"));
   const navigate = useNavigate();
-  const [expandedTopic, setExpandedTopic] = useState(null);
-  const [materials, setMaterials] = useState([]);
   useEffect(() => {
     fetchClassDetails();
   }, []);
@@ -48,25 +47,36 @@ const AdminClassDetail = () => {
   const fetchClassDetails = async () => {
     try {
       console.log(id);
-      const response = await axios.get(baseUrl + `class/${id}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await axios.get(
+        baseUrl+`class/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
       setClassDetails(response.data);
     } catch (error) {
       console.error("Error fetching class details:", error);
     }
   };
 
+  const handleViewStudent = (studentId) => {
+    navigate(`/class/${id}/student/${studentId}`);
+  };
+
+
   const fetchStudents = async () => {
     setLoading(true);
     try {
-      const response = await axios.get(baseUrl + `class/${id}/students`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await axios.get(
+        baseUrl+`class/${id}/students`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
       setStudents(response.data);
     } catch (error) {
       console.error("Error fetching students:", error);
@@ -77,11 +87,14 @@ const AdminClassDetail = () => {
   const fetchAllClassTopics = async () => {
     setLoading(true);
     try {
-      const response = await axios.get(baseUrl + `class/${id}/alltopics`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await axios.get(
+        baseUrl+`class/${id}/alltopics`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
       setAvailableTopics(response.data);
     } catch (error) {
       console.error("Error fetching topics:", error);
@@ -92,11 +105,14 @@ const AdminClassDetail = () => {
   const fetchTopics = async () => {
     setLoading(true);
     try {
-      const response = await axios.get(baseUrl + `class/${id}/topics`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await axios.get(
+        baseUrl+`class/${id}/topics`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
       console.log(response.data);
       setTopics(response.data);
     } catch (error) {
@@ -119,12 +135,15 @@ const AdminClassDetail = () => {
   const fetchMaterials = async () => {
     setLoading(true);
     try {
-      const response = await axios.get(baseUrl + `class/${id}/materials`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      setMaterials(response.data);
+      // const response = await axios.get(
+      //   baseUrl+`class/${id}/materials`,
+      //   {
+      //     headers: {
+      //       Authorization: `Bearer ${token}`,
+      //     },
+      //   }
+      // );
+      // setMaterials(response.data);
     } catch (error) {
       console.error("Error fetching materials:", error);
     } finally {
@@ -155,7 +174,7 @@ const AdminClassDetail = () => {
         endDate: row.endDate,
       };
       console.log(formData);
-      await axios.post(baseUrl + `class/opentopic`, formData, {
+      await axios.post(baseUrl+`class/opentopic`, formData, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -173,10 +192,6 @@ const AdminClassDetail = () => {
         topic.id === id ? { ...topic, [field]: value } : topic
       )
     );
-  };
-
-  const handleTopicExpand = (topicId) => {
-    setExpandedTopic(expandedTopic === topicId ? null : topicId);
   };
 
   // Columns for DataGrid
@@ -199,6 +214,96 @@ const AdminClassDetail = () => {
       // renderCell: (params) => (
       //   <button onClick={() => handleViewDetails(params.row)}>View</button>
       // ),
+    },
+  ];
+
+  const topicColumns = [
+    {
+      field: "name",
+      headerName: "Tên chủ đề",
+      flex: 1,
+      renderCell: (params) => {
+        if (params.row.isNew) {
+          return (
+            <Select
+              value={params.row.topicId || ""}
+              onChange={(e) =>
+                handleEditRowChange(params.row.id, "topicId", e.target.value)
+              }
+              fullWidth
+              size="small"
+            >
+              {availableTopics.map((topic) => (
+                <MenuItem key={topic.id} value={topic.id}>
+                  {topic.name}
+                </MenuItem>
+              ))}
+            </Select>
+          );
+        }
+        return params.value;
+      },
+    },
+    {
+      field: "startDate",
+      headerName: "Ngày mở",
+      flex: 1,
+      renderCell: (params) => {
+        if (params.row.isNew) {
+          return (
+            <TextField
+              type="date"
+              value={params.row.startDate || ""}
+              onChange={(e) =>
+                handleEditRowChange(params.row.id, "startDate", e.target.value)
+              }
+              fullWidth
+              size="small"
+            />
+          );
+        }
+        return moment(params.value).format("DD/MM/YYYY");
+      },
+    },
+    {
+      field: "endDate",
+      headerName: "Ngày đóng",
+      flex: 1,
+      renderCell: (params) => {
+        if (params.row.isNew) {
+          return (
+            <TextField
+              type="date"
+              value={params.row.endDate || ""}
+              onChange={(e) =>
+                handleEditRowChange(params.row.id, "endDate", e.target.value)
+              }
+              fullWidth
+              size="small"
+            />
+          );
+        }
+        return moment(params.value).format("DD/MM/YYYY");
+      },
+    },
+    {
+      field: "action",
+      headerName: "Action",
+      flex: 1,
+      renderCell: (params) => {
+        if (params.row.isNew) {
+          return (
+            <Button
+              onClick={() => handleSaveTopic(params.row)}
+              variant="contained"
+              color="primary"
+            >
+              Save
+            </Button>
+          );
+        }
+        return null;
+      },
     },
   ];
 
@@ -317,38 +422,45 @@ const AdminClassDetail = () => {
                   Mở chủ đề
                 </Button>
                 <Box sx={{ mt: 3 }}>
-                  {topics.map((topic) => (
-                    <Accordion
-                      key={topic.id}
-                      expanded={expandedTopic === topic.id}
-                      onChange={() => handleTopicExpand(topic.id)}
-                      sx={{
-                        marginBottom: 1,
-                        "& .MuiAccordionSummary-content": {
-                          display: "flex",
-                          flexDirection: "column",
-                        },
-                      }}
-                    >
-                      <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                        <Typography variant="h6">{topic.name}</Typography>
-                        <Typography variant="body2" color="textSecondary">
-                          {moment(topic.startDate).format("DD/MM/YYYY")} -{" "}
-                          {moment(topic.endDate).format("DD/MM/YYYY")}
-                        </Typography>
-                      </AccordionSummary>
-                      <AccordionDetails>
+                  <DataGridPro
+                    rows={topics}
+                    columns={topicColumns}
+                    autoHeight
+                    pageSize={5}
+                    loading={loading}
+                    getRowId={(row) => row.id} // Ensure unique row IDs
+                    getDetailPanelContent={({ row }) => (
+                      <Box sx={{ padding: 2 }}>
                         <DataGrid
-                          rows={topic.classExerciseListDTOs || []}
+                          rows={row.classExerciseListDTOs || []}
                           columns={exerciseColumns}
                           autoHeight
                           pageSize={5}
                         />
-                      </AccordionDetails>
-                    </Accordion>
-                  ))}
+                      </Box>
+                    )}
+                  />
                 </Box>
               </div>
+
+              // <DataGridPro
+              //   rows={topics}
+              //   columns={topicColumns}
+              //   autoHeight
+              //   pageSize={5}
+              //   loading={loading}
+              //   getRowId={(row) => row.id} // Ensure unique row IDs
+              //   getDetailPanelContent={({ row }) => (
+              //     <Box sx={{ padding: 2 }}>
+              //       <DataGrid
+              //         rows={row.classExerciseListDTOs || []}
+              //         columns={exerciseColumns}
+              //         autoHeight
+              //         pageSize={5}
+              //       />
+              //     </Box>
+              //   )}
+              // />
             )}
 
             {activeTab === 2 && (

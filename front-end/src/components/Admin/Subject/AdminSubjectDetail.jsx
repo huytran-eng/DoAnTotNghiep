@@ -15,6 +15,11 @@ import {
   List,
   ListItem,
   ListItemText,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  TextField
 } from "@mui/material";
 import { useParams } from "react-router-dom";
 import { baseUrl } from "../../../util/constant";
@@ -32,6 +37,9 @@ const AdminSubjectDetail = () => {
   const token = localStorage.getItem("token"); // Retrieve JWT token
   const { id } = useParams();
   const navigate = useNavigate();
+  const [openDialog, setOpenDialog] = useState(false); // Dialog state for adding new study material
+  const [materialName, setMaterialName] = useState("");
+  const [file, setFile] = useState(null);
 
   useEffect(() => {
     fetchSubjectDetails();
@@ -163,6 +171,59 @@ const AdminSubjectDetail = () => {
 
   const handleViewClassDetails = (rowData) => {
     navigate(`/admin/class/${rowData.id}`);
+  };
+
+  const handleOpenDialog = () => {
+    setOpenDialog(true);
+  };
+
+  const handleCloseDialog = () => {
+    setOpenDialog(false);
+  };
+
+  const handleMaterialNameChange = (e) => {
+    setMaterialName(e.target.value);
+  };
+
+  const handleFileChange = (e) => {
+    setFile(e.target.files[0]);
+  };
+
+  const handleSubmitStudyMaterial = async () => {
+    if (!materialName || !file) {
+      alert("Please enter all fields.");
+      return;
+    }
+
+    setLoading(true);
+
+    // Create FormData object to send file and other data
+    const formData = new FormData();
+    formData.append("title", materialName);
+    formData.append("file", file);
+
+    try {
+      // Replace with your API endpoint for creating study material
+      const response = await axios.post(
+        "/api/study-material/create",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+
+      if (response.status === 200) {
+        setMaterials([...materials, response.data]); // Update the study materials list
+        handleCloseDialog(); // Close the dialog after success
+      }
+    } catch (error) {
+      console.error("Error uploading study material", error);
+      alert("Error uploading study material");
+    } finally {
+      setLoading(false);
+    }
   };
 
   // Columns for DataGrid
@@ -432,13 +493,53 @@ const AdminSubjectDetail = () => {
 
             {activeTab === 2 && (
               <div>
+                <Button
+                  onClick={handleOpenDialog}
+                  variant="contained"
+                  color="primary"
+                >
+                  Thêm tài liệu cho môn học
+                </Button>
+
                 <DataGrid
-                  rows={classes}
-                  columns={classColumns}
+                  rows={materials}
+                  columns={materialColumns}
                   autoHeight
                   pageSize={5}
                   loading={loading}
                 />
+
+                {/* Dialog for adding study material */}
+                <Dialog open={openDialog} onClose={handleCloseDialog}>
+                  <DialogTitle>Thêm tài liệu</DialogTitle>
+                  <DialogContent>
+                    <TextField
+                      label="Tên tài liệu"
+                      fullWidth
+                      value={materialName}
+                      onChange={handleMaterialNameChange}
+                      margin="normal"
+                    />
+                    <input
+                      type="file"
+                      accept=".pdf"
+                      onChange={handleFileChange}
+                      style={{ width: "100%" }}
+                    />
+                  </DialogContent>
+                  <DialogActions>
+                    <Button onClick={handleCloseDialog} color="secondary">
+                      Hủy
+                    </Button>
+                    <Button
+                      onClick={handleSubmitStudyMaterial}
+                      color="primary"
+                      disabled={loading}
+                    >
+                      {loading ? "Đang tải..." : "Thêm tài liệu"}
+                    </Button>
+                  </DialogActions>
+                </Dialog>
               </div>
             )}
           </div>
