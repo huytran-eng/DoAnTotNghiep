@@ -8,28 +8,34 @@ import {
   Tabs,
   Tab,
   Grid,
-  Select,
   Button,
-  TextField,
-  MenuItem,
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
 } from "@mui/material";
 import { useParams, useNavigate } from "react-router-dom";
 import moment from "moment";
-import { DataGridPro } from "@mui/x-data-grid-pro";
 import { baseUrl } from "../../../util/constant";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import TopicSelectionDialog from "./TopicSelectionDialog";
 
 const AdminClassDetail = () => {
-  const [activeTab, setActiveTab] = useState(0); // Track active tab index
-  const [classDetails, setClassDetails] = useState(null); // Class details data
-  const [students, setStudents] = useState([]); // Students data
-  const [topics, setTopics] = useState([]); // Opened topics data
-  const [materials, setMaterials] = useState([]); // Class study materials
-  const [loading, setLoading] = useState(false); // Loading state
+  const [activeTab, setActiveTab] = useState(0);
+  const [classDetails, setClassDetails] = useState(null);
+  const [students, setStudents] = useState([]);
+  const [topics, setTopics] = useState([]);
+  const [loading, setLoading] = useState(false);
   const [availableTopics, setAvailableTopics] = useState([]);
-  const token = localStorage.getItem("token"); // Retrieve JWT token
-  const { id } = useParams(); // Get class ID from URL
+  const token = localStorage.getItem("token");
+  const { id } = useParams();
   const user = JSON.parse(localStorage.getItem("userInfo"));
   const navigate = useNavigate();
+  const [expandedTopic, setExpandedTopic] = useState(null);
+  const [materials, setMaterials] = useState([]);
+  const [openedTopics, setOpenedTopics] = useState([]);
+  // Thêm states mới
+  const [showTopicDialog, setShowTopicDialog] = useState(false);
+
   useEffect(() => {
     fetchClassDetails();
   }, []);
@@ -46,37 +52,25 @@ const AdminClassDetail = () => {
 
   const fetchClassDetails = async () => {
     try {
-      console.log(id);
-      const response = await axios.get(
-        baseUrl+`class/${id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const response = await axios.get(baseUrl + `class/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       setClassDetails(response.data);
     } catch (error) {
       console.error("Error fetching class details:", error);
     }
   };
 
-  const handleViewStudent = (studentId) => {
-    navigate(`/class/${id}/student/${studentId}`);
-  };
-
-
   const fetchStudents = async () => {
     setLoading(true);
     try {
-      const response = await axios.get(
-        baseUrl+`class/${id}/students`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const response = await axios.get(baseUrl + `class/${id}/students`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       setStudents(response.data);
     } catch (error) {
       console.error("Error fetching students:", error);
@@ -84,17 +78,15 @@ const AdminClassDetail = () => {
       setLoading(false);
     }
   };
+
   const fetchAllClassTopics = async () => {
     setLoading(true);
     try {
-      const response = await axios.get(
-        baseUrl+`class/${id}/alltopics`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const response = await axios.get(baseUrl + `class/${id}/alltopics`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       setAvailableTopics(response.data);
     } catch (error) {
       console.error("Error fetching topics:", error);
@@ -102,19 +94,17 @@ const AdminClassDetail = () => {
       setLoading(false);
     }
   };
+
   const fetchTopics = async () => {
     setLoading(true);
     try {
-      const response = await axios.get(
-        baseUrl+`class/${id}/topics`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      console.log(response.data);
+      const response = await axios.get(baseUrl + `class/${id}/topics`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       setTopics(response.data);
+      setOpenedTopics(response.data); // Lưu danh sách chủ đề đã mở
     } catch (error) {
       console.error("Error fetching topics:", error);
     } finally {
@@ -124,10 +114,8 @@ const AdminClassDetail = () => {
 
   const handleExerciseClick = (exerciseId) => {
     if (user.position === "Student") {
-      // Navigate to exercise for student
       navigate(`/class/${id}/exercise/${exerciseId}`);
     } else if (user.position === "Admin" || user.position === "Teacher") {
-      // Navigate to exercise detail for Admin/Teacher
       navigate(`/class/${id}/exerciseDetail/${exerciseId}`);
     }
   };
@@ -135,15 +123,12 @@ const AdminClassDetail = () => {
   const fetchMaterials = async () => {
     setLoading(true);
     try {
-      // const response = await axios.get(
-      //   baseUrl+`class/${id}/materials`,
-      //   {
-      //     headers: {
-      //       Authorization: `Bearer ${token}`,
-      //     },
-      //   }
-      // );
-      // setMaterials(response.data);
+      const response = await axios.get(baseUrl + `class/${id}/materials`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      setMaterials(response.data);
     } catch (error) {
       console.error("Error fetching materials:", error);
     } finally {
@@ -151,47 +136,40 @@ const AdminClassDetail = () => {
     }
   };
 
-  const handleOpenTopic = () => {
-    fetchAllClassTopics();
-    setTopics((prev) => [
-      ...prev,
-      {
-        id: Date.now(),
-        name: "",
-        startDate: null,
-        endDate: null,
-        isNew: true, // Mark as new for editing
-      },
-    ]);
+  const handleOpenTopic = async () => {
+    try {
+      await fetchAllClassTopics();
+      setShowTopicDialog(true);
+    } catch (error) {
+      console.error("Error loading available topics:", error);
+    }
   };
 
-  const handleSaveTopic = async (row) => {
+  const handleTopicExpand = (topicId) => {
+    setExpandedTopic(expandedTopic === topicId ? null : topicId);
+  };
+
+  const handleSaveTopic = async (topicData) => {
     try {
-      var formData = {
+      const formData = {
         classId: id,
-        topicId: row.topicId,
-        startDate: row.startDate,
-        endDate: row.endDate,
+        ...topicData,
       };
-      console.log(formData);
-      await axios.post(baseUrl+`class/opentopic`, formData, {
+
+      await axios.post(baseUrl + "class/opentopic", formData, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
+
+      setShowTopicDialog(false);
       fetchTopics();
     } catch (error) {
-      console.error("Error saving topic:", error);
+      if(error.response.status === 400){
+        alert("Chủ đề đã được mở trong khoảng thời gian được chọn");
+      }
+      alert("Có lỗi xảy ra khi lưu chủ đề");
     }
-  };
-
-  const handleEditRowChange = (id, field, value) => {
-    console.log(id, field, value);
-    setTopics((prev) =>
-      prev.map((topic) =>
-        topic.id === id ? { ...topic, [field]: value } : topic
-      )
-    );
   };
 
   // Columns for DataGrid
@@ -211,99 +189,6 @@ const AdminClassDetail = () => {
       field: "action",
       headerName: "Action",
       flex: 1,
-      // renderCell: (params) => (
-      //   <button onClick={() => handleViewDetails(params.row)}>View</button>
-      // ),
-    },
-  ];
-
-  const topicColumns = [
-    {
-      field: "name",
-      headerName: "Tên chủ đề",
-      flex: 1,
-      renderCell: (params) => {
-        if (params.row.isNew) {
-          return (
-            <Select
-              value={params.row.topicId || ""}
-              onChange={(e) =>
-                handleEditRowChange(params.row.id, "topicId", e.target.value)
-              }
-              fullWidth
-              size="small"
-            >
-              {availableTopics.map((topic) => (
-                <MenuItem key={topic.id} value={topic.id}>
-                  {topic.name}
-                </MenuItem>
-              ))}
-            </Select>
-          );
-        }
-        return params.value;
-      },
-    },
-    {
-      field: "startDate",
-      headerName: "Ngày mở",
-      flex: 1,
-      renderCell: (params) => {
-        if (params.row.isNew) {
-          return (
-            <TextField
-              type="date"
-              value={params.row.startDate || ""}
-              onChange={(e) =>
-                handleEditRowChange(params.row.id, "startDate", e.target.value)
-              }
-              fullWidth
-              size="small"
-            />
-          );
-        }
-        return moment(params.value).format("DD/MM/YYYY");
-      },
-    },
-    {
-      field: "endDate",
-      headerName: "Ngày đóng",
-      flex: 1,
-      renderCell: (params) => {
-        if (params.row.isNew) {
-          return (
-            <TextField
-              type="date"
-              value={params.row.endDate || ""}
-              onChange={(e) =>
-                handleEditRowChange(params.row.id, "endDate", e.target.value)
-              }
-              fullWidth
-              size="small"
-            />
-          );
-        }
-        return moment(params.value).format("DD/MM/YYYY");
-      },
-    },
-    {
-      field: "action",
-      headerName: "Action",
-      flex: 1,
-      renderCell: (params) => {
-        if (params.row.isNew) {
-          return (
-            <Button
-              onClick={() => handleSaveTopic(params.row)}
-              variant="contained"
-              color="primary"
-            >
-              Save
-            </Button>
-          );
-        }
-        return null;
-      },
     },
   ];
 
@@ -345,7 +230,6 @@ const AdminClassDetail = () => {
         Chi tiết lớp học
       </Typography>
       <Grid container spacing={3}>
-        {/* Left Column (Class Details) */}
         <Grid item xs={12} sm={4}>
           <Box
             sx={{
@@ -386,7 +270,6 @@ const AdminClassDetail = () => {
           </Box>
         </Grid>
 
-        {/* Right Column (Tabs and DataGrids) */}
         <Grid item xs={12} sm={8}>
           <Box sx={{ borderBottom: 1, borderColor: "divider", mb: 3 }}>
             <Tabs
@@ -400,7 +283,6 @@ const AdminClassDetail = () => {
             </Tabs>
           </Box>
 
-          {/* Tab Content */}
           <div>
             {activeTab === 0 && (
               <DataGrid
@@ -422,45 +304,38 @@ const AdminClassDetail = () => {
                   Mở chủ đề
                 </Button>
                 <Box sx={{ mt: 3 }}>
-                  <DataGridPro
-                    rows={topics}
-                    columns={topicColumns}
-                    autoHeight
-                    pageSize={5}
-                    loading={loading}
-                    getRowId={(row) => row.id} // Ensure unique row IDs
-                    getDetailPanelContent={({ row }) => (
-                      <Box sx={{ padding: 2 }}>
+                  {topics.map((topic) => (
+                    <Accordion
+                      key={topic.id}
+                      expanded={expandedTopic === topic.id}
+                      onChange={() => handleTopicExpand(topic.id)}
+                      sx={{
+                        marginBottom: 1,
+                        "& .MuiAccordionSummary-content": {
+                          display: "flex",
+                          flexDirection: "column",
+                        },
+                      }}
+                    >
+                      <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                        <Typography variant="h6">{topic.name}</Typography>
+                        <Typography variant="body2" color="textSecondary">
+                          {moment(topic.startDate).format("DD/MM/YYYY")} -{" "}
+                          {moment(topic.endDate).format("DD/MM/YYYY")}
+                        </Typography>
+                      </AccordionSummary>
+                      <AccordionDetails>
                         <DataGrid
-                          rows={row.classExerciseListDTOs || []}
+                          rows={topic.classExerciseListDTOs || []}
                           columns={exerciseColumns}
                           autoHeight
                           pageSize={5}
                         />
-                      </Box>
-                    )}
-                  />
+                      </AccordionDetails>
+                    </Accordion>
+                  ))}
                 </Box>
               </div>
-
-              // <DataGridPro
-              //   rows={topics}
-              //   columns={topicColumns}
-              //   autoHeight
-              //   pageSize={5}
-              //   loading={loading}
-              //   getRowId={(row) => row.id} // Ensure unique row IDs
-              //   getDetailPanelContent={({ row }) => (
-              //     <Box sx={{ padding: 2 }}>
-              //       <DataGrid
-              //         rows={row.classExerciseListDTOs || []}
-              //         columns={exerciseColumns}
-              //         autoHeight
-              //         pageSize={5}
-              //       />
-              //     </Box>
-              //   )}
-              // />
             )}
 
             {activeTab === 2 && (
@@ -475,7 +350,15 @@ const AdminClassDetail = () => {
           </div>
         </Grid>
       </Grid>
+      <TopicSelectionDialog
+        open={showTopicDialog}
+        onClose={() => setShowTopicDialog(false)}
+        availableTopics={availableTopics}
+        openedTopics={openedTopics}
+        onSave={handleSaveTopic}
+      />
     </div>
   );
 };
+
 export default AdminClassDetail;
