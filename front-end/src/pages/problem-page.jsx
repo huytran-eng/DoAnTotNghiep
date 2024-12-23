@@ -89,10 +89,10 @@ export default function ProblemPage() {
     setLanguageId,
   } = useCodeEditor();
   return (
-    <div className="h-[calc(100vh-64px)] max-h-[calc(100vh-64px)] flex flex-col overflow-hidden">
+    <div className="h-[calc(100vh-64px)] max-h-[calc(100vh-64px)] flex flex-col overflow-hiddens">
       <div className=" flex-1 max-h-[calc(100vh-64px)] grid grid-cols-2 gap-2 p-3 bg-[rgb(240_240_240_/0.5)]">
         {/* Left Panel */}
-        <div className="border flex flex-col border-gray-300 rounded-lg bg-white max-h-[calc(100vh-70px)] shadow-md">
+        <div className="border flex flex-col border-gray-300 rounded-lg bg-white max-h-[calc(100vh-96px)] shadow-md overflow-hidden">
           <div className="flex space-x-4 py-[2px] bg-[#fafafa] rounded-t-lg shadow-sm">
             <button
               className={`px-4 py-2 rounded flex justify-center items-center w-[110px] text-sm ${
@@ -168,7 +168,7 @@ export default function ProblemPage() {
         </div>
 
         {/* Right Panel */}
-        <div className="border flex flex-col border-gray-300 rounded-lg bg-inherit max-h-[calc(100vh-64px)]">
+        <div className="border flex flex-col border-gray-300 rounded-lg bg-inherit max-h-[calc(100vh-96px)]">
           <div className="flex space-x-4 bg-[#fafafa] rounded-t-lg shadow-sm justify-between p-[2px] mb-[2px] ">
             <div
               className={`px-4 py-2 rounded flex justify-center items-center w-[100px] text-sm font-medium `}

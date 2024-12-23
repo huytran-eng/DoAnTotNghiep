@@ -5,7 +5,7 @@ const StudentLayout = ({ children }) => {
     <div style={{ display: "flex" }}>
       <div style={{ flexGrow: 1 }}>
         <StudentHeader />
-        <div style={{ padding: "20px", width: "80%", margin: "0 auto" }}>
+        <div>
           {children}
         </div>
       </div>

@@ -135,7 +135,7 @@ const StudentClassList = () => {
     return <div>Loading...</div>;
   }
   return (
-    <div>
+    <div className="p-6 h-[calc(100vh-64px)]" >
       <Typography variant="h4" component="h2" gutterBottom align="center">
         Danh sách các lớp đang theo học
       </Typography>
@@ -146,9 +146,10 @@ const StudentClassList = () => {
           border: "1px solid #ccc",
           borderRadius: "8px",
           backgroundColor: "#f9f9f9",
+          height: '90%'
         }}
       >
-        <div style={{ height: 600, width: "100%" }}>
+        <div className="h-full">
           <DataGrid
             mt-2
             rows={classes}

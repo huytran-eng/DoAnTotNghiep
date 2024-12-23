@@ -14,10 +14,10 @@ export default function ProblemDescription(props) {
         <span
           className={`px-3 py-1 rounded text-sm ${
             problem.difficulty === 1
-              ? "bg-green-100 text-green-800"
+              ? "bg-green-100 text-green-800 font-medium"
               : problem.difficulty === 2
-              ? "bg-yellow-100 text-yellow-800"
-              : "bg-red-100 text-red-800"
+              ? "bg-yellow-100 text-yellow-800 font-medium"
+              : "bg-red-100 text-red-800 font-medium"
           }`}
         >
           {getDifficulty(problem.difficulty)}
