@@ -9,7 +9,7 @@ import loadingIcon from "../assets/image/loading.gif";
 import axios from "axios";
 import SubmitHistory from "../components/problem/submit-history";
 import SubmitResult from "../components/problem/submit-result";
-import {baseUrl} from "../util/constant";
+import { baseUrl } from "../util/constant";
 
 export default function ProblemPage() {
   const [activeTab, setActiveTab] = useState("description");
@@ -29,7 +29,7 @@ export default function ProblemPage() {
 
       try {
         const response = await axios.get(
-          baseUrl+`class/exercise/${classExerciseId}`,
+          baseUrl + `class/exercise/${classExerciseId}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -52,10 +52,10 @@ export default function ProblemPage() {
 
     const fetchSubmissonData = async () => {
       setIsLoading(true); // Set loading to true before fetching
-      setError(null); // Reset error state      
+      setError(null); // Reset error state
       try {
         const response = await axios.get(
-           baseUrl + `submission/history/${classExerciseId}`,
+          baseUrl + `submission/history/${classExerciseId}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -64,7 +64,11 @@ export default function ProblemPage() {
         );
         setSubmitHistory(response.data); // Store the fetched data in state
       } catch (err) {
-        setError(err.message || "Failed to fetch data."); // Handle any errors
+        if (err.status === 404) {
+          setSubmitHistory([]);
+        } else {
+          setError(err.message || "Failed to fetch data."); // Handle any errors
+        }
       } finally {
         setIsLoading(false); // Set loading to false after fetching
       }
@@ -77,7 +81,7 @@ export default function ProblemPage() {
   const switchTab = (tab) => {
     setActiveTab(tab);
     setError(null);
-  }
+  };
   const {
     code,
     language,
@@ -156,13 +160,11 @@ export default function ProblemPage() {
 
             {activeTab === "submissions" &&
               (submissionHistory ? (
-                  <SubmitHistory submissionHistory={submissionHistory} />
+                <SubmitHistory submissionHistory={submissionHistory} />
+              ) : error ? (
+                <div>{error}</div>
               ) : (
-                error ? (
-                  <div>{error}</div>
-                ) : (
                 <div>Loading submission History...</div>
-                )
               ))}
           </div>
         </div>
