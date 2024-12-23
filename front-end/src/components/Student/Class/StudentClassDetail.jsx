@@ -2,12 +2,23 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { DataGrid } from "@mui/x-data-grid";
-import { Box, Typography, Tabs, Tab, Grid, IconButton } from "@mui/material";
+import {
+  Box,
+  Typography,
+  Tabs,
+  Tab,
+  Grid,
+  IconButton,
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
+} from "@mui/material";
 import { useParams, useNavigate } from "react-router-dom";
 import moment from "moment";
-import { DataGridPro } from "@mui/x-data-grid-pro";
+import {} from "@mui/x-data-grid-pro";
 import { baseUrl } from "../../../util/constant";
 import { Visibility } from "@mui/icons-material";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
 const StudentClassDetail = () => {
   const [activeTab, setActiveTab] = useState(0); // Track active tab index
@@ -274,26 +285,52 @@ const StudentClassDetail = () => {
             )}
 
             {activeTab === 1 && (
-              <DataGridPro
-                rows={topics}
-                columns={topicColumns}
-                autoHeight
-                pageSize={5}
-                loading={loading}
-                getRowId={(row) => row.id} // Ensure unique row IDs
-                getDetailPanelContent={({ row }) => (
-                  <Box sx={{ padding: 2 }}>
-                    <DataGrid
-                      rows={row.classExerciseListDTOs || []}
-                      columns={exerciseColumns}
-                      autoHeight
-                      pageSize={5}
-                    />
-                  </Box>
-                )}
-              />
+              <div>
+                {topics.map((topic) => (
+                  <Accordion key={topic.id} sx={{
+                    margin:"10px",
+                    borderRadius: '6px'
+                  }}>
+                    <AccordionSummary
+                      expandIcon={<ExpandMoreIcon />}
+                      aria-controls={`topic-${topic.id}-content`}
+                      id={`topic-${topic.id}-header`}
+                    >
+                      <div
+                        style={{
+                          display: "flex",
+                          width: "100%",
+                          justifyContent: "space-between",
+                          alignItems: "center",                     
+                        }}
+                        className="m-2"
+                      >
+                        <Typography sx={{ width: "33%", flexShrink: 0 }}>
+                          {topic.name}
+                        </Typography>
+                        <Typography sx={{ width: "33%" }}>
+                          Ngày mở:{" "}
+                          {moment(topic.startDate).format("DD/MM/YYYY")}
+                        </Typography>
+                        <Typography sx={{ width: "33%" }}>
+                          Ngày đóng:{" "}
+                          {moment(topic.endDate).format("DD/MM/YYYY")}
+                        </Typography>
+                      </div>
+                    </AccordionSummary>
+                    <AccordionDetails>
+                      <DataGrid
+                        rows={topic.classExerciseListDTOs || []}
+                        columns={exerciseColumns}
+                        autoHeight
+                        pageSize={5}
+                        disableSelectionOnClick
+                      />
+                    </AccordionDetails>
+                  </Accordion>
+                ))}
+              </div>
             )}
-
             {activeTab === 2 && (
               <DataGrid
                 rows={materials}
