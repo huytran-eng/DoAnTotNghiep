@@ -16,6 +16,9 @@ import AdminSubjectDetail from "../components/Admin/Subject/AdminSubjectDetail";
 import AdminSubjectCreate from "../components/Admin/Subject/AdminSubjectCreate";
 import AdminEditSubject from "../components/Admin/Subject/AdminEditSubject";
 
+import AdminTeacherList from "../components/Admin/Teacher/AdminTeacherList";
+import AdminTeacherCreate from "../components/Admin/Teacher/AdminTeacherCreate";
+import AdminTeacherDetail from "../components/Admin/Teacher/AdminTeacherDetail";
 
 import AdminExerciseList from "../components/Admin/Exercise/AdminExerciseList";
 import AdminCreateExercise from "../components/Admin/Exercise/AdminCreateExercise";
@@ -74,6 +77,10 @@ const paths = [
       { path: "exercise/edit/:id", element: <AdminEditExercise /> },
       { path: "exercise/create", element: <AdminCreateExercise /> },
       { path: "exercise/:id", element: <AdminExerciseDetail /> },
+
+      { path: "teacher", element: <AdminTeacherList /> },
+      { path: "teacher/create", element: <AdminTeacherCreate /> },
+      { path: "teacher/:id", element: <AdminTeacherDetail /> },
 
      
       { path: "student", element: <AdminStudentList /> },

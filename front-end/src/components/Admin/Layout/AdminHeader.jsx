@@ -86,6 +86,9 @@ export function AdminHeader() {
           <Button color="inherit" onClick={() => navigate("/admin/student")}>
             Sinh viên
           </Button>
+          <Button color="inherit" onClick={() => navigate("/admin/teacher")}>
+            Giáo viên
+          </Button>
         </Box>
 
         {/* User Menu */}
