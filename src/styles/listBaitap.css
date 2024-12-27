@@ -1,0 +1,55 @@
+/* listBaitap.css */
+
+.assignments-page {
+    font-family: Arial, sans-serif;
+    background-color: #f9f9f9;
+    padding: 20px;
+  }
+  
+  .assignments-page h1 {
+    text-align: center;
+    font-size: 2em;
+    color: #333;
+  }
+  
+  .assignments-table {
+    width: 100%;
+    margin: 20px 0;
+    border-collapse: collapse;
+  }
+  
+  .assignments-table th, .assignments-table td {
+    padding: 12px 15px;
+    text-align: left;
+    border: 1px solid #ddd;
+  }
+  
+  .assignments-table th {
+    background-color: #4CAF50;
+    color: white;
+  }
+  
+  .assignments-table td {
+    background-color: #ffffff;
+  }
+  
+  .assignments-table tr:nth-child(even) {
+    background-color: #f2f2f2;
+  }
+  
+  .assignments-table tr:hover {
+    background-color: #ddd;
+  }
+  
+  .assignments-page .loading {
+    text-align: center;
+    font-size: 1.2em;
+    color: #666;
+  }
+  
+  .assignments-page .no-assignments {
+    text-align: center;
+    font-size: 1.2em;
+    color: #999;
+  }
+  

@@ -1,0 +1,74 @@
+/* src/styles/formStyles.css */
+
+.main-container {
+  text-align: center;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: pink; /* Nền hồng */
+}
+
+.welcome-text {
+  color: black;
+  font-weight: bold;
+  font-size: large;
+  margin-bottom: 4rem; /* Khoảng cách dưới */
+}
+
+.form-container {
+  margin-top: 1rem;
+  padding: 2.5rem;
+  background-color: white; /* Nền trắng cho form */
+  border-radius: 0.5rem; /* Bo góc */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Bóng đổ */
+  width: 400px; /* Chiều rộng của form */
+  min-height: 500px;
+}
+
+.form-title {
+  margin-bottom: 1rem; /* Khoảng cách dưới */
+  margin-top: 0.1rem;
+  font-weight: 600; /* Nét chữ */
+}
+
+.input-container {
+  margin-bottom: 1rem; /* Khoảng cách giữa các input */
+}
+
+.input-field {
+  padding: 1rem; /* Padding cho input */
+  border: 1px solid #ccc; /* Đường viền */
+  border-radius: 0.25rem; /* Bo góc */
+  width: 100%; /* Chiều rộng 100% */
+  font-size: 1rem; /* Cỡ chữ */
+  color: black; /* Đổi màu chữ thành đen */
+}
+
+.input-field:focus {
+  outline: none; /* Bỏ viền khi focus */
+  ring: 2px solid blue; /* Viền xanh khi focus */
+}
+
+.submit-button {
+  padding: 0.5rem;
+  margin-top: 2rem;
+  background-color: blue; /* Màu nền của button */
+  color: white; /* Màu chữ */
+  border-radius: 0.25rem; /* Bo góc */
+  transition: background-color 0.2s; /* Hiệu ứng chuyển màu */
+}
+
+.submit-button:hover {
+  background-color: darkblue; /* Màu khi hover */
+}
+
+.register-link {
+  margin-top: 2rem; /* Khoảng cách trên */
+}
+
+.link {
+  color: blue; /* Màu chữ link */
+  text-decoration: underline; /* Gạch chân */
+}

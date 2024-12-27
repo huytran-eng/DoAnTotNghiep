@@ -1,0 +1,162 @@
+/* Cấu hình chung cho body và html */
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%; /* Đảm bảo chiều cao của trang chiếm hết màn hình */
+    overflow: hidden; /* Ngăn cuộn ngang và cuộn dọc */
+    box-sizing: border-box; /* Tính toán chiều rộng và chiều cao không bị vượt quá */
+  }
+  
+  /* Đảm bảo tất cả phần tử đều có box-sizing đúng */
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box; /* Tính toán chiều rộng và chiều cao của các phần tử đúng */
+  }
+  
+  /* Cấu hình cho app-container */
+  .app-container {
+    display: flex;
+    flex-direction: row;
+    min-height: 100vh; /* Đảm bảo chiều cao của app chiếm toàn bộ màn hình */
+    height: 100%; /* Chiều cao app = chiều cao màn hình */
+    box-sizing: border-box;
+  }
+  button {
+    padding: 8px 15px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  /* Cấu hình cho các nút "Xem" và các link hiển thị cùng một hàng */
+td button {
+    margin-right: 10px;  /* Để tạo khoảng cách giữa nút "Xem" và các link */
+  }
+  
+  /* Cấu hình cho content-container */
+  .content-container {
+    margin-left: 100px; /* Dành không gian cho Sidebar */
+    padding: 20px;
+    min-height: 100vh; /* Đảm bảo chiều cao container bằng chiều cao của màn hình */
+    display: flex;
+    flex-direction: column;
+    width: calc(100% - 200px); /* Chiều rộng = 100% trừ chiều rộng Sidebar */
+    box-sizing: border-box;
+    overflow: hidden; /* Không cho phép cuộn ngang và cuộn dọc */
+    flex-grow: 1; /* Giúp content-container chiếm hết không gian còn lại */
+  }
+  
+  /* Cấu hình cho header */
+  .header-row {
+    display: flex;
+    justify-content: space-between; /* Khoảng cách giữa tiêu đề và thanh tìm kiếm */
+    align-items: center;
+    width: 100%;
+    margin-bottom: 10px; /* Giảm khoảng cách dưới */
+  }
+  /* Tăng chiều cao của container bảng để bảng dài hơn */
+.table-scroll-container {
+  max-height: 150vh; /* Tăng chiều cao lên 80% chiều cao của viewport */
+  overflow-y: auto; /* Cho phép cuộn dọc */
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+  
+  /* Cấu hình cho thanh tìm kiếm */
+  .search-input {
+    padding: 8px;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    width: 250px; /* Giới hạn chiều rộng của thanh tìm kiếm */
+  }
+  .table-scroll-container {
+    max-height: 60vh; /* Giới hạn chiều cao của bảng */
+    overflow-y: auto; /* Cho phép cuộn dọc */
+  }
+  
+  /* Đảm bảo bảng chiếm toàn bộ chiều rộng của container */
+  .table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .search-icon {
+    margin-left: 10px;
+    cursor: pointer;
+  }
+  
+  /* Cấu hình cho bảng */
+  .table {
+    width: 100%;
+    max-width: 100%;
+    max-height: 300vh;
+    margin: 0;
+    border-collapse: collapse;
+    background-color: white;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    overflow-x: auto; /* Cho phép cuộn ngang nếu bảng quá rộng */
+  }
+  
+  .header-title {
+    font-weight: bold;
+    text-decoration: underline;
+    margin-bottom: 10px;
+  }
+  
+  .table th, .table td {
+    border: 1px solid #ccc;
+    padding: 12px; /* Giảm padding để tiết kiệm không gian */
+    text-align: left;
+    font-size: 1rem;
+  }
+  
+  /* Mobile responsiveness */
+  @media (max-width: 768px) {
+    .content-container {
+      padding: 5px; /* Giảm padding cho màn hình nhỏ */
+      height: calc(100vh - 60px); /* Giảm chiều cao của content khi header có chiều cao */
+    }
+  
+    .table {
+      width: 100%;
+      overflow-x: auto; /* Cho phép cuộn ngang nếu bảng quá rộng */
+    }
+  
+    .header-title {
+      font-size: 1.2rem; /* Giảm kích thước tiêu đề cho màn hình nhỏ */
+    }
+  }
+  .resource-links {
+    display: flex;                 /* Sử dụng flexbox để đặt các link trên cùng một dòng */
+    justify-content: center;       /* Căn giữa các link theo chiều ngang */
+    gap: 20px;                     /* Khoảng cách giữa các link */
+    margin-top: 1px;   
+    margin-bottom: 20px;             /* Khoảng cách phía trên */
+    width: 100%;                   /* Đảm bảo container chiếm toàn bộ chiều rộng */
+  }
+  .action-container {
+    display: flex;                 /* Sử dụng flexbox để đặt các link trên cùng một dòng */
+    justify-content: center;       /* Căn giữa các link theo chiều ngang */
+    gap: 20px;                     /* Khoảng cách giữa các link */
+    margin-top: 1px;   
+    margin-bottom: 20px;             /* Khoảng cách phía trên */
+    width: 100%;                         /* Khoảng cách giữa nút "Xem" và các link */
+  }
+  .table-scroll-container {
+    max-height: 75vh; /* Chiều cao lớn hơn để bảng hiển thị nhiều dòng hơn */
+    overflow-y: auto;
+  }
+  
+  .table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
