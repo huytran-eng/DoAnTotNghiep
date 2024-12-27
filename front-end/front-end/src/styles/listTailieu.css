@@ -1,0 +1,125 @@
+/* Bao bọc bảng và thêm thanh cuộn - chỉ áp dụng cho giao diện sinh viên */
+.student-interface .class-table-wrapper {
+    width: 90%;
+    max-width: 1200px;
+    margin: 0 auto;
+    overflow-x: auto; /* Cho phép cuộn ngang nếu bảng quá rộng */
+    overflow-y: auto; /* Cho phép cuộn dọc nếu bảng quá dài */
+    max-height: 500px;
+    border-radius: 8px; /* Bo góc cho bảng */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Thêm bóng mờ cho bảng */
+    background-color: #ffffff;
+}
+
+/* Thiết lập bảng - chỉ áp dụng cho giao diện sinh viên */
+.student-interface .materials-table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #fff;
+    border-radius: 8px;
+    overflow: hidden; /* Ẩn phần thừa nếu có */
+}
+
+/* Thiết lập cho tiêu đề và ô bảng - chỉ áp dụng cho giao diện sinh viên */
+.student-interface .materials-table th,
+.student-interface .materials-table td {
+    padding: 12px;
+    text-align: left;
+    border: 1px solid #ddd;
+    transition: background-color 0.3s ease; /* Thêm hiệu ứng chuyển màu nền khi hover */
+}
+
+/* Thiết lập độ rộng cho các cột */
+.student-interface .materials-table th:nth-child(1),
+.student-interface .materials-table td:nth-child(1) {
+    width: 400px; /* Độ rộng cho cột tên tài liệu */
+}
+
+.student-interface .materials-table th:nth-child(2),
+.student-interface .materials-table td:nth-child(2) {
+    width: 200px; /* Độ rộng cho cột ngày tải lên */
+}
+
+.student-interface .materials-table th:nth-child(3),
+.student-interface .materials-table td:nth-child(3) {
+    width: 180px; /* Độ rộng cho cột mô tả */
+}
+.student-interface .materials-table th:nth-child(3),
+.student-interface .materials-table td:nth-child(3) {
+    width: 180px; /* Độ rộng cho cột mô tả */
+}
+
+/* Thiết lập màu nền cho các tiêu đề */
+.student-interface .materials-table th {
+    background-color: #007bff;
+    color: #fff;
+    font-weight: bold;
+}
+
+/* Thêm hiệu ứng cho các dòng bảng khi hover */
+.student-interface .materials-table tr:hover {
+    background-color: #f1f1f1;
+}
+
+/* Thiết lập màu nền cho các hàng chẵn */
+.student-interface .materials-table tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+/* Phần thông báo không có tài liệu */
+.student-interface .no-materials {
+    text-align: center;
+    font-style: italic;
+    color: #666;
+    padding: 20px 0;
+}
+
+/* Thêm khoảng cách cho tiêu đề trang */
+.student-interface h1 {
+    font-size: 1.8rem;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 30px;
+    color: #333;
+}
+
+/* Căn giữa phần chứa bảng tài liệu */
+.student-interface .flex-grow {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+}
+
+.student-interface .flex {
+    display: flex;
+}
+
+.student-interface .h-screen {
+    height: 100vh;
+}
+
+/* Đảm bảo nội dung và sidebar không bị tràn khi thu nhỏ màn hình */
+.student-interface .class-table-wrapper {
+    width: 100%;
+    margin: 0 10px;
+}
+
+.student-interface .materials-table th,
+.student-interface .materials-table td {
+    padding: 10px;
+}
+
+/* Thêm hiệu ứng thanh cuộn đẹp */
+.student-interface .class-table-wrapper::-webkit-scrollbar {
+    height: 8px;
+}
+
+.student-interface .class-table-wrapper::-webkit-scrollbar-thumb {
+    background: #007bff;
+    border-radius: 4px;
+}
+
+.student-interface .class-table-wrapper::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}

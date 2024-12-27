@@ -1,0 +1,120 @@
+/* Căn giữa bảng và thêm thanh cuộn */
+.class-table-wrapper {
+  width: 100%; /* Đảm bảo phần tử chứa bảng không vượt quá màn hình */
+  max-width: 100%;
+  margin: 0 auto;
+  overflow-x: auto; /* Cho phép cuộn ngang nếu cần */
+  overflow-y: auto;
+  max-height: 500px;
+  box-sizing: border-box; /* Đảm bảo padding và border không làm tăng kích thước phần tử */
+}
+
+.class-table {
+  width: 100%; /* Đảm bảo bảng không vượt quá kích thước phần tử cha */
+  border-collapse: collapse;
+  table-layout: fixed; /* Điều chỉnh tự động chiều rộng cột */
+}
+
+.class-table td, .class-table th {
+  word-wrap: break-word; /* Ngắt từ nếu quá dài */
+  white-space: nowrap; /* Không cho phép xuống dòng */
+  overflow: hidden;
+  text-overflow: ellipsis; /* Thêm dấu "..." nếu văn bản quá dài */
+}
+
+.class-table th, .class-table td {
+  padding: 12px;
+  text-align: left;
+  border: 1px solid #ddd; /* Đặt border cho các ô trong bảng */
+}
+
+.class-table th {
+  background-color: #f2f2f2;
+}
+
+.class-table tr:nth-child(even) {
+  background-color: #f9f9f9; /* Đổi màu nền cho các hàng chẵn */
+}
+
+.class-table tr:hover {
+  background-color: #f1f1f1; /* Hiệu ứng hover cho dòng */
+}
+
+/* Điều chỉnh CSS cho search-filter-container */
+.search-filter-container {
+  display: flex;
+  justify-content: center; /* Căn giữa theo chiều ngang */
+  align-items: center; /* Căn giữa theo chiều dọc */
+  margin-bottom: 20px; /* Khoảng cách phía dưới */
+  gap: 20px; /* Khoảng cách giữa các phần tử */
+  flex-wrap: wrap; /* Cho phép phần tử chuyển sang dòng mới nếu không đủ chỗ */
+}
+
+/* Điều chỉnh cho search-container */
+.search-container {
+  display: flex;
+  align-items: center;
+  border: 1px solid #ccc;
+  padding: 5px 10px;
+  border-radius: 5px;
+}
+
+h1.mb-4 {
+  font-weight: bold; /* In đậm chữ */
+  text-align: center; /* Căn giữa chữ */
+  margin-bottom: 20px; /* Khoảng cách giữa tiêu đề và bảng */
+}
+
+.search-input {
+  border: none;
+  padding: 8px;
+  outline: none;
+  width: 200px; /* Điều chỉnh chiều rộng của input */
+}
+
+.search-btn {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 8px;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.search-btn:hover {
+  background-color: #0056b3;
+}
+
+/* Điều chỉnh cho filter-container */
+.filter-container {
+  display: flex;
+  align-items: center;
+  gap: 10px; /* Khoảng cách giữa nhãn và dropdown */
+}
+
+.filter-label {
+  font-weight: bold;
+}
+
+.filter-select {
+  padding: 8px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+
+.view-btn {
+  background-color: #4CAF50;
+  color: white;
+  padding: 5px 10px;
+  border-radius: 5px;
+  text-decoration: none;
+}
+
+.view-btn:hover {
+  background-color: #45a049;
+}
+
+/* Đảm bảo padding không ảnh hưởng đến chiều rộng tổng */
+* {
+  box-sizing: border-box;
+}

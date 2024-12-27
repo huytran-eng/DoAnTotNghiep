@@ -1,0 +1,48 @@
+services:
+  code-executor:
+    build: .
+    container_name: code-executor
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - MAX_MEMORY=512m
+      - TIMEOUT_SECONDS=5
+      - CODE_EXECUTION_TIMEOUT=30
+      - CODE_EXECUTION_POOL_SIZE=4
+    # Resource limits
+    mem_limit: 1g
+    mem_reservation: 512m
+    cpus: 4
+    # Security options
+    security_opt:
+      - no-new-privileges:true
+    # Add required capabilities instead of privileged mode
+    cap_add:
+      - SYS_ADMIN
+      - SYS_PTRACE
+    # Mount points
+    volumes:
+      - ./temp:/app/temp:rw,noexec,nosuid,nodev
+      - /proc:/proc:rw
+    # Enable pid namespace sharing
+    pid: host
+    # Temporary filesystems
+    tmpfs:
+      - /run:rw,nosuid,nodev
+      - /run/lock:rw,nosuid,nodev
+    # Logging configuration
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+    # Restart policy
+    restart: unless-stopped
+    # Network configuration
+    networks:
+      - code-executor-network
+
+networks:
+  code-executor-network:
+    driver: bridge

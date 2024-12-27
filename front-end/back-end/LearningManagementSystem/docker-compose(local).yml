@@ -1,0 +1,29 @@
+services:
+  lms.api:
+    container_name: blissful_blackburn
+    image: huytk5/lmsapi:latest  # Match the existing LMS API image
+    ports:
+      - "80:5000"      # Map port 5000 on the container to port 80
+      - "443:5001"     # Map port 5001 on the container to port 443
+    depends_on:
+      - db
+
+  db:
+    container_name: sqlserver-container
+    image: huytk5/sqlserver-image:latest  # Use the existing SQL Server image
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=M@tkh4umo1
+    ports:
+      - "1433:1433"    # Map port 1433
+    volumes:
+      - sql_data:/var/opt/mssql
+
+  code-executor:
+    container_name: code-executor
+    image: codeexecutionapp_code-executor  # Match the image name for the code executor
+    ports:
+      - "8080:8080"    # Map port 8080 on the container to port 8080 on the host
+
+volumes:
+  sql_data:

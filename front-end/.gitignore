@@ -22,3 +22,15 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+.vs/
+
+# Ignore .NET build folders
+**/bin/
+**/obj/
+
+# Ignore debug and release folders
+Debug/
+Release/
+
+**/Migrations/
