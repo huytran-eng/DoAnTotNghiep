@@ -12,13 +12,15 @@ import {
   Accordion,
   AccordionSummary,
   AccordionDetails,
+  Button
 } from "@mui/material";
 import { useParams, useNavigate } from "react-router-dom";
 import moment from "moment";
 import {} from "@mui/x-data-grid-pro";
 import { baseUrl } from "../../../util/constant";
-import { Visibility } from "@mui/icons-material";
+import { Visibility, Download } from "@mui/icons-material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import Swal from "sweetalert2";
 
 const StudentClassDetail = () => {
   const [activeTab, setActiveTab] = useState(0); // Track active tab index
@@ -100,7 +102,35 @@ const StudentClassDetail = () => {
       navigate(`/class/${id}/exerciseDetail/${exerciseId}`);
     }
   };
+  const handleDownloadMaterial = async (materialId) => {
+    try {
+      const response = await axios.get(
+        baseUrl + `studymaterial/download/${materialId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          responseType: "blob", // Important for downloading files
+        }
+      );
 
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", "material.pdf"); // or extract the filename from response headers
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    } catch (error) {
+      console.error("Error downloading material:", error);
+      Swal.fire({
+        title: "Lỗi",
+        text: "Không thể tải xuống tài liệu.",
+        icon: "error",
+        confirmButtonText: "OK",
+      });
+    }
+  };
   const handleViewStudent = (studentId) => {
     navigate(`/class/${id}/student/${studentId}`);
   };
@@ -108,15 +138,12 @@ const StudentClassDetail = () => {
   const fetchMaterials = async () => {
     setLoading(true);
     try {
-      // const response = await axios.get(
-      //   baseUrl+`class/${id}/materials`,
-      //   {
-      //     headers: {
-      //       Authorization: `Bearer ${token}`,
-      //     },
-      //   }
-      // );
-      // setMaterials(response.data);
+      const response = await axios.get(baseUrl + `class/${id}/studymaterials`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      setMaterials(response.data);
     } catch (error) {
       console.error("Error fetching materials:", error);
     } finally {
@@ -192,19 +219,36 @@ const StudentClassDetail = () => {
   ];
 
   const materialColumns = [
-    { field: "title", headerName: "Title", width: 300 },
-    { field: "description", headerName: "Description", width: 500 },
-    { field: "fileType", headerName: "File Type", width: 150 },
+    { field: "title", headerName: "Tiêu đề tài liệu", flex: 1 },
     {
-      field: "uploadedOn",
-      headerName: "Uploaded On",
-      width: 200,
+      field: "createdAt",
+      headerName: "Ngày tạo",
+      flex: 1,
       valueGetter: (value) => {
         if (!value) {
           return "N/A";
         }
         return moment(value).format("DD/MM/YYYY");
       },
+    },
+    {
+      field: "openDate",
+      headerName: "Ngày mở",
+      flex: 1,
+      valueGetter: (value) => {
+        if (!value) {
+          return "N/A";
+        }
+        return moment(value).format("DD/MM/YYYY");
+      },
+    },
+    {
+      flex: 1,
+      renderCell: (params) => (
+        <Button onClick={() => handleDownloadMaterial(params.row.id)}>
+          <Download style={{ color: "#1976d2" }} />
+        </Button>
+      ),
     },
   ];
 
@@ -287,10 +331,13 @@ const StudentClassDetail = () => {
             {activeTab === 1 && (
               <div>
                 {topics.map((topic) => (
-                  <Accordion key={topic.id} sx={{
-                    margin:"10px",
-                    borderRadius: '6px'
-                  }}>
+                  <Accordion
+                    key={topic.id}
+                    sx={{
+                      margin: "10px",
+                      borderRadius: "6px",
+                    }}
+                  >
                     <AccordionSummary
                       expandIcon={<ExpandMoreIcon />}
                       aria-controls={`topic-${topic.id}-content`}
@@ -301,7 +348,7 @@ const StudentClassDetail = () => {
                           display: "flex",
                           width: "100%",
                           justifyContent: "space-between",
-                          alignItems: "center",                     
+                          alignItems: "center",
                         }}
                         className="m-2"
                       >

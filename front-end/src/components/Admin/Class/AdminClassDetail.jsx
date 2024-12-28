@@ -1,6 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useState, useEffect } from "react";
 import axios from "axios";
+import Swal from "sweetalert2";
 import { DataGrid } from "@mui/x-data-grid";
 import {
   Box,
@@ -12,14 +13,17 @@ import {
   Accordion,
   AccordionSummary,
   AccordionDetails,
+  Switch,
 } from "@mui/material";
 import { useParams, useNavigate } from "react-router-dom";
 import moment from "moment";
 import { baseUrl } from "../../../util/constant";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import TopicSelectionDialog from "./TopicSelectionDialog";
+import { Visibility, Download } from "@mui/icons-material";
 
 const AdminClassDetail = () => {
+  const [toggleLoading, setToggleLoading] = useState(false);
   const [activeTab, setActiveTab] = useState(0);
   const [classDetails, setClassDetails] = useState(null);
   const [students, setStudents] = useState([]);
@@ -119,18 +123,44 @@ const AdminClassDetail = () => {
       navigate(`/class/${id}/exerciseDetail/${exerciseId}`);
     }
   };
-
+  const handleToggleMaterial = async (materialId) => {
+    setLoading(true);
+    try {
+      console.log(token);
+      await axios.post(
+        baseUrl + `class/${id}/materialtoggle/${materialId}`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      fetchMaterials(); 
+    } catch (error) {
+      console.error("Error toggling study material:", error);
+      Swal.fire({
+        title: "Lỗi",
+        text: "Không thể cập nhật trạng thái tài liệu.",
+        icon: "error",
+        confirmButtonText: "OK",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
   const fetchMaterials = async () => {
     setLoading(true);
     try {
-      const response = await axios.get(baseUrl + `class/${id}/materials`, {
+      const response = await axios.get(baseUrl + `class/${id}/studymaterials`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
+      console.log(response.data);
       setMaterials(response.data);
     } catch (error) {
-      console.error("Error fetching materials:", error);
+      console.error("Error fetching study materials:", error);
     } finally {
       setLoading(false);
     }
@@ -165,10 +195,40 @@ const AdminClassDetail = () => {
       setShowTopicDialog(false);
       fetchTopics();
     } catch (error) {
-      if(error.response.status === 400){
+      if (error.response.status === 400) {
         alert("Chủ đề đã được mở trong khoảng thời gian được chọn");
       }
       alert("Có lỗi xảy ra khi lưu chủ đề");
+    }
+  };
+
+  const handleDownloadMaterial = async (materialId) => {
+    try {
+      const response = await axios.get(
+        baseUrl + `studymaterial/download/${materialId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          responseType: "blob", // Important for downloading files
+        }
+      );
+
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", "material.pdf"); // or extract the filename from response headers
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    } catch (error) {
+      console.error("Error downloading material:", error);
+      Swal.fire({
+        title: "Lỗi",
+        text: "Không thể tải xuống tài liệu.",
+        icon: "error",
+        confirmButtonText: "OK",
+      });
     }
   };
 
@@ -208,19 +268,50 @@ const AdminClassDetail = () => {
   ];
 
   const materialColumns = [
-    { field: "title", headerName: "Title", width: 300 },
-    { field: "description", headerName: "Description", width: 500 },
-    { field: "fileType", headerName: "File Type", width: 150 },
+    { field: "title", headerName: "Tiêu đề tài liệu", flex: 1 },
     {
-      field: "uploadedOn",
-      headerName: "Uploaded On",
-      width: 200,
+      field: "createdAt",
+      headerName: "Ngày tạo",
+      flex: 1,
       valueGetter: (value) => {
         if (!value) {
           return "N/A";
         }
         return moment(value).format("DD/MM/YYYY");
       },
+    },
+    {
+      field: "openDate",
+      headerName: "Ngày mở",
+      flex: 1,
+      valueGetter: (value) => {
+        if (!value) {
+          return "N/A";
+        }
+        return moment(value).format("DD/MM/YYYY");
+      },
+    },
+    {
+      field: "isOpen",
+      headerName: "Trạng thái",
+      width: 150,
+      renderCell: (params) => (
+        <Switch
+          checked={params.row.isOpen}
+          onChange={() =>
+            handleToggleMaterial(params.row.id)
+          }
+          color="primary"
+        />
+      ),
+    },
+    {
+      flex: 1,
+      renderCell: (params) => (
+        <Button onClick={() => handleDownloadMaterial(params.row.id)}>
+          <Download style={{ color: "#1976d2" }} />
+        </Button>
+      ),
     },
   ];
 

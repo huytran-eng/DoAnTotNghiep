@@ -12,7 +12,7 @@ const LoginVer2 = () => {
     setError(""); // Reset error message before new attempt
 
     try {
-      const response = await fetch(baseUrl+"User/login", {
+      const response = await fetch(baseUrl + "User/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username, password }),
@@ -22,9 +22,11 @@ const LoginVer2 = () => {
         const data = await response.json();
         localStorage.setItem("token", data.token);
         localStorage.setItem("userInfo", JSON.stringify(data));
-
-        if (data.position.toLowerCase() === "admin") navigate("/admin"); // Redirect to dashboard
-
+        if (data.position.toLowerCase() === "admin") {
+          console.log("o login ver2 as admin");
+          navigate("/admin");
+        } else if (data.position.toLowerCase() === "teacher")
+          navigate("/teacher");
         navigate("/"); // Redirect to dashboard
       } else {
         setError("Sai tài khoản hoặc mật khẩu"); // Show error on failure
@@ -323,7 +325,7 @@ const LoginVer2 = () => {
             <div className="m-2 mb-0 flex items-center justify-center">
               <p className="text-red-500">{error}</p>
             </div>
-          )}       
+          )}
         </div>
       </div>
     </div>

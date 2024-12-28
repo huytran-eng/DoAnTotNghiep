@@ -3,6 +3,7 @@ import { useState, useEffect, useMemo } from "react";
 import axios from "axios";
 import { DataGrid } from "@mui/x-data-grid";
 import moment from "moment";
+import Swal from "sweetalert2";
 import {
   Box,
   Typography,
@@ -19,12 +20,12 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
-  TextField
+  TextField,
 } from "@mui/material";
 import { useParams } from "react-router-dom";
 import { baseUrl } from "../../../util/constant";
 import { useNavigate } from "react-router-dom";
-import { Visibility } from "@mui/icons-material";
+import { Visibility, Download } from "@mui/icons-material";
 
 const AdminSubjectDetail = () => {
   const [activeTab, setActiveTab] = useState(0); // Track active tab index
@@ -199,41 +200,83 @@ const AdminSubjectDetail = () => {
 
     // Create FormData object to send file and other data
     const formData = new FormData();
-    formData.append("title", materialName);
     formData.append("file", file);
-
+    formData.append("title", materialName);
+    formData.append("subjectId", id);
+    console.log(formData);
     try {
       // Replace with your API endpoint for creating study material
       const response = await axios.post(
-        "/api/study-material/create",
+        baseUrl + "studymaterial/create",
         formData,
         {
           headers: {
             "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${token}`,
           },
         }
       );
-
-      if (response.status === 200) {
-        setMaterials([...materials, response.data]); // Update the study materials list
-        handleCloseDialog(); // Close the dialog after success
+      console.log(response);
+      if (response.status === 200 || response.status === 204) {
+        handleCloseDialog();
+        Swal.fire({
+          title: "Thành công",
+          text: "Tạo tài liệu học tập thành công!",
+          icon: "success",
+          confirmButtonText: "OK",
+        }).then(() => {
+          setMaterialName("");
+          setFile(null);
+          fetchMaterials();
+        });
+      } else {
+        // Handle other non-success statuses
+        Swal.fire({
+          title: "Có lỗi xảy ra!",
+          text: "Không thể tạo tài liệu học tập.",
+          icon: "error",
+          confirmButtonText: "OK",
+        });
       }
     } catch (error) {
       console.error("Error uploading study material", error);
-      alert("Error uploading study material");
+
+      // Handle API error response and display appropriate message
+      const errorMessage =
+        error.response?.data?.message || // Custom message returned from API
+        "Đã có lỗi xảy ra khi tạo tài liệu học tập.";
+
+      const statusCode = error.response?.status;
+
+      // Show SweetAlert popup with error message based on status code
+      if (statusCode === 400) {
+        Swal.fire({
+          title: "Bad Request",
+          text: errorMessage,
+          icon: "warning",
+          confirmButtonText: "OK",
+        });
+      } else if (statusCode === 401) {
+        Swal.fire({
+          title: "Unauthorized",
+          text: "You are not authorized. Please log in again.",
+          icon: "error",
+          confirmButtonText: "OK",
+        });
+      } else {
+        Swal.fire({
+          title: "Lỗi hệ thống",
+          text: errorMessage,
+          icon: "error",
+          confirmButtonText: "OK",
+        });
+      }
     } finally {
       setLoading(false);
     }
   };
 
   // Columns for DataGrid
-  const materialColumns = [
-    { field: "title", headerName: "Title", width: 300 },
-    { field: "description", headerName: "Description", width: 500 },
-    { field: "fileType", headerName: "File Type", width: 150 },
-    { field: "uploadedOn", headerName: "Uploaded On", width: 200 },
-  ];
-
   const classColumns = [
     { field: "name", headerName: "Tên lớp", flex: 1 },
     { field: "subjectName", headerName: "Tên môn học", flex: 1.5 },
@@ -277,6 +320,37 @@ const AdminSubjectDetail = () => {
       );
     });
   }, [allExercises, exercises]);
+
+  const handleDownloadMaterial = async (materialId) => {
+    try {
+      const response = await axios.get(
+        baseUrl + `studymaterial/download/${materialId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          responseType: "blob", // Important for downloading files
+        }
+      );
+
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", "material.pdf"); // or extract the filename from response headers
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    } catch (error) {
+      console.error("Error downloading material:", error);
+      Swal.fire({
+        title: "Lỗi",
+        text: "Không thể tải xuống tài liệu.",
+        icon: "error",
+        confirmButtonText: "OK",
+      });
+    }
+  };
+
   const exerciseColumns = [
     {
       field: "title", // Replace "name" with "exerciseName"
@@ -359,6 +433,32 @@ const AdminSubjectDetail = () => {
         ) : null,
     },
   ];
+
+  const materialColumns = [
+    { field: "title", headerName: "Tiêu đề tài liệu", flex: 1 },
+    {
+      field: "createdAt",
+      headerName: "Ngày tạo",
+      flex: 1,
+      valueGetter: (value) => {
+        if (!value) {
+          return "N/A";
+        }
+        return moment(value).format("DD/MM/YYYY");
+      },
+    },
+    {
+      flex: 1,
+      renderCell: (params) => (
+        <Button
+          onClick={() => handleDownloadMaterial(params.row.id)}
+        >
+          <Download style={{ color: "#1976d2" }} />
+        </Button>
+      ),
+    },
+  ];
+
   return (
     <div>
       <Typography variant="h5" component="h2" gutterBottom align="center">
