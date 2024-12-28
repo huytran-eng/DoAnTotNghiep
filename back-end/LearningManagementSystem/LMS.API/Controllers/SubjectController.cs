@@ -2,11 +2,8 @@
 using LMS.BusinessLogic.DTOs.RequestDTO;
 using LMS.BusinessLogic.Services.Implementations;
 using LMS.BusinessLogic.Services.Interfaces;
-using LMS.DataAccess.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Drawing.Printing;
-using System.Globalization;
 
 namespace LMS.API.Controllers
 {
@@ -17,15 +14,17 @@ namespace LMS.API.Controllers
         private readonly ISubjectService _subjectService;
         private readonly IExerciseService _exerciseService;
         private readonly IClassService _classService;
+        private readonly IStudyMaterialService _studyMaterialService;
         private readonly IProgrammingLanguageService _programmingLanguageService;
 
-        public SubjectController(ISubjectService subjectService, IExerciseService exerciseService, IClassService classService, IProgrammingLanguageService programmingLanguageService)
+        public SubjectController(ISubjectService subjectService, IExerciseService exerciseService, IClassService classService, IProgrammingLanguageService programmingLanguageService, IStudyMaterialService studyMaterialService)
         {
             _subjectService = subjectService;
             _exerciseService = exerciseService;
             _classService = classService;
             _classService = classService;
             _programmingLanguageService = programmingLanguageService;
+            _studyMaterialService = studyMaterialService;
         }
 
         [Authorize]
@@ -107,6 +106,34 @@ namespace LMS.API.Controllers
             }
 
             var subjectExercise = await _classService.GetClassesForSubject(subjectId, userId.Value);
+
+
+            if (subjectExercise.IsSuccess)
+            {
+                return Ok(subjectExercise.Data);
+            }
+            else
+            {
+                return subjectExercise.Code switch
+                {
+                    400 => BadRequest(subjectExercise.Message),
+                    404 => BadRequest(subjectExercise.Message),
+                    403 => BadRequest(subjectExercise.Message),
+                    _ => StatusCode(500, subjectExercise.Message)
+                };
+            }
+        }
+
+        [HttpGet("{subjectId}/materials")]
+        public async Task<IActionResult> GetStudyMaterialsBySubject(Guid subjectId)
+        {
+            var userId = GetCurrentUserId();
+            if (userId == null)
+            {
+                return Unauthorized("UserId not found or invalid.");
+            }
+
+            var subjectExercise = await _studyMaterialService.GetStudyMaterialsForSubject(subjectId, userId.Value);
 
 
             if (subjectExercise.IsSuccess)

@@ -12,7 +12,7 @@ namespace LMS.DataAccess.Repositories
         public async Task<List<ClassStudyMaterial>> GetByClassIdAsync(Guid classId)
         {
             return await _context.ClassStudyMaterials
-                .Where(csm => csm.ClassId == classId)
+                .Where(csm => csm.ClassId == classId && !csm.IsDeleted)
                 .Include(csm => csm.StudyMaterial)
                 .ToListAsync();
         }

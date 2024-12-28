@@ -22,7 +22,30 @@ namespace LMS.DataAccess.Repositories
 
         public virtual async Task<T> GetByIdAsync(Guid id)
         {
-            return await _dbSet.FirstOrDefaultAsync(entity => EF.Property<Guid>(entity, "Id") == id && !EF.Property<bool>(entity, "IsDeleted"));
+            var entity = await _dbSet.FirstOrDefaultAsync(entity => EF.Property<Guid>(entity, "Id") == id);
+
+            if (entity != null)
+            {
+                bool isDeleted = false;
+
+                try
+                {
+                    isDeleted = EF.Property<bool>(entity, "IsDeleted");
+                }
+                catch
+                {
+                    // Handle the case where IsDeleted property doesn't exist.
+                    // For example, assuming entities without an IsDeleted field are not deleted.
+                    isDeleted = false;
+                }
+
+                if (!isDeleted)
+                {
+                    return entity;
+                }
+            }
+
+            return null; // or handle the not found case
         }
 
         public virtual async Task<T> FindAsync(Expression<Func<T, bool>> expression)
@@ -32,7 +55,7 @@ namespace LMS.DataAccess.Repositories
 
         public virtual async Task<IEnumerable<T>> FindListAsync(Expression<Func<T, bool>> expression)
         {
-            return await Task.FromResult(_dbSet.Where(expression)); 
+            return await _dbSet.Where(expression).ToListAsync(); 
         }
 
         public virtual async Task AddAsync(T entity)

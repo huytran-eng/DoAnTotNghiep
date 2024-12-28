@@ -2,7 +2,9 @@
 using LMS.BusinessLogic.DTOs.RequestDTO;
 using LMS.BusinessLogic.Services.Implementations;
 using LMS.BusinessLogic.Services.Interfaces;
+using LMS.Core;
 using LMS.DataAccess.Models;
+using LMS.DataAccess.Repositories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -18,12 +20,15 @@ namespace LMS.API.Controllers
         private readonly IExerciseService _exerciseService;
         private readonly IProgrammingLanguageService _programmingLanguageService;
         private readonly IStudentSubmissionService _studentSubmissionService;
+        private readonly IStudyMaterialService _studyMaterialService;
         public ClassController(IClassService classService,
             IUserService userService,
             IStudentService studentService,
             IExerciseService exerciseService,
             IProgrammingLanguageService programmingLanguageService,
-            IStudentSubmissionService studentSubmissionService)
+            IStudentSubmissionService studentSubmissionService,
+            IStudyMaterialService studyMaterialService
+            )
         {
             _classService = classService;
             _userService = userService;
@@ -31,6 +36,7 @@ namespace LMS.API.Controllers
             _exerciseService = exerciseService;
             _programmingLanguageService = programmingLanguageService;
             _studentSubmissionService = studentSubmissionService;
+            _studyMaterialService = studyMaterialService;
         }
 
 
@@ -221,7 +227,64 @@ namespace LMS.API.Controllers
             }
         }
 
-       
+        [Authorize]
+        [HttpGet("{classId}/studymaterials")]
+        public async Task<IActionResult> GetStudyMaterialsByClass(Guid classId)
+        {
+            var userId = GetCurrentUserId();
+            if (userId == null)
+            {
+                return Unauthorized("UserId not found or invalid.");
+            }
+
+            var result = await _studyMaterialService.GetClassStudyMaterials(classId, userId.Value);
+
+
+            if (result.IsSuccess)
+            {
+                return Ok(result.Data);
+            }
+            else
+            {
+                return result.Code switch
+                {
+                    400 => BadRequest(result.Message),
+                    404 => BadRequest(result.Message),
+                    403 => BadRequest(result.Message),
+                    _ => StatusCode(500, result.Message)
+                };
+            }
+        }
+
+        [Authorize(Roles = "Admin, Teacher")]
+        [HttpPost("{id}/materialtoggle/{materialId}")]
+        public async Task<IActionResult> ToggleStudyMaterialForClass(Guid id, Guid materialId)
+        {
+           
+                var userId = GetCurrentUserId();
+                if (userId == null)
+                {
+                    return Unauthorized("UserId not found or invalid.");
+                }
+                // Call the service to toggle the study material for the class
+                var result = await _studyMaterialService.ToggleStudyMaterialForClass(id, materialId, userId.Value);
+
+                // Check if the operation was successful
+                if (result.IsSuccess)
+                {
+                    return Ok(result.Data);
+                }
+                else
+                {
+                    return result.Code switch
+                    {
+                        400 => BadRequest(result.Message),
+                        404 => BadRequest(result.Message),
+                        403 => BadRequest(result.Message),
+                        _ => StatusCode(500, result.Message)
+                    };
+                }
+        }
 
         [Authorize]
         [HttpGet("{id}/student-submission/{studentId}")]

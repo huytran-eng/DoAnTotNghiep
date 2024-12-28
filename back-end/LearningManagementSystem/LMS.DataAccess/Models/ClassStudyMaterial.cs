@@ -2,9 +2,8 @@
 
 namespace LMS.DataAccess.Models
 {
-    public class ClassStudyMaterial
+    public class ClassStudyMaterial:BaseEntity
     {
-        public Guid Id { get; set; }
         public DateTime OpenDate { get;set; }
         public Guid ClassId { get; set; }
         [ForeignKey("ClassId")]

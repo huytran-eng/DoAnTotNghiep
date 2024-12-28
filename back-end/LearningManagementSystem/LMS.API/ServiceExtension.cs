@@ -2,13 +2,12 @@
 using LMS.BusinessLogic.Services.Interfaces;
 using LMS.DataAccess.Repositories;
 using OfficeOpenXml;
-using System.Net.Security;
 
 namespace LMS.API
 {
     public static class ServiceExtension
     {
-        public static IServiceCollection AddApplicationServices(this IServiceCollection services)
+        public static IServiceCollection AddApplicationServices(this IServiceCollection services, IConfiguration configuration)
         {
             ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
             // Register repositories
@@ -28,6 +27,7 @@ namespace LMS.API
             services.AddScoped<IProgrammingLanguageRepository, ProgrammingLanguageRepository>();
             services.AddScoped<IDepartmentRepository, DepartmentRepository>();
             services.AddScoped<IStudentSubmissonRepository, StudentSubmissionRepository>();
+            services.AddScoped<IStudyMaterialRepository, StudyMaterialRepository>();
 
 
             // Register services
@@ -41,7 +41,17 @@ namespace LMS.API
             services.AddScoped<IProgrammingLanguageService, ProgrammingLanguageService>();
             services.AddScoped<IStudentSubmissionService, StudentSubmissionService>();
             services.AddScoped<IDepartmentService, DepartmentService>();
-
+            services.AddScoped<IStudyMaterialService, StudyMaterialService>();
+            //var storagePath = configuration["StoragePath"];
+            //if (string.IsNullOrEmpty(storagePath))
+            //{
+            //    throw new InvalidOperationException("StoragePath is not configured in environment variables.");
+            //}
+            //services.AddScoped<IStudyMaterialService>(provider =>
+            //    new StudyMaterialService(
+            //        provider.GetRequiredService<IStudyMaterialRepository>(),
+            //        storagePath
+            //    ));
 
             return services;
         }
