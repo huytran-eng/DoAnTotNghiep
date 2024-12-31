@@ -9,6 +9,8 @@ import "../../../styles/studentClassList.css";
 import { baseUrl } from "../../../util/constant";
 import { Box, Typography, Button, IconButton } from "@mui/material";
 import { Visibility } from "@mui/icons-material";
+import "../../../styles/homeStyles.css";
+import Swal from "sweetalert2";
 
 const StudentClassList = () => {
   const [classes, setClasses] = useState([]);
@@ -34,7 +36,7 @@ const StudentClassList = () => {
     } catch (error) {
       console.error("Error fetching classes:", error);
       if (error.response?.status === 401) {
-        alert("Session expired. Please log in again.");
+        alert("Phiên đăng nhập đã kết thúc. Vui lòng đăng nhập lại");
         window.location.href = "/login"; // Redirect to login page
       }
     } finally {
@@ -55,7 +57,7 @@ const StudentClassList = () => {
     },
     {
       field: "teacherName",
-      headerName: "Tên giáo viên",
+      headerName: "Tên giảng viên",
       flex: 1,
     },
     {
@@ -116,26 +118,28 @@ const StudentClassList = () => {
       flex: 1,
       renderCell: (params) => (
         <div>
-          <IconButton
-            color="primary"
-            onClick={() => handleViewDetails(params.row)}
-            sx={{ mr: 1 }}
-          >
-            <Visibility />
-          </IconButton>
+          {params.row.status === 1 && (
+            <IconButton
+              color="primary"
+              onClick={() => handleViewDetails(params.row)}
+              sx={{ mr: 1 }}
+            >
+              <Visibility />
+            </IconButton>
+          )}
         </div>
       ),
     },
   ];
 
-  const handleViewDetails = (rowData) => {
+  const handleViewDetails = async (rowData) => {
     navigate(`/class/${rowData.id}`);
   };
   if (loading) {
     return <div>Loading...</div>;
   }
   return (
-    <div className="p-6 h-[calc(100vh-64px)]" >
+    <div style={{ padding: "20px", width: "80%", margin: "0 auto" }} className="content-container" >
       <Typography variant="h4" component="h2" gutterBottom align="center">
         Danh sách các lớp đang theo học
       </Typography>
@@ -146,10 +150,10 @@ const StudentClassList = () => {
           border: "1px solid #ccc",
           borderRadius: "8px",
           backgroundColor: "#f9f9f9",
-          height: '90%'
+          height: "90%",
         }}
       >
-        <div className="h-full">
+        <div style={{ height: 600, width: "100%" }}>
           <DataGrid
             mt-2
             rows={classes}

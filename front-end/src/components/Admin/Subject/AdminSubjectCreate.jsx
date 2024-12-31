@@ -43,7 +43,7 @@ const AdminCreateSubject = () => {
     } catch (error) {
       console.error("Error fetching departments:", error);
       if (error.response?.status === 401) {
-        alert("Session expired. Please log in again.");
+        alert("Phiên đăng nhập đã kết thúc. Vui lòng đăng nhập lại");
         window.location.href = "/login";
       }
     }
@@ -60,7 +60,7 @@ const AdminCreateSubject = () => {
     } catch (error) {
       console.error("Error fetching programming languages:", error);
       if (error.response?.status === 401) {
-        alert("Session expired. Please log in again.");
+        alert("Phiên đăng nhập đã kết thúc. Vui lòng đăng nhập lại");
         window.location.href = "/login";
       }
     }

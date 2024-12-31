@@ -144,7 +144,7 @@ const AdminStudentDetail = () => {
     },
     {
       field: "teacherName",
-      headerName: "Tên giáo viên",
+      headerName: "Tên giảng viên",
       flex: 1,
     },
     {

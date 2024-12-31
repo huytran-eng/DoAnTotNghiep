@@ -4,7 +4,7 @@ import { DataGrid } from "@mui/x-data-grid";
 import "../../../styles/homeStyles.css";
 import { useNavigate } from "react-router-dom";
 import moment from "moment";
-import { Typography, Box, Button } from "@mui/material";
+import { Typography, Box, Button, IconButton } from "@mui/material";
 import { Visibility } from "@mui/icons-material";
 import { baseUrl } from "../../../util/constant";
 
@@ -23,19 +23,16 @@ const AdminClassList = () => {
   const fetchClasses = async () => {
     setLoading(true);
     try {
-      const response = await axios.get(
-        baseUrl+`class/list`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const response = await axios.get(baseUrl + `class/list`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       setClasses(response.data);
     } catch (error) {
       console.error("Error fetching classes:", error);
       if (error.response?.status === 401) {
-        alert("Session expired. Please log in again.");
+        alert("Phiên đăng nhập đã kết thúc. Vui lòng đăng nhập lại");
         window.location.href = "/login"; // Redirect to login page
       }
     } finally {
@@ -44,19 +41,34 @@ const AdminClassList = () => {
   };
 
   const columns = [
-    { field: "name", headerName: "Tên lớp", flex: 1 },
-    { field: "subjectName", headerName: "Tên môn học", flex: 1.5 },
-    { field: "teacherName", headerName: "Tên giáo viên", flex: 1 },
-    { field: "numberOfStudent", headerName: "Sĩ số", flex: 0.5 },
+    {
+      field: "name",
+      headerName: "Tên lớp",
+      flex: 1,
+    },
+    {
+      field: "subjectName",
+      headerName: "Tên môn học",
+      flex: 1.5,
+    },
+    {
+      field: "teacherName",
+      headerName: "Tên giảng viên",
+      flex: 1,
+    },
+    {
+      field: "numberOfStudent",
+      headerName: "Sĩ số",
+      flex: 0.5,
+    },
     {
       field: "startDate",
       headerName: "Ngày bắt đầu",
       flex: 1,
       valueGetter: (value) => {
         if (!value) {
-          return "N/A"
+          return "N/A";
         }
-        // Convert the decimal value to a percentage
         return moment(value).format("DD/MM/YYYY");
       },
     },
@@ -66,19 +78,50 @@ const AdminClassList = () => {
       flex: 1,
       valueGetter: (value) => {
         if (!value) {
-          return "N/A"
+          return "N/A";
         }
-        // Convert the decimal value to a percentage
         return moment(value).format("DD/MM/YYYY");
+      },
+    },
+    {
+      field: "status",
+      headerName: "Tình trạng",
+      width: 150,
+      renderCell: (params) => {
+        let color;
+        let text;
+        switch (params.row.status) {
+          case 0:
+            color = "yellow";
+            text = "Chưa bắt đầu";
+            break;
+          case 1:
+            color = "red";
+            text = "Đang mở";
+            break;
+          case 2:
+            color = "green";
+            text = "Đã kết thúc";
+            break;
+          default:
+            color = "black";
+            text = "";
+        }
+        return <span style={{ color }}>{text}</span>;
       },
     },
     {
       flex: 1,
       renderCell: (params) => (
-        <button onClick={() => handleViewDetails(params.row)}>
-          {" "}
-          <Visibility style={{ color: "#1976d2" }} />
-        </button>
+        <div>
+          <IconButton
+            color="primary"
+            onClick={() => handleViewDetails(params.row)}
+            sx={{ mr: 1 }}
+          >
+            <Visibility />
+          </IconButton>
+        </div>
       ),
     },
   ];

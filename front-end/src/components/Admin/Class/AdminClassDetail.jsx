@@ -14,6 +14,7 @@ import {
   AccordionSummary,
   AccordionDetails,
   Switch,
+  IconButton
 } from "@mui/material";
 import { useParams, useNavigate } from "react-router-dom";
 import moment from "moment";
@@ -114,6 +115,10 @@ const AdminClassDetail = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleViewStudent = (studentId) => {
+    navigate(`/admin/class/${id}/student/${studentId}`);
   };
 
   const handleExerciseClick = (exerciseId) => {
@@ -236,19 +241,21 @@ const AdminClassDetail = () => {
   const studentColumns = [
     { field: "studentIdString", headerName: "Mã sinh viên", flex: 1 },
     { field: "name", headerName: "Họ và tên", flex: 1.5 },
-    {
-      field: "birthDate",
-      headerName: "Ngày sinh",
-      flex: 1,
-      valueFormatter: (params) => moment(params?.value).format("DD/MM/YYYY"),
-    },
-    { field: "email", headerName: "Email", flex: 1 },
-    { field: "address", headerName: "Địa chỉ", flex: 1 },
-    { field: "phone", headerName: "Số điện thoại", flex: 1 },
+    { field: "exercisesDone", headerName: "Số bài tập đã làm", flex: 1.5 },
+    { field: "exercisesCorrect", headerName: "Số bài tập làm đúng", flex: 1.5 },
     {
       field: "action",
       headerName: "Action",
       flex: 1,
+      renderCell: (params) => (
+        <IconButton
+          color="primary"
+          onClick={() => handleViewStudent(params.row.id)}
+          sx={{ mr: 1 }}
+        >
+          <Visibility /> 
+        </IconButton>
+      ),
     },
   ];
 

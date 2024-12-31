@@ -90,7 +90,7 @@ const AdminEditSubject = () => {
 
   const handleAuthError = (error) => {
     if (error.response?.status === 401) {
-      alert("Session expired. Please log in again.");
+      alert("Phiên đăng nhập đã kết thúc. Vui lòng đăng nhập lại");
       window.location.href = "/login";
     }
   };

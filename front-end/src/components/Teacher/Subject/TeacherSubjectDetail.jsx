@@ -15,12 +15,17 @@ import {
   List,
   ListItem,
   ListItemText,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  TextField,
 } from "@mui/material";
 import { useParams } from "react-router-dom";
 import { baseUrl } from "../../../util/constant";
 import { useNavigate } from "react-router-dom";
-import { Visibility } from "@mui/icons-material";
-
+import { Visibility,Download } from "@mui/icons-material";
+import Swal from "sweetalert2";
 const TeacherSubjectDetail = () => {
   const [activeTab, setActiveTab] = useState(0); // Track active tab index
   const [subjectDetails, setSubjectDetails] = useState(null); // Subject details data
@@ -32,6 +37,9 @@ const TeacherSubjectDetail = () => {
   const token = localStorage.getItem("token"); // Retrieve JWT token
   const { id } = useParams();
   const navigate = useNavigate();
+  const [openDialog, setOpenDialog] = useState(false);
+  const [materialName, setMaterialName] = useState("");
+  const [file, setFile] = useState(null);
 
   useEffect(() => {
     fetchSubjectDetails();
@@ -47,7 +55,97 @@ const TeacherSubjectDetail = () => {
       fetchMaterials();
     }
   }, [activeTab]);
+  const handleMaterialNameChange = (e) => {
+    setMaterialName(e.target.value);
+  };
+  const handleFileChange = (e) => {
+    setFile(e.target.files[0]);
+  };
 
+  const handleSubmitStudyMaterial = async () => {
+    if (!materialName || !file) {
+      alert("Please enter all fields.");
+      return;
+    }
+
+    setLoading(true);
+
+    // Create FormData object to send file and other data
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("title", materialName);
+    formData.append("subjectId", id);
+    try {
+      // Replace with your API endpoint for creating study material
+      const response = await axios.post(
+        baseUrl + "studymaterial/create",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      console.log(response);
+      if (response.status === 200 || response.status === 204) {
+        handleCloseDialog();
+        Swal.fire({
+          title: "Thành công",
+          text: "Tạo tài liệu học tập thành công!",
+          icon: "success",
+          confirmButtonText: "OK",
+        }).then(() => {
+          setMaterialName("");
+          setFile(null);
+          fetchMaterials();
+        });
+      } else {
+        // Handle other non-success statuses
+        Swal.fire({
+          title: "Có lỗi xảy ra!",
+          text: "Không thể tạo tài liệu học tập.",
+          icon: "error",
+          confirmButtonText: "OK",
+        });
+      }
+    } catch (error) {
+      console.error("Error uploading study material", error);
+
+      // Handle API error response and display appropriate message
+      const errorMessage =
+        error.response?.data?.message || // Custom message returned from API
+        "Đã có lỗi xảy ra khi tạo tài liệu học tập.";
+
+      const statusCode = error.response?.status;
+
+      // Show SweetAlert popup with error message based on status code
+      if (statusCode === 400) {
+        Swal.fire({
+          title: "Bad Request",
+          text: errorMessage,
+          icon: "warning",
+          confirmButtonText: "OK",
+        });
+      } else if (statusCode === 401) {
+        Swal.fire({
+          title: "Unauthorized",
+          text: "You are not authorized. Please log in again.",
+          icon: "error",
+          confirmButtonText: "OK",
+        });
+      } else {
+        Swal.fire({
+          title: "Lỗi hệ thống",
+          text: errorMessage,
+          icon: "error",
+          confirmButtonText: "OK",
+        });
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
   // Fetch subject details
   const fetchSubjectDetails = async () => {
     try {
@@ -154,6 +252,36 @@ const TeacherSubjectDetail = () => {
     ]);
   };
 
+  const handleDownloadMaterial = async (materialId) => {
+    try {
+      const response = await axios.get(
+        baseUrl + `studymaterial/download/${materialId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          responseType: "blob", // Important for downloading files
+        }
+      );
+
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", "material.pdf"); // or extract the filename from response headers
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    } catch (error) {
+      console.error("Error downloading material:", error);
+      Swal.fire({
+        title: "Lỗi",
+        text: "Không thể tải xuống tài liệu.",
+        icon: "error",
+        confirmButtonText: "OK",
+      });
+    }
+  };
+
   // Update new exercise data
   const handleExerciseChange = (id, field, value) => {
     setExercises((prev) =>
@@ -164,19 +292,42 @@ const TeacherSubjectDetail = () => {
   const handleViewClassDetails = (rowData) => {
     navigate(`/admin/class/${rowData.id}`);
   };
-
+  const handleCloseDialog = () => {
+    setOpenDialog(false);
+  };
+  const handleOpenDialog = () => {
+    setOpenDialog(true);
+  };
   // Columns for DataGrid
-  const materialColumns = [
-    { field: "title", headerName: "Title", width: 300 },
-    { field: "description", headerName: "Description", width: 500 },
-    { field: "fileType", headerName: "File Type", width: 150 },
-    { field: "uploadedOn", headerName: "Uploaded On", width: 200 },
-  ];
+   const materialColumns = [
+      { field: "title", headerName: "Tiêu đề tài liệu", flex: 1 },
+      {
+        field: "createdAt",
+        headerName: "Ngày tạo",
+        flex: 1,
+        valueGetter: (value) => {
+          if (!value) {
+            return "N/A";
+          }
+          return moment(value).format("DD/MM/YYYY");
+        },
+      },
+      {
+        flex: 1,
+        renderCell: (params) => (
+          <Button
+            onClick={() => handleDownloadMaterial(params.row.id)}
+          >
+            <Download style={{ color: "#1976d2" }} />
+          </Button>
+        ),
+      },
+    ];
 
   const classColumns = [
     { field: "name", headerName: "Tên lớp", flex: 1 },
     { field: "subjectName", headerName: "Tên môn học", flex: 1.5 },
-    { field: "teacherName", headerName: "Tên giáo viên", flex: 1 },
+    { field: "teacherName", headerName: "Tên giảng viên", flex: 1 },
     { field: "numberOfStudent", headerName: "Sĩ số", flex: 0.5 },
     {
       field: "startDate",
@@ -432,13 +583,53 @@ const TeacherSubjectDetail = () => {
 
             {activeTab === 2 && (
               <div>
+                <Button
+                  onClick={handleOpenDialog}
+                  variant="contained"
+                  color="primary"
+                >
+                  Thêm tài liệu cho môn học
+                </Button>
+
                 <DataGrid
-                  rows={classes}
-                  columns={classColumns}
+                  rows={materials}
+                  columns={materialColumns}
                   autoHeight
                   pageSize={5}
                   loading={loading}
                 />
+
+                {/* Dialog for adding study material */}
+                <Dialog open={openDialog} onClose={handleCloseDialog}>
+                  <DialogTitle>Thêm tài liệu</DialogTitle>
+                  <DialogContent>
+                    <TextField
+                      label="Tên tài liệu"
+                      fullWidth
+                      value={materialName}
+                      onChange={handleMaterialNameChange}
+                      margin="normal"
+                    />
+                    <input
+                      type="file"
+                      accept=".pdf"
+                      onChange={handleFileChange}
+                      style={{ width: "100%" }}
+                    />
+                  </DialogContent>
+                  <DialogActions>
+                    <Button onClick={handleCloseDialog} color="secondary">
+                      Hủy
+                    </Button>
+                    <Button
+                      onClick={handleSubmitStudyMaterial}
+                      color="primary"
+                      disabled={loading}
+                    >
+                      {loading ? "Đang tải..." : "Thêm tài liệu"}
+                    </Button>
+                  </DialogActions>
+                </Dialog>
               </div>
             )}
           </div>

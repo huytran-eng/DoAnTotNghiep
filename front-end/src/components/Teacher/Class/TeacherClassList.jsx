@@ -35,7 +35,7 @@ const TeacherClassList = () => {
     } catch (error) {
       console.error("Error fetching classes:", error);
       if (error.response?.status === 401) {
-        alert("Session expired. Please log in again.");
+        alert("Phiên đăng nhập đã kết thúc. Vui lòng đăng nhập lại");
         window.location.href = "/login"; // Redirect to login page
       }
     } finally {
@@ -46,7 +46,7 @@ const TeacherClassList = () => {
   const columns = [
     { field: "name", headerName: "Tên lớp", flex: 1 },
     { field: "subjectName", headerName: "Tên môn học", flex: 1.5 },
-    { field: "teacherName", headerName: "Tên giáo viên", flex: 1 },
+    { field: "teacherName", headerName: "Tên giảng viên", flex: 1 },
     { field: "numberOfStudent", headerName: "Sĩ số", flex: 0.5 },
     {
       field: "startDate",

@@ -280,7 +280,7 @@ const AdminSubjectDetail = () => {
   const classColumns = [
     { field: "name", headerName: "Tên lớp", flex: 1 },
     { field: "subjectName", headerName: "Tên môn học", flex: 1.5 },
-    { field: "teacherName", headerName: "Tên giáo viên", flex: 1 },
+    { field: "teacherName", headerName: "Tên giảng viên", flex: 1 },
     { field: "numberOfStudent", headerName: "Sĩ số", flex: 0.5 },
     {
       field: "startDate",

@@ -131,7 +131,7 @@ const TeacherStudentDetail = () => {
     },
     {
       field: "teacherName",
-      headerName: "Tên giáo viên",
+      headerName: "Tên giảng viên",
       flex: 1,
     },
     {

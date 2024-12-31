@@ -32,7 +32,7 @@ const AdminStudentList = () => {
     } catch (error) {
       console.error("Error fetching students:", error);
       if (error.response?.status === 401) {
-        alert("Session expired. Please log in again.");
+        alert("Phiên đăng nhập đã kết thúc. Vui lòng đăng nhập lại");
         window.location.href = "/login"; // Redirect to login page
       }
     } finally {

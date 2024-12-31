@@ -34,7 +34,7 @@ const AdminSubjectList = () => {
     } catch (error) {
       console.error("Error fetching subjects:", error);
       if (error.response?.status === 401) {
-        alert("Session expired. Please log in again.");
+        alert("Phiên đăng nhập đã kết thúc. Vui lòng đăng nhập lại");
         // Redirect to login page
         window.location.href = "/login";
       }

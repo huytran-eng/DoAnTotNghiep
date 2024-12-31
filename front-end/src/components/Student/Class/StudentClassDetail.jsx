@@ -55,6 +55,27 @@ const StudentClassDetail = () => {
         },
       });
       setClassDetails(response.data);
+      if (response.data.status === 0) {
+        Swal.fire({
+          title: 'Không thể truy cập',
+          text: 'Lớp học này chưa bắt đầu và không thể được truy cập.',
+          icon: 'warning',
+          confirmButtonText: 'OK',
+        }).then(() => {
+          navigate('class'); // Navigate back to the class list
+        });
+      }
+
+      if (response.data.status === 2) {
+        Swal.fire({
+          title: 'Không thể truy cập',
+          text: 'Lớp học này đã kết thúc và không thể được truy cập.',
+          icon: 'warning',
+          confirmButtonText: 'OK',
+        }).then(() => {
+          navigate('class'); // Navigate back to the class list
+        });
+      }
     } catch (error) {
       console.error("Error fetching class details:", error);
     }
@@ -84,7 +105,6 @@ const StudentClassDetail = () => {
           Authorization: `Bearer ${token}`,
         },
       });
-      console.log(response.data);
       setTopics(response.data);
     } catch (error) {
       console.error("Error fetching topics:", error);
@@ -173,47 +193,45 @@ const StudentClassDetail = () => {
     },
   ];
 
-  const topicColumns = [
-    {
-      field: "name",
-      headerName: "Tên chủ đề",
-      flex: 1,
-    },
-    {
-      field: "startDate",
-      headerName: "Ngày mở",
-      flex: 1,
-      valueGetter: (value) => {
-        if (!value) {
-          return "N/A";
-        }
-        return moment(value).format("DD/MM/YYYY");
-      },
-    },
-    {
-      field: "endDate",
-      headerName: "Ngày đóng",
-      flex: 1,
-      valueGetter: (value) => {
-        if (!value) {
-          return "N/A";
-        }
-        return moment(value).format("DD/MM/YYYY");
-      },
-    },
-  ];
-
   const exerciseColumns = [
-    { field: "title", headerName: "Title", flex: 1 },
-    { field: "difficulty", headerName: "Difficulty", flex: 1 },
+    { field: "title", headerName: "Tên bài tập", flex: 1 },
+    { field: "difficulty", headerName: "Độ khó", flex: 1 },
     {
-      field: "action",
-      headerName: "Action",
+      field: "status",
+      headerName: "Trạng thái",
+      flex: 1,
+      renderCell: (params) => {
+        const statusColors = {
+          "-1": "gray", // Not done
+          0: "green", // AC
+          1: "red", // WA
+          2: "red", // RE
+          3: "yellow", // TLE
+        };
+        const statusLabels = {
+          "-1": "Chưa làm",
+          0: "AC",
+          1: "WA",
+          2: "RE",
+          3: "TLE",
+        };
+        return (
+          <span style={{ color: statusColors[params.value] || "inherit" }}>
+            {statusLabels[params.value] || "Unknown"}
+          </span>
+        );
+      },
+    },
+    {
       flex: 1,
       renderCell: (params) => (
-        <button onClick={() => handleExerciseClick(params.row.id)}>
-          View Exercises
-        </button>
+        <IconButton
+          color="primary"
+          onClick={() => handleExerciseClick(params.row.id)}
+          sx={{ mr: 1 }}
+        >
+          <Visibility /> {/* View icon */}
+        </IconButton>
       ),
     },
   ];

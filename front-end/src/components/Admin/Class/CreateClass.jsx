@@ -12,12 +12,16 @@ import {
   CircularProgress,
 } from "@mui/material";
 import { baseUrl } from "../../../util/constant";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import dayjs from "dayjs";
 
 const CreateClass = () => {
   const [formData, setFormData] = useState({
     name: "",
-    startDate: "",
-    endDate: "",
+    startDate: dayjs(),
+    endDate: dayjs(),
     teacherId: "",
     subjectId: "",
   });
@@ -30,28 +34,36 @@ const CreateClass = () => {
   const [excelFile, setExcelFile] = useState(null);
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        if (!token) {
-          throw new Error("User is not authenticated");
-        }
-        const headers = { Authorization: `Bearer ${token}` };
-
-        const [teacherResponse, subjectResponse] = await Promise.all([
-          axios.get(baseUrl+"teacher", { headers }),
-          axios.get(baseUrl+"subject", { headers }),
-        ]);
-        setTeachers(teacherResponse.data);
-        setSubjects(subjectResponse.data);
-        setLoading(false);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-        setLoading(false);
-      }
-    };
-
-    fetchData();
+    fetchSubjects();
   }, []);
+
+  const fetchSubjects = async () => {
+    try {
+      const response = await axios.get(baseUrl + 'subject', {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      setSubjects(response.data);
+    } catch (error) {
+      console.error('Error fetching subjects:', error);
+    }finally{
+      setLoading(false);
+    }
+  };
+
+  const fetchTeachers = async (departmentId) => {
+    try {
+      const response = await axios.get(baseUrl + `teacher/department/${departmentId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      setTeachers(response.data);
+    } catch (error) {
+      console.error('Error fetching teachers:', error);
+    }
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -61,8 +73,36 @@ const CreateClass = () => {
     }));
   };
 
+  const handleSubjectChange = (e) => {
+    const { value } = e.target;
+    setFormData({ ...formData, subjectId: value, teacherId: '' });
+
+    const selectedSubject = subjects.find((subject) => subject.id === value);
+    if (selectedSubject) {
+      console.log(selectedSubject)
+      fetchTeachers(selectedSubject.departmentId);
+    }
+  };
+
   const handleFileChange = (e) => {
     setExcelFile(e.target.files[0]);
+  };
+  const handleStartDateChange = (date) => {
+    if (date) {
+      setFormData((prevData) => ({
+        ...prevData,
+        startDate: date,
+      }));
+    };
+  };
+
+  const handleEndDateChange = (date) => {
+    if (date) {
+      setFormData((prevData) => ({
+        ...prevData,
+        endDate: date,
+      }));
+    };
   };
 
   const handleSubmit = async (e) => {
@@ -71,11 +111,7 @@ const CreateClass = () => {
       if (!token) {
         throw new Error("User is not authenticated");
       }
-
-      const headers = {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "multipart/form-data",
-      };
+      
       const data = new FormData();
       console.log(formData);
       // Append form data
@@ -84,7 +120,11 @@ const CreateClass = () => {
         return;
       }
       Object.entries(formData).forEach(([key, value]) => {
-        data.append(key, value);
+        if (key === 'startDate' || key === 'endDate') {
+          data.append(key, dayjs(value).format('YYYY-MM-DD')); // Format the date to string date-time
+        } else {
+          data.append(key, value);
+        }
       });
 
       // Append file if available
@@ -129,7 +169,6 @@ const CreateClass = () => {
         display: "flex",
         flexDirection: "column",
         gap: 2,
-        maxWidth: 400,
         margin: "auto",
         mt: 4,
         p: 3,
@@ -138,36 +177,54 @@ const CreateClass = () => {
       }}
     >
       <Typography variant="h5" textAlign="center">
-        Create Class
+        Tạo lớp học
       </Typography>
       <TextField
-        label="Class Name"
+        label="Tên lớp học"
         name="name"
         value={formData.name}
         onChange={handleChange}
         fullWidth
         required
       />
-      <TextField
-        label="Start Date"
-        name="startDate"
-        type="date"
-        value={formData.startDate}
-        onChange={handleChange}
-        InputLabelProps={{ shrink: true }}
+      <LocalizationProvider dateAdapter={AdapterDayjs}>
+        <DatePicker
+          label="Ngày bắt đầu"
+          value={formData.startDate} // This should be a dayjs object
+          onChange={handleStartDateChange}
+          renderInput={(params) => <TextField {...params} fullWidth required />}
+          format="DD/MM/YYYY" // Correct format
+        />
+      </LocalizationProvider>
+      
+      <LocalizationProvider dateAdapter={AdapterDayjs}>
+        <DatePicker
+          label="Ngày kết thúc"
+          value={formData.endDate} // This should be a dayjs object
+          onChange={handleEndDateChange}
+          renderInput={(params) => <TextField {...params} fullWidth required />}
+          format="DD/MM/YYYY" // Correct format
+        />
+      </LocalizationProvider>
+
+      <Select
+        name="subjectId"
+        value={formData.subjectId}
+        onChange={handleSubjectChange}
+        displayEmpty
         fullWidth
         required
-      />
-      <TextField
-        label="End Date"
-        name="endDate"
-        type="date"
-        value={formData.endDate}
-        onChange={handleChange}
-        InputLabelProps={{ shrink: true }}
-        fullWidth
-        required
-      />
+      >
+        <MenuItem value="" disabled>
+          Chọn môn học
+        </MenuItem>
+        {subjects.map((subject) => (
+          <MenuItem key={subject.id} value={subject.id}>
+            {subject.name}
+          </MenuItem>
+        ))}
+      </Select>
+
       <Select
         name="teacherId"
         value={formData.teacherId}
@@ -177,7 +234,7 @@ const CreateClass = () => {
         required
       >
         <MenuItem value="" disabled>
-          Select a Teacher
+          Chọn giáo viên
         </MenuItem>
         {teachers.map((teacher) => (
           <MenuItem key={teacher.id} value={teacher.id}>
@@ -185,26 +242,9 @@ const CreateClass = () => {
           </MenuItem>
         ))}
       </Select>
-      <Select
-        name="subjectId"
-        value={formData.subjectId}
-        onChange={handleChange}
-        displayEmpty
-        fullWidth
-        required
-      >
-        <MenuItem value="" disabled>
-          Select a Subject
-        </MenuItem>
-        {subjects.map((subject) => (
-          <MenuItem key={subject.id} value={subject.id}>
-            {subject.name}
-          </MenuItem>
-        ))}
-      </Select>
       <Box>
         <Typography variant="subtitle1" sx={{ mb: 1 }}>
-          Import Students (Excel)
+          Nhập danh sách sinh viên (Excel)
         </Typography>
         <label htmlFor="upload-file" style={{ cursor: "pointer" }}>
           <input
@@ -215,7 +255,7 @@ const CreateClass = () => {
             onChange={handleFileChange}
           />
           <Button variant="contained" component="span">
-            Choose File
+            Chọn file
           </Button>
         </label>
         {excelFile && (
@@ -225,7 +265,7 @@ const CreateClass = () => {
         )}
       </Box>
       <Button type="submit" variant="contained" color="primary" fullWidth>
-        Create Class
+        Tạo lớp học
       </Button>
     </Box>
   );
