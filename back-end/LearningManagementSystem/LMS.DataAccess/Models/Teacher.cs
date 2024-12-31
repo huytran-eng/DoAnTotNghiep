@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace LMS.DataAccess.Models
 {
@@ -12,6 +7,11 @@ namespace LMS.DataAccess.Models
     {
         [Key, ForeignKey("User")]
         public Guid Id { get; set; }
+        public Guid DepartmentId { get; set; }
+
+        [ForeignKey("DepartmentId")]
+        public virtual Department Department { get; set; }
         public virtual User User { get; set; }
+
     }
 }

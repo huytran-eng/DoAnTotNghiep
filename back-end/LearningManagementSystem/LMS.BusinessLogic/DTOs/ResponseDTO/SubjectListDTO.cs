@@ -6,6 +6,7 @@
         public string Name { get; set; }
         public int Credit { get; set; }
         public string DepartmentName { get; set; }
+        public Guid DepartmentId { get; set; }
         public int NumberOfClasses { get; set; }
 
         public string Description { get; set; }

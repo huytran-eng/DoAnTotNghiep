@@ -29,7 +29,7 @@ namespace LMS.BusinessLogic.Services.Implementations
         private readonly ISubjectExerciseRepository _subjectExerciseRepository;
         private readonly IClassTopicRepository _classTopicRepository;
         private readonly IClassExerciseRepository _classExerciseRepository;
-
+        private readonly IStudentSubmissonRepository _studentSubmissionRepository;
 
 
         public ClassService(
@@ -42,7 +42,8 @@ namespace LMS.BusinessLogic.Services.Implementations
               ITopicRepository topicRepository,
               ISubjectExerciseRepository subjectExerciseRepository,
               IClassTopicRepository classTopicRepository,
-              IClassExerciseRepository classExerciseRepository)
+              IClassExerciseRepository classExerciseRepository,
+              IStudentSubmissonRepository studentSubmissionRepository)
         {
             _studentRepository = studentRepository;
             _classRepository = classRepository;
@@ -54,6 +55,7 @@ namespace LMS.BusinessLogic.Services.Implementations
             _subjectExerciseRepository = subjectExerciseRepository;
             _classTopicRepository = classTopicRepository;
             _classExerciseRepository = classExerciseRepository;
+            _studentSubmissionRepository = studentSubmissionRepository;
         }
 
         /// <summary>
@@ -281,11 +283,17 @@ namespace LMS.BusinessLogic.Services.Implementations
                 TeacherName = c.Teacher.User.Name,
                 SubjectName = c.Subject.Name,
                 NumberOfStudent = c.StudentClasses.Count(),
-                Status = c.StartDate > currentDate ? 0 :
+                // class status: 
+                // 0: not open
+                // 1: opening
+                // 2: closed
+                Status = c.StartDate > currentDate ? 0 : 
                  (c.StartDate <= currentDate && c.EndDate >= currentDate) ? 1 : 2
-            }).ToList();
+             }).OrderBy(dto => dto.Status != 1)
+              .ThenBy(dto => dto.StartDate).ToList();
 
-          
+            
+
             return new CommonResult<List<ClassListDTO>>
             {
                 IsSuccess = true,
@@ -353,7 +361,7 @@ namespace LMS.BusinessLogic.Services.Implementations
                         };
                     }
                 }
-
+                var currentDate = DateTime.Now;
                 var classDTO = new ClassDTO
                 {
                     Id = classEntity.Id,
@@ -361,7 +369,13 @@ namespace LMS.BusinessLogic.Services.Implementations
                     EndDate = classEntity.EndDate,
                     NumberOfStudent = classEntity.StudentClasses.Count(),
                     TeacherName = classEntity.Teacher?.User?.Name,
-                    SubjectName = classEntity.Subject?.Name
+                    SubjectName = classEntity.Subject?.Name,
+                     // class status: 
+                     // 0: not open
+                     // 1: opening
+                     // 2: closed
+                    Status = classEntity.StartDate > currentDate ? 0 :
+                        (classEntity.StartDate <= currentDate && classEntity.EndDate >= currentDate) ? 1 : 2
                 };
 
                 return new CommonResult<ClassDTO>
@@ -371,7 +385,8 @@ namespace LMS.BusinessLogic.Services.Implementations
                     Message = "Success",
                     Data = classDTO
                 };
-            }catch(Exception e)
+            }
+            catch (Exception e)
             {
                 return new CommonResult<ClassDTO>
                 {
@@ -382,7 +397,7 @@ namespace LMS.BusinessLogic.Services.Implementations
             }
         }
 
-      
+
 
         public async Task<CommonResult<List<ClassStudyMaterialDTO>>> GetStudyMaterialsForClassAsync(Guid classId, Guid userId)
         {
@@ -678,9 +693,9 @@ namespace LMS.BusinessLogic.Services.Implementations
                         Message = "User not found."
                     };
                 }
-
+                var isStudent = currentUserInfo.Position == PositionEnum.Student;
                 var classTopics = await _classTopicRepository.GetAllClassTopicAsync(classId);
-                if(classTopics == null || !classTopics.Any())
+                if (classTopics == null || !classTopics.Any())
                 {
                     return new CommonResult<List<ClassTopicOpenListDTO>>
                     {
@@ -712,6 +727,45 @@ namespace LMS.BusinessLogic.Services.Implementations
                     }).ToList()
                 }).ToList();
 
+                // if user is a student, loop through the exercise and set the status for each exercise
+                if (isStudent)
+                {
+                    foreach (var topic in result)
+                    {
+                        foreach (var exercise in topic.ClassExerciseListDTOs)
+                        {
+                            var submissions = await _studentSubmissionRepository
+                                .GetSubmissionsByExerciseAndStudentAsync(exercise.Id, userId);
+
+                            if (submissions != null && submissions.Any())
+                            {
+                                if (submissions.Any(s => s.Status == StudentSubmissionStatus.AC))
+                                {
+                                    exercise.Status = 0; // AC (successful)
+                                }
+                                else
+                                {
+                                    // Get the latest submission status
+                                    var latestSubmission = submissions
+                                        .FirstOrDefault();
+                                    exercise.Status = (int)latestSubmission.Status;
+
+                                }
+                            }
+                            else
+                            {
+                                exercise.Status = -1;
+                            }
+                        }
+
+                        topic.ClassExerciseListDTOs = topic.ClassExerciseListDTOs
+                            .OrderBy(ex => ex.Difficulty)
+                            .ToList();
+                    }
+
+
+                }
+
                 return new CommonResult<List<ClassTopicOpenListDTO>>
                 {
                     IsSuccess = true,
@@ -727,7 +781,7 @@ namespace LMS.BusinessLogic.Services.Implementations
                     IsSuccess = false,
                     Code = 500,
                     Message = $"Error retrieving topics: {ex.Message}",
-                }; 
+                };
             }
         }
 

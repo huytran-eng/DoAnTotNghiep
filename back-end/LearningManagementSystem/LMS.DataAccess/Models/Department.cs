@@ -13,5 +13,7 @@ namespace LMS.DataAccess.Models
         public virtual University University { get; set; }
 
         public ICollection<Subject> Subjects { get; set; }
+        public ICollection<Teacher> Teachers { get; set; }
+
     }
 }

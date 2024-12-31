@@ -3,7 +3,6 @@ namespace LMS.BusinessLogic.DTOs.ResponseDTO
     public class StudentSubmissionHistoryDTO
     {
         public Guid Id { get; set; }
-        public Guid SubmissionId { get; set; }
         public Guid ExerciseId { get; set; }
         public Guid StudentId { get; set; }
         public int Status { get; set; }

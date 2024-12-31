@@ -7,6 +7,9 @@ namespace LMS.BusinessLogic.Services.Interfaces
     public interface ITeacherService
     {
         Task<CommonResult<List<TeacherListDTO>>> GetAllTeachers();
-        Task<CommonResult<TeacherDTO>> CreateAsync(TeacherDTO teacherDTO);
+        Task<CommonResult<TeacherDTO>> CreateAsync(CreateTeacherDTO teacherDTO);
+        Task<CommonResult<TeacherDetailDTO>> GetTeacherDetail(Guid teacherId);
+        Task<CommonResult<List<TeacherListDTO>>> GetTeachersByDepartmentIdAsync(Guid departmentId); 
+        
     }
 }

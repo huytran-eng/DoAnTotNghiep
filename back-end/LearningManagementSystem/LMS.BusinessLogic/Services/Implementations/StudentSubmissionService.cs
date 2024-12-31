@@ -195,7 +195,7 @@ namespace LMS.BusinessLogic.Services.Implementations
                 // Map submissions to DTOs
                 var submissionDtos = submissions.Select(submission => new StudentSubmissionHistoryDTO
                 {
-                    SubmissionId = submission.Id,
+                    Id = submission.Id,
                     ExerciseId = submission.ClassExercise.ExerciseId,
                     StudentId = submission.StudentId,
                     SubmitDate = submission.SubmitDate,
@@ -260,7 +260,7 @@ namespace LMS.BusinessLogic.Services.Implementations
                 // Map submissions to DTOs
                 var submissionDtos = submissions.Select(submission => new StudentSubmissionHistoryDTO
                 {
-                    SubmissionId = submission.Id,
+                    Id = submission.Id,
                     ExerciseId = submission.ClassExercise.ExerciseId,
                     StudentId = submission.StudentId,
                     SubmitDate = submission.SubmitDate,

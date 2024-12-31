@@ -17,6 +17,7 @@ namespace LMS.DataAccess.Repositories
                 .Include(ce => ce.SubjectProgrammingLanguage)
                 .ThenInclude(spl => spl.ProgrammingLanguage)
                 .Where(s => s.ClassExerciseId == classExerciseId && s.StudentId == studentId)
+                .OrderByDescending(s => s.SubmitDate)
                 .ToListAsync();
         }
 
@@ -28,6 +29,7 @@ namespace LMS.DataAccess.Repositories
               .Include(ce => ce.SubjectProgrammingLanguage)
               .ThenInclude(spl => spl.ProgrammingLanguage)
               .Where(s => s.StudentId == studentId && s.ClassExercise.ClassTopicOpen.ClassId == classId)
+              .OrderByDescending(s => s.SubmitDate)
               .ToListAsync();
         }
 
@@ -43,6 +45,7 @@ namespace LMS.DataAccess.Repositories
               .Include(ce => ce.SubjectProgrammingLanguage)
                 .ThenInclude(spl => spl.ProgrammingLanguage)
               .Where(s => s.StudentId == studentId)
+              .OrderByDescending(s => s.SubmitDate)
               .ToListAsync();
         }
     }

@@ -15,5 +15,21 @@ namespace LMS.DataAccess.Repositories
                .Include(c => c.User)
                .ToListAsync();
         }
+
+        public override async Task<Teacher> GetByIdAsync(Guid id)
+        {
+            return await _context.Teachers
+                .Include(t => t.User)
+                .FirstOrDefaultAsync(c => c.Id == id);
+        }
+
+        public async Task<IEnumerable<Teacher>> GetByDepartmentIdAsync(Guid departmentId)
+        {
+            return await _context.Teachers
+                .Include(t => t.User)
+                .Where(t => t.DepartmentId == departmentId)
+                .ToListAsync();
+        }
+
     }
 }

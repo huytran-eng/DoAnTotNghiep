@@ -15,5 +15,16 @@ namespace LMS.DataAccess.Repositories
         {
         }
 
+        public async Task<List<User>> GetUsersWithPrefixAsync(string prefix)
+        {
+            return await _context.Users
+                .Where(u => u.Username.StartsWith(prefix))
+                .ToListAsync();
+        }
+
+        public async Task<User> GetByEmailAsync(string email)
+        {
+            return await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
+        }
     }
 }

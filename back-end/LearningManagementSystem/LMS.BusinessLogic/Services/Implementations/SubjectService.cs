@@ -91,7 +91,8 @@ namespace LMS.BusinessLogic.Services.Implementations
                     Description = s.Description,
                     Credit = s.Credit,
                     NumberOfClasses = s.Classes.Count,
-                    DepartmentName = s.Department.Name
+                    DepartmentName = s.Department.Name,
+                    DepartmentId = s.Department.Id
                 }).ToList();
 
                 return new CommonResult<List<SubjectListDTO>>

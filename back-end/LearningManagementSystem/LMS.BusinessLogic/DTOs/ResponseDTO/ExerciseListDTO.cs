@@ -7,5 +7,6 @@
         public string Description { get; set; }
         public int Difficulty { get; set; }
         public DateTime CreatedAt { get; set; }
+        public int Status { get; set; }
     }
 }

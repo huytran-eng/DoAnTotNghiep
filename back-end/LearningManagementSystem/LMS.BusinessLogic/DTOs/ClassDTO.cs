@@ -15,6 +15,7 @@ namespace LMS.BusinessLogic.DTOs
         public int NumberOfStudent { get; set; }
         public string? TeacherName { get; set; }
         public string? SubjectName { get; set; }
+        public int Status { get; set; }
 
         public TeacherDTO Teacher { get; set; }
 

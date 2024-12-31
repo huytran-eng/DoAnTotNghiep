@@ -18,19 +18,25 @@ namespace LMS.API.Controllers
 
         [Authorize(Roles = "Admin")]
         [HttpPost("create")]
-        public async Task<IActionResult> CreateTeacher([FromBody] TeacherDTO teacherDTO)
+        public async Task<IActionResult> CreateTeacher([FromBody] CreateTeacherDTO teacherDTO)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
             var result = await _teacherService.CreateAsync(teacherDTO);
 
-            if (!result.IsSuccess)
+            if (result.IsSuccess)
             {
-                return StatusCode(500, result.Message);
+                return Ok(result.Data);
             }
-            
-            return Ok(result);
+            else
+            {
+                return result.Code switch
+                {
+                    400 => BadRequest(result.Message),
+                    _ => StatusCode(500, result.Message)
+                };
+            }
         }
 
         [Authorize(Roles = "Admin")] 
@@ -39,12 +45,59 @@ namespace LMS.API.Controllers
         {
             var result = await _teacherService.GetAllTeachers();
 
-            if (!result.IsSuccess)
+            if (result.IsSuccess)
             {
-                return StatusCode(500, result.Message);
+                return Ok(result.Data);
             }
-
-            return Ok(result.Data);
+            else
+            {
+                return result.Code switch
+                {
+                    400 => BadRequest(result.Message),
+                    _ => StatusCode(500, result.Message)
+                };
+            }
         }
+
+        [Authorize(Roles = "Admin")]
+        [HttpGet("department/{id}")]
+        public async Task<IActionResult> GetTeachersByDepartment(Guid id)
+        {
+            var result = await _teacherService.GetTeachersByDepartmentIdAsync(id);
+
+            if (result.IsSuccess)
+            {
+                return Ok(result.Data);
+            }
+            else
+            {
+                return result.Code switch
+                {
+                    400 => BadRequest(result.Message),
+                    _ => StatusCode(500, result.Message)
+                };
+            }
+        }
+
+        [Authorize(Roles = "Admin,Teacher")]
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetTeacherDetail(Guid id)
+        {
+            var result = await _teacherService.GetTeacherDetail(id);
+
+            if (result.IsSuccess)
+            {
+                return Ok(result.Data);
+            }
+            else
+            {
+                return result.Code switch
+                {
+                    400 => BadRequest(result.Message),
+                    _ => StatusCode(500, result.Message)
+                };
+            }
+        }
+
     }
 }
