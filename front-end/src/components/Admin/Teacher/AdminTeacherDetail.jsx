@@ -95,7 +95,33 @@ const AdminTeacherDetail = () => {
       },
     },
     { field: "numberOfStudent", headerName: "Số lượng học viên", flex: 1 },
-    { field: "status", headerName: "Trạng thái", flex: 1 },
+    {
+      field: "status",
+      headerName: "Trạng thái",
+      flex: 1,
+      renderCell: (params) => {
+        let color;
+        let text;
+        switch (params.row.status) {
+          case 0:
+            color = "yellow";
+            text = "Chưa bắt đầu";
+            break;
+          case 1:
+            color = "red";
+            text = "Đang mở";
+            break;
+          case 2:
+            color = "green";
+            text = "Đã kết thúc";
+            break;
+          default:
+            color = "black";
+            text = "";
+        }
+        return <span style={{ color }}>{text}</span>;
+      },
+    },
   ];
 
   return (
@@ -196,7 +222,7 @@ const AdminTeacherDetail = () => {
                   Ngày sinh:
                 </Typography>
                 <Typography variant="body1">
-                  {moment(teacher.birthDate ).format("DD/MM/YYYY")}
+                  {moment(teacher.birthDate).format("DD/MM/YYYY")}
                 </Typography>
 
                 <Typography variant="body1" sx={{ fontWeight: "bold" }}>
