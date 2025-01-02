@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { baseUrl } from "../../../util/constant";
 import { useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import {
   Box,
   CircularProgress,
@@ -9,9 +10,11 @@ import {
   Tabs,
   Tab,
   Grid,
+  IconButton
 } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import moment from "moment";
+import { Visibility } from "@mui/icons-material";
 
 const AdminTeacherDetail = () => {
   const { id } = useParams();
@@ -20,7 +23,7 @@ const AdminTeacherDetail = () => {
   const [activeTab, setActiveTab] = useState(0);
   const [teacherClasses, setTeacherClasses] = useState([]);
   const token = localStorage.getItem("token");
-
+  const navigate = useNavigate();
   useEffect(() => {
     fetchTeacherDetail();
   }, []);
@@ -42,10 +45,9 @@ const AdminTeacherDetail = () => {
     }
   };
 
-  const handleTabChange = (event, newValue) => {
-    setActiveTab(newValue);
+  const handleViewClassDetails = (rowData) => {
+    navigate(`/admin/class/${rowData.id}`);
   };
-
   if (loading) {
     return (
       <Box
@@ -121,6 +123,20 @@ const AdminTeacherDetail = () => {
         }
         return <span style={{ color }}>{text}</span>;
       },
+    },
+    {
+      flex: 1,
+      renderCell: (params) => (
+        <div>
+          <IconButton
+            color="primary"
+            onClick={() => handleViewClassDetails(params.row)}
+            sx={{ mr: 1 }}
+          >
+            <Visibility />
+          </IconButton>
+        </div>
+      ),
     },
   ];
 

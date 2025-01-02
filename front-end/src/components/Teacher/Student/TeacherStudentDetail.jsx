@@ -9,12 +9,16 @@ import {
   Tab,
   Grid,
   Modal,
+  IconButton
+
 } from "@mui/material";
 import { baseUrl } from "../../../util/constant"; // Ensure you have the correct URL constant
 import { DataGrid } from "@mui/x-data-grid";
 import moment from "moment";
 import { vs as themeEditor } from "react-syntax-highlighter/dist/esm/styles/prism";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
+import { useNavigate } from "react-router-dom";
+import { Visibility } from "@mui/icons-material";
 
 const style = {
   position: "absolute",
@@ -33,7 +37,7 @@ const style = {
 const TeacherStudentDetail = () => {
   const { id } = useParams(); // Get student ID from the URL
   const [student, setStudent] = useState(null);
-
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState(0); // For managing tab state
   const [studentClasses, setStudentClasses] = useState([]);
@@ -115,9 +119,9 @@ const TeacherStudentDetail = () => {
       setLoading(false);
     }
   };
-
-
-
+  const handleViewClassDetails = (rowData) => {
+    navigate(`/teacher/class/${rowData.id}`);
+  };
   const classColumns = [
     {
       field: "name",
@@ -160,6 +164,20 @@ const TeacherStudentDetail = () => {
         }
         return moment(value).format("DD/MM/YYYY");
       },
+    },
+    {
+      flex: 1,
+      renderCell: (params) => (
+        <div>
+          <IconButton
+            color="primary"
+            onClick={() => handleViewClassDetails(params.row)}
+            sx={{ mr: 1 }}
+          >
+            <Visibility />
+          </IconButton>
+        </div>
+      ),
     },
   ];
 
@@ -245,7 +263,7 @@ const TeacherStudentDetail = () => {
       </Box>
     );
   }
-  
+
   return (
     <div>
       <Typography variant="h5" component="h2" gutterBottom align="center">

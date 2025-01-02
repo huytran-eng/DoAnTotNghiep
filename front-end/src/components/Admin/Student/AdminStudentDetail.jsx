@@ -9,12 +9,16 @@ import {
   Tab,
   Grid,
   Modal,
+  IconButton
+
 } from "@mui/material";
 import { baseUrl } from "../../../util/constant"; // Ensure you have the correct URL constant
 import { DataGrid } from "@mui/x-data-grid";
 import moment from "moment";
 import { vs as themeEditor } from "react-syntax-highlighter/dist/esm/styles/prism";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
+import { Visibility } from "@mui/icons-material";
+import { useNavigate } from "react-router-dom";
 
 const style = {
   position: "absolute",
@@ -33,7 +37,7 @@ const style = {
 const AdminStudentDetail = () => {
   const { id } = useParams(); // Get student ID from the URL
   const [student, setStudent] = useState(null);
-
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState(0); // For managing tab state
   const [studentClasses, setStudentClasses] = useState([]);
@@ -115,7 +119,23 @@ const AdminStudentDetail = () => {
       setLoading(false);
     }
   };
-
+ const handleViewClassDetails = (rowData) => {
+    navigate(`/admin/class/${rowData.id}`);
+  };
+  if (loading) {
+    return (
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100vh",
+        }}
+      >
+        <CircularProgress />
+      </Box>
+    );
+  }
   if (!student) {
     return (
       <Box
@@ -134,25 +154,21 @@ const AdminStudentDetail = () => {
   const classColumns = [
     {
       field: "name",
-      headerClassName: "datagrid-header",
       headerName: "Tên lớp",
       flex: 1,
     },
     {
       field: "subjectName",
-      headerClassName: "datagrid-header",
       headerName: "Tên môn học",
       flex: 1.5,
     },
     {
       field: "teacherName",
-      headerClassName: "datagrid-header",
       headerName: "Tên giảng viên",
       flex: 1,
     },
     {
       field: "numberOfStudent",
-      headerClassName: "datagrid-header",
       headerName: "Sĩ số",
       flex: 0.5,
     },
@@ -160,7 +176,6 @@ const AdminStudentDetail = () => {
       field: "startDate",
       headerName: "Ngày bắt đầu",
       flex: 1,
-      headerClassName: "datagrid-header",
       valueGetter: (value) => {
         if (!value) {
           return "N/A";
@@ -172,13 +187,26 @@ const AdminStudentDetail = () => {
       field: "endDate",
       headerName: "Ngày kết thúc",
       flex: 1,
-      headerClassName: "datagrid-header",
       valueGetter: (value) => {
         if (!value) {
           return "N/A";
         }
         return moment(value).format("DD/MM/YYYY");
       },
+    },
+    {
+      flex: 1,
+      renderCell: (params) => (
+        <div>
+          <IconButton
+            color="primary"
+            onClick={() => handleViewClassDetails(params.row)}
+            sx={{ mr: 1 }}
+          >
+            <Visibility />
+          </IconButton>
+        </div>
+      ),
     },
   ];
 
