@@ -9,12 +9,12 @@ import {
   Select,
   MenuItem,
 } from "@mui/material";
+import Swal from "sweetalert2";
 import { baseUrl } from "../../../util/constant";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import dayjs from "dayjs";
-import Swal from 'sweetalert2';
 
 const AdminTeacherCreate = () => {
   const [departments, setDepartments] = useState([]);
@@ -68,7 +68,12 @@ const AdminTeacherCreate = () => {
 
     // Validate required fields
     if (!teachers.name || !teachers.email || !teachers.birthDate) {
-      alert("Please fill in all required fields.");
+      Swal.fire({
+        title: "Thất bại",
+        text: "Hãy điền tất cả các trường cần thiết.",
+        icon: "error",
+        confirmButtonText: "OK",
+      });
       setLoading(false);
       return;
     }
@@ -84,20 +89,42 @@ const AdminTeacherCreate = () => {
         },
       });
       Swal.fire({
-        title: 'Thành công',
-        text: 'Tạo giảng viên thành công',
-        icon: 'success',
-        confirmButtonText: 'OK',
+        title: "Thành công",
+        text: "Tạo giảng viên thành công",
+        icon: "success",
+        confirmButtonText: "OK",
       }).then(() => {
-        navigate('/admin/teacher');
+        navigate("/admin/teacher");
       });
     } catch (error) {
-      Swal.fire({
-        title: 'Thất bại',
-        text: 'Xảy ra lỗi khi tạo giảng viên.',
-        icon: 'error',
-        confirmButtonText: 'OK',
-      });
+      const errorMessage =
+        error.response?.data?.message || 
+        "Đã có lỗi xảy ra khi tạo thông tin giáo viên.";
+      const statusCode = error.response?.status;
+
+      // Show SweetAlert popup with error message based on status code
+      if (statusCode === 400) {
+        Swal.fire({
+          title: "Thất bại",
+          text: errorMessage,
+          icon: "warning",
+          confirmButtonText: "OK",
+        });
+      } else if (statusCode === 404) {
+        Swal.fire({
+          title: "Không tìm thấy",
+          text: errorMessage,
+          icon: "error",
+          confirmButtonText: "OK",
+        });
+      } else {
+        Swal.fire({
+          title: "Lỗi hệ thống",
+          text: errorMessage,
+          icon: "error",
+          confirmButtonText: "OK",
+        });
+      }
     } finally {
       setLoading(false);
     }
@@ -163,33 +190,10 @@ const AdminTeacherCreate = () => {
           format="DD/MM/YYYY" // Correct format
         />
       </LocalizationProvider>
-      {/* <LocalizationProvider dateAdapter={AdapterDayjs} >
-        <DatePicker
-          label="Ngày sinh"
-          value={teachers.birthDate}
-          // onChange={handleDateChange}
-          renderInput={(params) => (
-            <TextField {...params} fullWidth required />
-          )}
-          inputFormat="dd/MM/yyyy"
-        />
-      </LocalizationProvider> */}
-      {/* <TextField
-        label="Ngày sinh"
-        name="birthDate"
-        type="date"
-        value={teachers.birthDate}
-        onChange={handleInputChange}
-        InputLabelProps={{
-          shrink: true,
-        }}
-        fullWidth
-        required
-      /> */}
       <Select
         label="Khoa"
         name="departmentId"
-        value={teachers.departmentId || ""} 
+        value={teachers.departmentId || ""}
         onChange={handleInputChange}
         fullWidth
         displayEmpty

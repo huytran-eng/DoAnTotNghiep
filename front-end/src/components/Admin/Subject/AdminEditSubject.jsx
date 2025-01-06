@@ -12,6 +12,7 @@ import {
   CircularProgress,
 } from "@mui/material";
 import { baseUrl } from "../../../util/constant";
+import Swal from 'sweetalert2';
 
 const AdminEditSubject = () => {
   const [departments, setDepartments] = useState([]);
@@ -133,11 +134,21 @@ const AdminEditSubject = () => {
       await axios.post(baseUrl + `subject/edit/${id}`, subject, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      alert("Subject updated successfully!");
-      navigate("/admin/subjects");
+      Swal.fire({
+        title: 'Thành công',
+        text: 'Tạo giảng viên thành công',
+        icon: 'success',
+        confirmButtonText: 'OK',
+      }).then(() => {
+        navigate(`/admin/teacher/${id}`);
+      });
     } catch (error) {
-      console.error("Error updating subject:", error);
-      alert("Failed to update subject.");
+      Swal.fire({
+        title: 'Error',
+        text: 'An error occurred while creating the teacher.',
+        icon: 'error',
+        confirmButtonText: 'OK',
+      });
     } finally {
       setLoading(false);
     }

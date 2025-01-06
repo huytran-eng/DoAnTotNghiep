@@ -100,7 +100,7 @@ const AdminStudentDetailForClass = () => {
   };
 
   const handleGoBack = () => {
-    navigate(`/teacher/class/${id}`); // Navigate back to the class view
+    navigate(`/admin/class/${id}`); // Navigate back to the class view
   };
 
   const submissionColumns = [

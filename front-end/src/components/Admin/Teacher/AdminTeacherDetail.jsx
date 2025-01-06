@@ -276,16 +276,14 @@ const AdminTeacherDetail = () => {
                 <Button
                   variant="contained"
                   fullWidth
-                  color="error"
-                  onClick={handleDeleteTeacher}
-                >
-                  Xóa giảng viên
-  </Button>
-                <Button
-                  variant="contained"
-                  fullWidth
                   color="primary"
-                  onClick={handleEditClick} // Điều hướng đến trang sửa
+                  onClick={handleEditClick} 
+                  sx={{
+                    display: "block",
+                    mx: "auto", // Center horizontally
+                    mt: 2, // Add some margin at the top
+                    maxWidth: "200px", // Optional: Restrict button width
+                  }}
               >
                 Sửa thông tin
               </Button>

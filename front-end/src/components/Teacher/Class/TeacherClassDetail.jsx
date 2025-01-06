@@ -1,6 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useState, useEffect } from "react";
 import axios from "axios";
+import Swal from "sweetalert2";
 import { DataGrid } from "@mui/x-data-grid";
 import {
   Box,
@@ -8,30 +9,47 @@ import {
   Tabs,
   Tab,
   Grid,
-  Select,
   Button,
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
+  Switch,
+  IconButton,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
   TextField,
-  MenuItem,
-  IconButton
 } from "@mui/material";
 import { useParams, useNavigate } from "react-router-dom";
 import moment from "moment";
-import { DataGridPro } from "@mui/x-data-grid-pro";
 import { baseUrl } from "../../../util/constant";
-import { Visibility } from "@mui/icons-material";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import TopicSelectionDialog from "./TopicSelectionDialog";
+import { Visibility, Download } from "@mui/icons-material";
 
 const TeacherClassDetail = () => {
-  const [activeTab, setActiveTab] = useState(0); // Track active tab index
-  const [classDetails, setClassDetails] = useState(null); // Class details data
-  const [students, setStudents] = useState([]); // Students data
-  const [topics, setTopics] = useState([]); // Opened topics data
-  const [materials, setMaterials] = useState([]); // Class study materials
-  const [loading, setLoading] = useState(false); // Loading state
+  const [toggleLoading, setToggleLoading] = useState(false);
+  const [activeTab, setActiveTab] = useState(0);
+  const [classDetails, setClassDetails] = useState(null);
+  const [students, setStudents] = useState([]);
+  const [topics, setTopics] = useState([]);
+  const [loading, setLoading] = useState(false);
   const [availableTopics, setAvailableTopics] = useState([]);
-  const token = localStorage.getItem("token"); // Retrieve JWT token
-  const { id } = useParams(); // Get class ID from URL
+  const token = localStorage.getItem("token");
+  const { id } = useParams();
   const user = JSON.parse(localStorage.getItem("userInfo"));
   const navigate = useNavigate();
+  const [expandedTopic, setExpandedTopic] = useState(null);
+  const [materials, setMaterials] = useState([]);
+  const [openedTopics, setOpenedTopics] = useState([]);
+  const [openDialog, setOpenDialog] = useState(false);
+  const [materialName, setMaterialName] = useState("");
+  const [file, setFile] = useState(null);
+
+  // Thêm states mới
+  const [showTopicDialog, setShowTopicDialog] = useState(false);
+
   useEffect(() => {
     fetchClassDetails();
   }, []);
@@ -45,40 +63,114 @@ const TeacherClassDetail = () => {
       fetchMaterials();
     }
   }, [activeTab]);
-
+  const handleMaterialNameChange = (e) => {
+    setMaterialName(e.target.value);
+  };
   const fetchClassDetails = async () => {
     try {
-      console.log(id);
-      const response = await axios.get(
-        baseUrl+`class/${id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const response = await axios.get(baseUrl + `class/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       setClassDetails(response.data);
     } catch (error) {
       console.error("Error fetching class details:", error);
     }
   };
+  const handleSubmitStudyMaterial = async () => {
+    if (!materialName || !file) {
+      alert("Please enter all fields.");
+      return;
+    }
 
-  const handleViewStudent = (studentId) => {
-    navigate(`/teacher/class/${id}/student/${studentId}`);
-  };
-
-
-  const fetchStudents = async () => {
     setLoading(true);
+    // Create FormData object to send file and other data
+    const formData = new FormData();
+    console.log(classDetails)
+    formData.append("file", file);
+    formData.append("title", materialName);
+    formData.append("subjectId", classDetails.subjectId);
+    console.log(formData);
     try {
-      const response = await axios.get(
-        baseUrl+`class/${id}/students`,
+      // Replace with your API endpoint for creating study material
+      const response = await axios.post(
+        baseUrl + "studymaterial/create",
+        formData,
         {
           headers: {
+            "Content-Type": "multipart/form-data",
             Authorization: `Bearer ${token}`,
           },
         }
       );
+      console.log(response);
+      if (response.status === 200 || response.status === 204) {
+        handleCloseDialog();
+        Swal.fire({
+          title: "Thành công",
+          text: "Tạo tài liệu học tập thành công!",
+          icon: "success",
+          confirmButtonText: "OK",
+        }).then(() => {
+          setMaterialName("");
+          setFile(null);
+          fetchMaterials();
+        });
+      } else {
+        // Handle other non-success statuses
+        Swal.fire({
+          title: "Có lỗi xảy ra!",
+          text: "Không thể tạo tài liệu học tập.",
+          icon: "error",
+          confirmButtonText: "OK",
+        });
+      }
+    } catch (error) {
+      console.error("Error uploading study material", error);
+
+      // Handle API error response and display appropriate message
+      const errorMessage =
+        error.response?.data?.message || // Custom message returned from API
+        "Đã có lỗi xảy ra khi tạo tài liệu học tập.";
+
+      const statusCode = error.response?.status;
+
+      // Show SweetAlert popup with error message based on status code
+      if (statusCode === 400) {
+        Swal.fire({
+          title: "Bad Request",
+          text: errorMessage,
+          icon: "warning",
+          confirmButtonText: "OK",
+        });
+      } else if (statusCode === 401) {
+        Swal.fire({
+          title: "Unauthorized",
+          text: "You are not authorized. Please log in again.",
+          icon: "error",
+          confirmButtonText: "OK",
+        });
+      } else {
+        Swal.fire({
+          title: "Lỗi hệ thống",
+          text: errorMessage,
+          icon: "error",
+          confirmButtonText: "OK",
+        });
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+  const fetchStudents = async () => {
+    setLoading(true);
+    try {
+      const response = await axios.get(baseUrl + `class/${id}/students`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       setStudents(response.data);
     } catch (error) {
       console.error("Error fetching students:", error);
@@ -86,17 +178,15 @@ const TeacherClassDetail = () => {
       setLoading(false);
     }
   };
+
   const fetchAllClassTopics = async () => {
     setLoading(true);
     try {
-      const response = await axios.get(
-        baseUrl+`class/${id}/alltopics`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const response = await axios.get(baseUrl + `class/${id}/alltopics`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       setAvailableTopics(response.data);
     } catch (error) {
       console.error("Error fetching topics:", error);
@@ -104,96 +194,171 @@ const TeacherClassDetail = () => {
       setLoading(false);
     }
   };
+
   const fetchTopics = async () => {
     setLoading(true);
     try {
-      const response = await axios.get(
-        baseUrl+`class/${id}/topics`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      console.log(response.data);
+      const response = await axios.get(baseUrl + `class/${id}/topics`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       setTopics(response.data);
+      setOpenedTopics(response.data); // Lưu danh sách chủ đề đã mở
     } catch (error) {
       console.error("Error fetching topics:", error);
     } finally {
       setLoading(false);
     }
   };
-
-  const handleExerciseClick = (exerciseId) => {
-    if (user.position === "Student") {
-      // Navigate to exercise for student
-      navigate(`/class/${id}/exercise/${exerciseId}`);
-    } else if (user.position === "Admin" || user.position === "Teacher") {
-      // Navigate to exercise detail for Admin/Teacher
-      navigate(`/class/${id}/exerciseDetail/${exerciseId}`);
-    }
+  const handleOpenDialog = () => {
+    setOpenDialog(true);
+  };
+  const handleViewStudent = (studentId) => {
+    navigate(`/Teacher/class/${id}/student/${studentId}`);
   };
 
+  const handleExerciseClick = (exerciseId) => {
+     navigate(`/Teacher/exercise/${exerciseId}`);
+  };
+  const handleToggleMaterial = async (materialId) => {
+    setLoading(true);
+    try {
+      console.log(token);
+      await axios.post(
+        baseUrl + `class/${id}/materialtoggle/${materialId}`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      fetchMaterials();
+    } catch (error) {
+      console.error("Error toggling study material:", error);
+      Swal.fire({
+        title: "Lỗi",
+        text: "Không thể cập nhật trạng thái tài liệu.",
+        icon: "error",
+        confirmButtonText: "OK",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
   const fetchMaterials = async () => {
     setLoading(true);
     try {
-      // const response = await axios.get(
-      //   baseUrl+`class/${id}/materials`,
-      //   {
-      //     headers: {
-      //       Authorization: `Bearer ${token}`,
-      //     },
-      //   }
-      // );
-      // setMaterials(response.data);
+      const response = await axios.get(baseUrl + `class/${id}/studymaterials`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      console.log(response.data);
+      setMaterials(response.data);
     } catch (error) {
-      console.error("Error fetching materials:", error);
+      console.error("Error fetching study materials:", error);
     } finally {
       setLoading(false);
     }
   };
 
-  const handleOpenTopic = () => {
-    fetchAllClassTopics();
-    setTopics((prev) => [
-      ...prev,
-      {
-        id: Date.now(),
-        name: "",
-        startDate: null,
-        endDate: null,
-        isNew: true, // Mark as new for editing
-      },
-    ]);
+  const handleOpenTopic = async () => {
+    try {
+      await fetchAllClassTopics();
+      setShowTopicDialog(true);
+    } catch (error) {
+      console.error("Error loading available topics:", error);
+    }
   };
 
-  const handleSaveTopic = async (row) => {
+  const handleTopicExpand = (topicId) => {
+    setExpandedTopic(expandedTopic === topicId ? null : topicId);
+  };
+  const handleCloseDialog = () => {
+    setOpenDialog(false);
+  };
+  const handleSaveTopic = async (topicData) => {
     try {
-      var formData = {
+      const formData = {
         classId: id,
-        topicId: row.topicId,
-        startDate: row.startDate,
-        endDate: row.endDate,
+        ...topicData,
       };
-      console.log(formData);
-      await axios.post(baseUrl+`class/opentopic`, formData, {
+
+      const response = await axios.post(baseUrl + "class/opentopic", formData, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
-      fetchTopics();
+
+      if (response.status === 200) {
+        // Show success dialog using SweetAlert
+        Swal.fire({
+          icon: "success",
+          title: "Thành công",
+          text: "Chủ đề đã được mở thành công!",
+        });
+        setShowTopicDialog(false);
+        fetchTopics();
+      } else {
+        Swal.fire({
+          icon: "error",
+          title: "Thất bại",
+          text: response.data.message,
+        });
+      }
     } catch (error) {
-      console.error("Error saving topic:", error);
+      if (error.response) {
+        const { status, data } = error.response;
+
+        // Show error dialog using SweetAlert
+        Swal.fire({
+          icon: "error",
+          title: "Thất bại",
+          text: data || "Có lỗi xảy ra khi lưu chủ đề",
+        });
+      } else {
+        // Handle unexpected errors (e.g., network issues)
+        Swal.fire({
+          icon: "error",
+          title: "Thât bại",
+          text: "Không thể kết nối tới máy chủ. Vui lòng thử lại.",
+        });
+      }
     }
   };
+  const handleFileChange = (e) => {
+    setFile(e.target.files[0]);
+  };
+  const handleDownloadMaterial = async (materialId) => {
+    try {
+      const response = await axios.get(
+        baseUrl + `studymaterial/download/${materialId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          responseType: "blob", // Important for downloading files
+        }
+      );
 
-  const handleEditRowChange = (id, field, value) => {
-    console.log(id, field, value);
-    setTopics((prev) =>
-      prev.map((topic) =>
-        topic.id === id ? { ...topic, [field]: value } : topic
-      )
-    );
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", "material.pdf"); // or extract the filename from response headers
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    } catch (error) {
+      console.error("Error downloading material:", error);
+      Swal.fire({
+        title: "Lỗi",
+        text: "Không thể tải xuống tài liệu.",
+        icon: "error",
+        confirmButtonText: "OK",
+      });
+    }
   };
 
   // Columns for DataGrid
@@ -203,8 +368,6 @@ const TeacherClassDetail = () => {
     { field: "exercisesDone", headerName: "Số bài tập đã làm", flex: 1.5 },
     { field: "exercisesCorrect", headerName: "Số bài tập làm đúng", flex: 1.5 },
     {
-      field: "action",
-      headerName: "Action",
       flex: 1,
       renderCell: (params) => (
         <IconButton
@@ -212,100 +375,9 @@ const TeacherClassDetail = () => {
           onClick={() => handleViewStudent(params.row.id)}
           sx={{ mr: 1 }}
         >
-          <Visibility /> {/* View icon */}
+          <Visibility />
         </IconButton>
       ),
-    },
-  ];
-
-
-  const topicColumns = [
-    {
-      field: "name",
-      headerName: "Tên chủ đề",
-      flex: 1,
-      renderCell: (params) => {
-        if (params.row.isNew) {
-          return (
-            <Select
-              value={params.row.topicId || ""}
-              onChange={(e) =>
-                handleEditRowChange(params.row.id, "topicId", e.target.value)
-              }
-              fullWidth
-              size="small"
-            >
-              {availableTopics.map((topic) => (
-                <MenuItem key={topic.id} value={topic.id}>
-                  {topic.name}
-                </MenuItem>
-              ))}
-            </Select>
-          );
-        }
-        return params.value;
-      },
-    },
-    {
-      field: "startDate",
-      headerName: "Ngày mở",
-      flex: 1,
-      renderCell: (params) => {
-        if (params.row.isNew) {
-          return (
-            <TextField
-              type="date"
-              value={params.row.startDate || ""}
-              onChange={(e) =>
-                handleEditRowChange(params.row.id, "startDate", e.target.value)
-              }
-              fullWidth
-              size="small"
-            />
-          );
-        }
-        return moment(params.value).format("DD/MM/YYYY");
-      },
-    },
-    {
-      field: "endDate",
-      headerName: "Ngày đóng",
-      flex: 1,
-      renderCell: (params) => {
-        if (params.row.isNew) {
-          return (
-            <TextField
-              type="date"
-              value={params.row.endDate || ""}
-              onChange={(e) =>
-                handleEditRowChange(params.row.id, "endDate", e.target.value)
-              }
-              fullWidth
-              size="small"
-            />
-          );
-        }
-        return moment(params.value).format("DD/MM/YYYY");
-      },
-    },
-    {
-      field: "action",
-      headerName: "Action",
-      flex: 1,
-      renderCell: (params) => {
-        if (params.row.isNew) {
-          return (
-            <Button
-              onClick={() => handleSaveTopic(params.row)}
-              variant="contained"
-              color="primary"
-            >
-              Save
-            </Button>
-          );
-        }
-        return null;
-      },
     },
   ];
 
@@ -313,31 +385,63 @@ const TeacherClassDetail = () => {
     { field: "title", headerName: "Tên bài tập", flex: 1 },
     { field: "difficulty", headerName: "Độ khó", flex: 1 },
     {
-      field: "action",
-      headerName: "Action",
       flex: 1,
       renderCell: (params) => (
-        <button onClick={() => handleExerciseClick(params.row.id)}>
-          Xem thông tin bài tập
-        </button>
+        <IconButton
+          color="primary"
+          onClick={() => handleExerciseClick(params.row.exerciseId)}
+          sx={{ mr: 1 }}
+        >
+          <Visibility />
+        </IconButton>
+        
       ),
     },
   ];
 
   const materialColumns = [
-    { field: "title", headerName: "Title", width: 300 },
-    { field: "description", headerName: "Description", width: 500 },
-    { field: "fileType", headerName: "File Type", width: 150 },
+    { field: "title", headerName: "Tiêu đề tài liệu", flex: 1 },
     {
-      field: "uploadedOn",
-      headerName: "Uploaded On",
-      width: 200,
+      field: "createdAt",
+      headerName: "Ngày tạo",
+      flex: 1,
       valueGetter: (value) => {
         if (!value) {
           return "N/A";
         }
         return moment(value).format("DD/MM/YYYY");
       },
+    },
+    {
+      field: "openDate",
+      headerName: "Ngày mở",
+      flex: 1,
+      valueGetter: (value) => {
+        if (!value) {
+          return "N/A";
+        }
+        return moment(value).format("DD/MM/YYYY");
+      },
+    },
+    {
+      field: "isOpen",
+      headerName: "Trạng thái",
+      width: 150,
+      renderCell: (params) => (
+        <Switch
+          checked={params.row.isOpen}
+          onChange={() => handleToggleMaterial(params.row.id)}
+          color="primary"
+        />
+      ),
+    },
+    {
+      flex: 1,
+      renderCell: (params) => (
+        <Button onClick={() => handleDownloadMaterial(params.row.id)}>
+          <Download style={{ color: "#1976d2" }} />
+        </Button>
+      ),
     },
   ];
 
@@ -347,7 +451,6 @@ const TeacherClassDetail = () => {
         Chi tiết lớp học
       </Typography>
       <Grid container spacing={3}>
-        {/* Left Column (Class Details) */}
         <Grid item xs={12} sm={4}>
           <Box
             sx={{
@@ -388,7 +491,6 @@ const TeacherClassDetail = () => {
           </Box>
         </Grid>
 
-        {/* Right Column (Tabs and DataGrids) */}
         <Grid item xs={12} sm={8}>
           <Box sx={{ borderBottom: 1, borderColor: "divider", mb: 3 }}>
             <Tabs
@@ -402,7 +504,6 @@ const TeacherClassDetail = () => {
             </Tabs>
           </Box>
 
-          {/* Tab Content */}
           <div>
             {activeTab === 0 && (
               <DataGrid
@@ -424,60 +525,101 @@ const TeacherClassDetail = () => {
                   Mở chủ đề
                 </Button>
                 <Box sx={{ mt: 3 }}>
-                  <DataGridPro
-                    rows={topics}
-                    columns={topicColumns}
-                    autoHeight
-                    pageSize={5}
-                    loading={loading}
-                    getRowId={(row) => row.id} // Ensure unique row IDs
-                    getDetailPanelContent={({ row }) => (
-                      <Box sx={{ padding: 2 }}>
+                  {topics.map((topic) => (
+                    <Accordion
+                      key={topic.id}
+                      expanded={expandedTopic === topic.id}
+                      onChange={() => handleTopicExpand(topic.id)}
+                      sx={{
+                        marginBottom: 1,
+                        "& .MuiAccordionSummary-content": {
+                          display: "flex",
+                          flexDirection: "column",
+                        },
+                      }}
+                    >
+                      <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                        <Typography variant="h6">{topic.name}</Typography>
+                        <Typography variant="body2" color="textSecondary">
+                          {moment(topic.startDate).format("DD/MM/YYYY")} -{" "}
+                          {moment(topic.endDate).format("DD/MM/YYYY")}
+                        </Typography>
+                      </AccordionSummary>
+                      <AccordionDetails>
                         <DataGrid
-                          rows={row.classExerciseListDTOs || []}
+                          rows={topic.classExerciseListDTOs || []}
                           columns={exerciseColumns}
                           autoHeight
                           pageSize={5}
                         />
-                      </Box>
-                    )}
-                  />
+                      </AccordionDetails>
+                    </Accordion>
+                  ))}
                 </Box>
               </div>
-
-              // <DataGridPro
-              //   rows={topics}
-              //   columns={topicColumns}
-              //   autoHeight
-              //   pageSize={5}
-              //   loading={loading}
-              //   getRowId={(row) => row.id} // Ensure unique row IDs
-              //   getDetailPanelContent={({ row }) => (
-              //     <Box sx={{ padding: 2 }}>
-              //       <DataGrid
-              //         rows={row.classExerciseListDTOs || []}
-              //         columns={exerciseColumns}
-              //         autoHeight
-              //         pageSize={5}
-              //       />
-              //     </Box>
-              //   )}
-              // />
             )}
 
             {activeTab === 2 && (
-              <DataGrid
-                rows={materials}
-                columns={materialColumns}
-                autoHeight
-                pageSize={5}
-                loading={loading}
-              />
+              <div>
+                <Button
+                  onClick={handleOpenDialog}
+                  variant="contained"
+                  color="primary"
+                >
+                  Thêm tài liệu cho môn học
+                </Button>
+
+                <DataGrid
+                  rows={materials}
+                  columns={materialColumns}
+                  autoHeight
+                  pageSize={5}
+                  loading={loading}
+                />
+                <Dialog open={openDialog} onClose={handleCloseDialog}>
+                  <DialogTitle>Thêm tài liệu cho môn học</DialogTitle>
+                  <DialogContent>
+                    <TextField
+                      label="Tên tài liệu"
+                      fullWidth
+                      value={materialName}
+                      onChange={handleMaterialNameChange}
+                      margin="normal"
+                    />
+                    <input
+                      type="file"
+                      accept=".pdf"
+                      onChange={handleFileChange}
+                      style={{ width: "100%" }}
+                    />
+                  </DialogContent>
+                  <DialogActions>
+                    <Button onClick={handleCloseDialog} color="secondary">
+                      Hủy
+                    </Button>
+                    <Button
+                      onClick={handleSubmitStudyMaterial}
+                      color="primary"
+                      disabled={loading}
+                    >
+                      {loading ? "Đang tải..." : "Thêm tài liệu"}
+                    </Button>
+                  </DialogActions>
+                </Dialog>
+              </div>
             )}
           </div>
         </Grid>
       </Grid>
+      <TopicSelectionDialog
+        open={showTopicDialog}
+        onClose={() => setShowTopicDialog(false)}
+        availableTopics={availableTopics}
+        openedTopics={openedTopics}
+        onSave={handleSaveTopic}
+      />
     </div>
   );
 };
+
 export default TeacherClassDetail;
