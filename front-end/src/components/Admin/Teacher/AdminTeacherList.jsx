@@ -12,7 +12,7 @@ import { DataGrid } from "@mui/x-data-grid";
 const AdminTeacherList = () => {
   const [teachers, setTeachers] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(true); // khi bat dau trang thai luon la tai
   const navigate = useNavigate();
   const token = localStorage.getItem("token");
 

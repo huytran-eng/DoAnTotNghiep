@@ -5,6 +5,7 @@ import { useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import {
   Box,
+  Button,
   CircularProgress,
   Typography,
   Tabs,
@@ -15,6 +16,7 @@ import {
 import { DataGrid } from "@mui/x-data-grid";
 import moment from "moment";
 import { Visibility } from "@mui/icons-material";
+import { Delete } from "@mui/icons-material";
 
 const AdminTeacherDetail = () => {
   const { id } = useParams();
@@ -47,6 +49,30 @@ const AdminTeacherDetail = () => {
 
   const handleViewClassDetails = (rowData) => {
     navigate(`/admin/class/${rowData.id}`);
+  };
+  const handleEditClick = () => {
+    // Chuyển hướng sang trang chỉnh sửa giảng viên với id
+    navigate(`/admin/teacher/edit/${id}`);
+  };
+  
+
+  const handleDeleteTeacher = async () => {
+    const confirmDelete = window.confirm("Bạn có chắc chắn muốn xóa giảng viên này?");
+    if (!confirmDelete) return;
+  
+    try {
+      setLoading(true);
+      await axios.delete(`${baseUrl}teacher/${id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      // Sau khi xóa thành công, bạn có thể chuyển hướng về trang danh sách giảng viên
+      navigate("/admin/teacher");
+    }
+     catch (error) {
+      console.error("Error deleting teacher:", error);
+    } finally {
+      setLoading(false);
+    }
   };
   if (loading) {
     return (
@@ -247,6 +273,23 @@ const AdminTeacherDetail = () => {
                 <Typography variant="body1">
                   {teacher.numberOfClasses}
                 </Typography>
+                <Button
+                  variant="contained"
+                  fullWidth
+                  color="error"
+                  onClick={handleDeleteTeacher}
+                >
+                  Xóa giảng viên
+  </Button>
+                <Button
+                  variant="contained"
+                  fullWidth
+                  color="primary"
+                  onClick={handleEditClick} // Điều hướng đến trang sửa
+              >
+                Sửa thông tin
+              </Button>
+
               </>
             ) : (
               <Typography>Loading subject details...</Typography>
