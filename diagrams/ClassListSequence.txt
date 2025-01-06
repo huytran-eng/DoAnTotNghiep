@@ -1,0 +1,43 @@
+@startuml
+actor User
+participant "Frontend" as Frontend
+participant "Class Controller" as ClassController
+participant "ClassService" as ClassService
+participant "UserRepository" as UserRepository
+participant "ClassRepository" as ClassRepository
+participant "Database" as Database
+User -> Frontend: click on ViewClasses link
+Frontend -> ClassController: HTTP GET /class
+ClassController -> ClassService: call to get classes
+
+ClassService -> UserRepository: call to get user information
+UserRepository --> ClassService: return user info
+
+alt User not found
+    ClassService -> ClassController: Return "User not found"
+    ClassController --> Frontend: 404 Response (User not found)
+else User found
+    alt User is Admin
+        ClassService -> ClassRepository: GetAllAsync()
+        ClassRepository -> Database: call
+        Database --> ClassRepository: return data
+        ClassRepository --> ClassService: List of all classes
+    else User is Teacher
+        ClassService -> ClassRepository: GetClassesByTeacherIdAsync(userId)
+        ClassRepository -> Database: call
+        Database --> ClassRepository: return data
+        ClassRepository --> ClassService: List of teacher's classes
+    else User is Student
+        ClassService -> ClassRepository: GetClassesByStudentIdAsync(userId)
+        ClassRepository -> Database: call
+        Database --> ClassRepository: return data
+        ClassRepository --> ClassService: List of student's classes
+    end
+
+    ClassService -> ClassService: map classes returned from class repoitory to DTO
+    ClassService --> ClassController: Return list of classes DTO
+    ClassController --> Frontend: 200 Response (DTO List)
+    Frontend --> User : display list class
+    
+end
+@enduml

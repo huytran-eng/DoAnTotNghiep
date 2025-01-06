@@ -1,0 +1,68 @@
+@startuml
+actor User
+participant "Frontend" as Frontend
+participant "Class Controller" as ClassController
+participant "ClassService" as ClassService
+participant "StudentService" as StudentService
+participant "TopicService" as TopicService
+participant "StudyMaterialService" as StudyMaterialService
+participant "StudentRepository" as StudentRepository
+participant "ClassRepository" as ClassRepository
+participant "TopicRepository" as TopicRepository
+participant "StudyMaterialRepository" as StudyMaterialRepository
+participant "Database" as Database
+
+User -> Frontend: At Class List Page, press a class to view detail
+Frontend -> ClassController: HTTP GET /class/{id}
+ClassController -> ClassService: Call to get class details
+ClassService --> ClassRepository: Call to get class details
+ClassRepository -> Database: Call 
+Database --> ClassRepository: Return 
+ClassRepository --> ClassService: Return class details
+ClassService -> ClassService: map class details to DTO
+ClassService --> ClassController: Return class details
+ClassController --> Frontend: 200 Response (class detailsDTO)
+Frontend -> User: Display class details
+
+alt User clicks on "Class Students" tab
+    User -> Frontend: Click on Students tab
+    Frontend -> ClassController: HTTP GET /class/{id}/students
+    ClassController -> StudentService: Call to get students for the class
+    StudentService -> StudentRepository: call to get students for class
+    StudentRepository -> Database: Fetch student data for the class
+    Database --> StudentRepository: Return list of students
+    StudentRepository --> StudentService: Return list of students
+    StudentService -> StudentService: map the student list to DTO
+    StudentService --> ClassController: Return list of students DTO
+    ClassController --> Frontend: 200 Response (list of students DTO)
+    Frontend -> User: Display student list
+end
+
+alt User clicks on "Class Topics" tab
+    User -> Frontend: Click on Topics tab
+    Frontend -> ClassController: HTTP GET /class/{id}/topics
+    ClassController -> TopicService: Call to get class topics
+    TopicService -> TopicRepository: Fetch class topics
+    TopicRepository -> Database: call
+    Database --> TopicRepository: Return
+    TopicRepository --> TopicService: return list of class topics
+    TopicService -> TopicService: map data to dto
+    TopicService --> ClassController: return dto
+    ClassController --> Frontend: 200 Response (dto)
+    Frontend -> User: Display class topics
+end
+
+alt User clicks on "Study Materials" tab
+    Frontend -> ClassController: HTTP GET /class/{id}/studymaterials
+    ClassController -> StudyMaterialService: Call to get study materials
+    StudyMaterialService -> StudyMaterialRepository: Fetch class study materials
+    StudyMaterialRepository -> Database: call
+    Database --> StudyMaterialRepository: Return
+    StudyMaterialRepository --> StudyMaterialService: return list of class study materials
+    StudyMaterialService -> StudyMaterialService: map data to dto
+    StudyMaterialService --> ClassController: Return dto
+    ClassController --> Frontend: 200 Response (dto)
+    Frontend -> User: Display study materials
+end
+
+@enduml
