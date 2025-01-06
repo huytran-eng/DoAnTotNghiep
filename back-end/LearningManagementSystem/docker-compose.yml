@@ -1,24 +1,31 @@
 services:
   lms.api:
-    container_name: LMS-app
-    image: ${DOCKER_REGISTRY-}lmsapi
-    build:
-      context: .
-      dockerfile: LMS.API/Dockerfile
+    container_name: blissful_blackburn
+    image: huytk5/lmsapi:latest  
     ports:
-        - "5000:5000"
-        - "5001:5001"
+      - "5000:5000"
+      - "5001:5001"
+    environment:
+      - ASPNETCORE_URLS=http://+:5000
+      - StoragePath=/app/data/files-upload
+      - TokenKey=supersecretkeysupersecretkeysupersecretkeysupersecretkeysupersecretkeysupersecretkeysupersecretkeysupersecretkeyformdocckercompose
+      - DefaultConnection=Server=db;Database=LearningManagementSystem;User=sa;Password=M@tkh4umo1;TrustServerCertificate=True
+    volumes:
+         - study_materials:/app/data/files-upload
     depends_on:
-        - db
+      - db
+
   db:
-    image: mcr.microsoft.com/mssql/server:2022-latest
     container_name: sqlserver-container
+    image: huytk5/sqlserver-image:latest  # Use the existing SQL Server image
     environment:
       - ACCEPT_EULA=Y
       - SA_PASSWORD=M@tkh4umo1
     ports:
-      - "1433:1433" 
+      - "1433:1433"    
     volumes:
       - sql_data:/var/opt/mssql
+
 volumes:
   sql_data:
+  study_materials:  

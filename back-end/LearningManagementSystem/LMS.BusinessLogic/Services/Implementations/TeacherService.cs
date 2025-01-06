@@ -158,6 +158,124 @@ namespace LMS.BusinessLogic.Services.Implementations
             }
         }
 
+        public async Task<CommonResult<TeacherDTO>> EditTeacherAsync(Guid teacherId, EditTeacherDTO teacherDTO)
+        {
+            try
+            {
+                // Retrieve the teacher by ID, including the associated User entity.
+                var teacher = await _teacherRepository.GetByIdAsync(teacherId);
+                if (teacher == null)
+                {
+                    return new CommonResult<TeacherDTO>
+                    {
+                        IsSuccess = false,
+                        Code = 404,
+                        Message = "Không tìm thấy thông tin giảng viên."
+                    };
+                }
+
+                // Check if the department exists.
+                var departmentExists = await _departmentRepository.GetByIdAsync(teacherDTO.DepartmentId);
+                if (departmentExists == null)
+                {
+                    return new CommonResult<TeacherDTO>
+                    {
+                        IsSuccess = false,
+                        Code = 404,
+                        Message = "The provided Department ID does not exist."
+                    };
+                }
+
+                var user = teacher.User;
+                if (user == null)
+                {
+                    return new CommonResult<TeacherDTO>
+                    {
+                        IsSuccess = false,
+                        Code = 404,
+                        Message = "Không tìm thấy thông tin người dùng."
+                    };
+                }
+
+
+                // Validate email if it has been updated.
+                if (!string.Equals(teacher.User.Email, teacherDTO.Email, StringComparison.OrdinalIgnoreCase))
+                {
+                    var existingUserWithEmail = await _userRepository.GetByEmailAsync(teacherDTO.Email);
+                    if (existingUserWithEmail != null)
+                    {
+                        return new CommonResult<TeacherDTO>
+                        {
+                            IsSuccess = false,
+                            Code = 400,
+                            Message = "Email đã được sử dụng."
+                        };
+                    }
+                }
+
+                // Update the teacher's User entity.
+                user.Name = teacherDTO.Name;
+                user.Email = teacherDTO.Email;
+                user.Address = teacherDTO.Address;
+                user.Phone = teacherDTO.Phone;
+                if (user.BirthDate != teacherDTO.BirthDate)
+                {
+                    user.BirthDate = teacherDTO.BirthDate;
+
+                    // Generate a new default password as "LastName + BirthDate" (e.g., Doe19900101).
+                    var firstName = StringHelper.RemoveVietnameseDiacritics(user.Name.Split(' ').Last());
+                    string newDefaultPassword = $"{firstName}{teacherDTO.BirthDate:ddMMyyyy}";
+                    var (hash, salt) = PasswordHelper.CreatePasswordHash(newDefaultPassword);
+
+                    // Update the password hash and salt.
+                    user.PasswordHash = hash;
+                    user.PasswordSalt = salt;
+                }
+                await _userRepository.UpdateAsync(user);
+
+                // Update the teacher's Department ID.
+                teacher.DepartmentId = teacherDTO.DepartmentId;
+
+                // Save changes to the database.
+                await _teacherRepository.UpdateAsync(teacher);
+
+                await _teacherRepository.SaveAsync();
+
+                // Map the updated Teacher entity to a TeacherDTO for the response.
+                var teacherDTOResult = new TeacherDTO
+                {
+                    Id = teacher.User.Id,
+                    Username = teacher.User.Username,
+                    Name = teacher.User.Name,
+                    BirthDate = teacher.User.BirthDate,
+                    Email = teacher.User.Email,
+                    Address = teacher.User.Address,
+                    Phone = teacher.User.Phone,
+                    Position = teacher.User.Position
+                };
+
+                // Return success result.
+                return new CommonResult<TeacherDTO>
+                {
+                    IsSuccess = true,
+                    Message = "Thay đổi thông tin giáo viên thành công.",
+                    Code = 200,
+                    Data = teacherDTOResult
+                };
+            }
+            catch (Exception ex)
+            {
+                // Handle exceptions (e.g., database issues, validation errors).
+                return new CommonResult<TeacherDTO>
+                {
+                    IsSuccess = false,
+                    Code = 500,
+                    Message = $"Có lỗi xảy ra khi thay đổi thông tin giáo viên: {ex.Message}",
+                };
+            }
+        }
+
+
         public async Task<CommonResult<List<TeacherListDTO>>> GetAllTeachers()
         {
             try
@@ -276,7 +394,8 @@ namespace LMS.BusinessLogic.Services.Implementations
                     Address = teacher.User.Address,
                     Phone = teacher.User.Phone,
                     NumberOfClasses = classListDTO.Count,
-                    Classes = classListDTO
+                    Classes = classListDTO,
+                    DepartmentId = teacher.DepartmentId
                 };
                 return new CommonResult<TeacherDetailDTO>
                 {

@@ -370,6 +370,7 @@ namespace LMS.BusinessLogic.Services.Implementations
                     NumberOfStudent = classEntity.StudentClasses.Count(),
                     TeacherName = classEntity.Teacher?.User?.Name,
                     SubjectName = classEntity.Subject?.Name,
+                    SubjectId = classEntity.Subject.Id,
                      // class status: 
                      // 0: not open
                      // 1: opening
@@ -519,7 +520,7 @@ namespace LMS.BusinessLogic.Services.Implementations
                     {
                         IsSuccess = false,
                         Code = 404,
-                        Message = "Class not found."
+                        Message = "Không tìm thấy lớp học."
                     };
                 }
 
@@ -531,7 +532,7 @@ namespace LMS.BusinessLogic.Services.Implementations
                     {
                         IsSuccess = false,
                         Code = 404,
-                        Message = "Topic not found."
+                        Message = "Không tìm thấy chủ đề."
                     };
                 }
 
@@ -542,7 +543,7 @@ namespace LMS.BusinessLogic.Services.Implementations
                     {
                         IsSuccess = false,
                         Code = 400,
-                        Message = "The topic does not belong to the subject of this class."
+                        Message = "Chủ đề không thuộc môn học."
                     };
                 }
 
@@ -555,7 +556,7 @@ namespace LMS.BusinessLogic.Services.Implementations
                     {
                         IsSuccess = false,
                         Code = 400,
-                        Message = "No exercises available for this topic."
+                        Message = "Không có bài tập nào thuộc chủ đề hiện tại."
                     };
                 }
 
@@ -569,7 +570,7 @@ namespace LMS.BusinessLogic.Services.Implementations
                     {
                         IsSuccess = false,
                         Code = 400,
-                        Message = "A topic with overlapping timeframe is already open for this class."
+                        Message = "Chủ đề đã được mở trong khoảng thời gian tương tự"
                     };
                 }
 
@@ -620,7 +621,7 @@ namespace LMS.BusinessLogic.Services.Implementations
                 {
                     IsSuccess = true,
                     Code = 200,
-                    Message = "Class topic opened successfully.",
+                    Message = "Mở chủ đề cho lớp học thành công.",
                     Data = resultDTO
                 };
             }
@@ -630,7 +631,7 @@ namespace LMS.BusinessLogic.Services.Implementations
                 {
                     IsSuccess = false,
                     Code = 500,
-                    Message = $"An error occurred while opening the class topic: {ex.Message}"
+                    Message = $"Đã có lỗi xảy ra: {ex.Message}"
                 };
             }
         }
@@ -718,12 +719,13 @@ namespace LMS.BusinessLogic.Services.Implementations
                         Name = cto.Topic.Name,
                         Description = cto.Topic.Description,
                     },
-                    ClassExerciseListDTOs = cto.ClassExercises.Select(se => new ExerciseListDTO
+                    ClassExerciseListDTOs = cto.ClassExercises.Select(ce => new ClassExerciseListDTO
                     {
-                        Id = se.Id,
-                        Title = se.SubjectExercise.Exercise.Title,
-                        Description = se.SubjectExercise.Exercise.Description,
-                        Difficulty = (int)se.SubjectExercise.Exercise.Difficulty,
+                        Id = ce.Id,
+                        Title = ce.SubjectExercise.Exercise.Title,
+                        Description = ce.SubjectExercise.Exercise.Description,
+                        Difficulty = ce.SubjectExercise.Exercise.Difficulty,
+                        ExerciseId = ce.SubjectExercise.ExerciseId
                     }).ToList()
                 }).ToList();
 

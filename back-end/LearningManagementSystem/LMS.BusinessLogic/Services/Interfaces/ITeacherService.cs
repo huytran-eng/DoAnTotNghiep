@@ -9,7 +9,7 @@ namespace LMS.BusinessLogic.Services.Interfaces
         Task<CommonResult<List<TeacherListDTO>>> GetAllTeachers();
         Task<CommonResult<TeacherDTO>> CreateAsync(CreateTeacherDTO teacherDTO);
         Task<CommonResult<TeacherDetailDTO>> GetTeacherDetail(Guid teacherId);
-        Task<CommonResult<List<TeacherListDTO>>> GetTeachersByDepartmentIdAsync(Guid departmentId); 
-        
+        Task<CommonResult<List<TeacherListDTO>>> GetTeachersByDepartmentIdAsync(Guid departmentId);
+        Task<CommonResult<TeacherDTO>> EditTeacherAsync(Guid teacherId, EditTeacherDTO teacherDTO);
     }
 }

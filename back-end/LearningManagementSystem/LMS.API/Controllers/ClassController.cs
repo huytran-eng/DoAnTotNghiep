@@ -80,15 +80,18 @@ namespace LMS.API.Controllers
             // Call the service method to open the class topic
             var result = await _classService.OpenClassTopicAsync(openClassTopicDTO, userId.Value);
 
-            // Check if the result is successful
             if (result.IsSuccess)
             {
-                return Ok(result); // Return the success result with a 200 status
+                return Ok(result);
             }
             else
             {
-                // If not successful, return the error message with appropriate status
-                return StatusCode(result.Code, result); // Use the provided status code
+                return result.Code switch
+                {
+                    400 => BadRequest(result.Message),
+                    404 => NotFound(result.Message),
+                    _ => StatusCode(500, result.Message)
+                };
             }
         }
 

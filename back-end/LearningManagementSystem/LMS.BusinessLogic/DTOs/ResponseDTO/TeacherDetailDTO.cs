@@ -13,6 +13,7 @@ namespace LMS.BusinessLogic.DTOs
         public string Phone { get; set; }
 
         public int NumberOfClasses { get; set; }
+        public Guid DepartmentId { get; set; }
         public ICollection<ClassListDTO> Classes { get; set; }
     }
 

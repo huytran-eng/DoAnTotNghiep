@@ -98,6 +98,29 @@ namespace LMS.API.Controllers
                 };
             }
         }
+        [Authorize(Roles = "Admin")]
+        [HttpPut("{id}")]
+        public async Task<IActionResult> EditTeacher(Guid id, [FromBody] EditTeacherDTO updateTeacherDTO)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var result = await _teacherService.EditTeacherAsync(id, updateTeacherDTO);
+
+            if (result.IsSuccess)
+            {
+                return Ok(result.Data);
+            }
+            else
+            {
+                return result.Code switch
+                {
+                    400 => BadRequest(result.Message),
+                    404 => NotFound(result.Message),
+                    _ => StatusCode(500, result.Message)
+                };
+            }
+        }
 
     }
 }

@@ -9,6 +9,6 @@
         public DateTime CreatedDate { get; set; }
         public ClassDTO ClassDTO { get; set; }
         public TopicDTO TopicDTO { get; set; }
-        public List<ExerciseListDTO>  ClassExerciseListDTOs{get;set;}
+        public List<ClassExerciseListDTO>  ClassExerciseListDTOs{get;set;}
     }
 }

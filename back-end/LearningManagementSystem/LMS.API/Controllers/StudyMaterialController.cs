@@ -44,7 +44,7 @@ namespace LMS.API.Controllers
                 }
 
                 // Call the service to handle the business logic
-                var result = await _studyMaterialService.CreateStudyMaterialAsync(createStudyMaterialDTO, file, currentUserId.Value);
+               var result = await _studyMaterialService.CreateStudyMaterialAsync(createStudyMaterialDTO, file, currentUserId.Value);
 
                 if (result.IsSuccess)
                 {

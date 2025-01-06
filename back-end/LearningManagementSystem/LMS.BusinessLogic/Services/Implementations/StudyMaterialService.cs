@@ -50,12 +50,6 @@ namespace LMS.BusinessLogic.Services.Implementations
                 var fileName = $"{studyMaterialGuid.ToString()}_{file.FileName}"; // Format the file name
                 var filePath = Path.Combine(_storagePath, fileName);
 
-                // Upload the file to the storage    directory
-                using (var fileStream = new FileStream(filePath, FileMode.Create))
-                {
-                    await file.CopyToAsync(fileStream);
-                }
-
                 studyMaterialDTO.MaterialLink = fileName;
 
                 var studyMaterial = new StudyMaterial
@@ -67,6 +61,12 @@ namespace LMS.BusinessLogic.Services.Implementations
                     CreatedById = userId
                 };
                 await _studyMaterialRepository.AddAsync(studyMaterial);
+
+                // Upload the file to the storage directory
+                using (var fileStream = new FileStream(filePath, FileMode.Create))
+                {
+                    await file.CopyToAsync(fileStream);
+                }
                 await _studyMaterialRepository.SaveAsync();
 
                 return new CommonResult<StudyMaterialDTO>()
@@ -77,7 +77,7 @@ namespace LMS.BusinessLogic.Services.Implementations
                 };
             }
             catch (Exception e)
-            {
+            {  
                 return new CommonResult<StudyMaterialDTO>()
                 {
                     IsSuccess = false,
