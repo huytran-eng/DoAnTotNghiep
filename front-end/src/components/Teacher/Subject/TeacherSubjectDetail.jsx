@@ -61,6 +61,7 @@ const TeacherSubjectDetail = () => {
   const handleFileChange = (e) => {
     setFile(e.target.files[0]);
   };
+console.log(allExercises);
 
   const handleSubmitStudyMaterial = async () => {
     if (!materialName || !file) {
@@ -253,7 +254,7 @@ const TeacherSubjectDetail = () => {
   const handleAddExercise = () => {
     setExercises((prev) => [
       ...prev,
-      { id: Date.now(), name: "", topicId: "", added: true },
+      { id: Date.now(), name: "", topicId: "",addedDate:Date.now(), added: true },
     ]);
   };
 

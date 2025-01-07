@@ -22,8 +22,9 @@ const LoginVer2 = () => {
         const data = await response.json();
         localStorage.setItem("token", data.token);
         localStorage.setItem("userInfo", JSON.stringify(data));
+        console.log(data);
+        
         if (data.position.toLowerCase() === "admin") {
-          console.log("o login ver2 as admin");
           navigate("/admin");
         } else if (data.position.toLowerCase() === "teacher")
           navigate("/teacher");

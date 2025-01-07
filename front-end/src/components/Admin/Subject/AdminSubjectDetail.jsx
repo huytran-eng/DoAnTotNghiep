@@ -97,7 +97,6 @@ const AdminSubjectDetail = () => {
           Authorization: `Bearer ${token}`,
         },
       });
-      console.log(response);
       setClasses(response.data);
     } catch (error) {
       console.error("Error fetching classes:", error);
@@ -126,7 +125,7 @@ const AdminSubjectDetail = () => {
   // Fetch all available exercises
   const fetchAllExercises = async () => {
     try {
-      const response = await axios.get(baseUrl + `exercise`, {
+      const response = await axios.get(baseUrl + `exercise`, {        
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -135,8 +134,7 @@ const AdminSubjectDetail = () => {
     } catch (error) {
       console.error("Error fetching all exercises:", error);
     }
-  };
-
+  };  
   const saveNewExercise = async (exercise) => {
     try {
       const addExerciseDTO = {
@@ -156,10 +154,10 @@ const AdminSubjectDetail = () => {
   };
 
   // Add new exercise
-  const handleAddExercise = () => {
+  const handleAddExercise = () => {    
     setExercises((prev) => [
       ...prev,
-      { id: Date.now(), name: "", topicId: "", added: true },
+      { id: Date.now(), name: "", topicId: "",addedDate:Date.now(), added: true },
     ]);
   };
 
@@ -208,7 +206,6 @@ const AdminSubjectDetail = () => {
     formData.append("file", file);
     formData.append("title", materialName);
     formData.append("subjectId", id);
-    console.log(formData);
     try {
       // Replace with your API endpoint for creating study material
       const response = await axios.post(
