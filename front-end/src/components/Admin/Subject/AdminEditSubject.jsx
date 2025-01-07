@@ -136,11 +136,11 @@ const AdminEditSubject = () => {
       });
       Swal.fire({
         title: 'Thành công',
-        text: 'Tạo giảng viên thành công',
+        text: 'Cập nhật môn học thành công',
         icon: 'success',
         confirmButtonText: 'OK',
       }).then(() => {
-        navigate(`/admin/teacher/${id}`);
+        navigate(`/admin/subject/${id}`);
       });
     } catch (error) {
       Swal.fire({
