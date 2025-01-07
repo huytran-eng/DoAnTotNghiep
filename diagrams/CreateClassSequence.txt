@@ -1,0 +1,62 @@
+@startuml
+actor User
+participant "Frontend" as Frontend
+participant "Class Controller" as ClassController
+participant "ClassService" as ClassService
+participant "TeacherRepository" as TeacherRepository
+participant "SubjectRepository" as SubjectRepository
+participant "StudentRepository" as StudentRepository
+participant "ClassRepository" as ClassRepository
+participant "Database" as Database
+participant "Excel Package" as ExcelPackage
+User -> Frontend: click on CreateClass link
+Frontend --> User: display CreateClass UI
+User -> Frontend: Submit CreateClass Form
+Frontend -> ClassController: HTTP POST /create (file, request)
+ClassController -> ClassController: check file
+
+alt No file uploaded
+    ClassController --> Frontend: 400 Response (No file uploaded)
+else File uploaded
+    ClassController -> ClassService: call to create class
+    ClassService -> ClassService: Get current user ID
+    ClassService -> TeacherRepository: call to get teacher by ID
+    TeacherRepository --> ClassService: return teacher data
+
+    alt Teacher not found
+        ClassService --> ClassController: Return "Teacher not found"
+        ClassController --> Frontend: 404 Response (Teacher not found)
+    else Teacher found
+        ClassService -> SubjectRepository: call to get subject by ID
+        SubjectRepository -> Database: call
+        Database  --> SubjectRepository: return data
+        SubjectRepository --> ClassService: return subject data
+
+        alt Subject not found
+            ClassService --> ClassController: Return "Subject not found"
+            ClassController --> Frontend: 404 Response (Subject not found)
+        else Subject found
+            ClassService -> ExcelPackage: Read Excel file to get student IDs
+            ExcelPackage --> ClassService: return list of student IDs
+
+            ClassService -> StudentRepository: call to find students by IDs
+            StudentRepository -> Database: call
+            Database  --> StudentRepository: return data
+            StudentRepository --> ClassService: return found students
+
+            alt Some students not found
+                ClassService --> ClassController: Return "Students not found"
+                ClassController --> Frontend: 404 Response (Students not found)
+            else All students found
+                ClassService -> ClassRepository: Create new class and add students
+                ClassRepository -> Database: Save new class data
+                Database --> ClassRepository: Confirm class creation
+                ClassRepository --> ClassService: return success result
+
+                ClassService --> ClassController: Return success message
+                ClassController --> Frontend: 200 Response (Create class successful)
+            end
+        end
+    end
+end
+@enduml

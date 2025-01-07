@@ -1,0 +1,35 @@
+@startuml
+actor User
+participant "Frontend" as Frontend
+participant "SubjectController" as SubjectController
+participant "SubjectService" as SubjectService
+participant "UserRepository" as UserRepository
+participant "SubjectRepository" as SubjectRepository
+participant "Database" as Database
+
+User -> Frontend: Click on Subjects 
+Frontend -> SubjectController: HTTP GET 
+SubjectController -> SubjectService: Call GetSubjectsForUser with parameters
+SubjectService -> UserRepository: Call GetByIdAsync to retrieve user info
+UserRepository -> Database: Fetch user by userId
+Database --> UserRepository: Return user info
+UserRepository --> SubjectService: Return user info
+
+alt User is Admin or Teacher
+    SubjectService -> SubjectRepository: Call GetAllAsync to retrieve all subjects
+    SubjectRepository -> Database: Fetch all subjects
+    Database --> SubjectRepository: Return all subjects
+    SubjectRepository --> SubjectService: Return all subjects
+else User is Student
+    SubjectService -> SubjectRepository: Call GetSubjectsByStudentIdAsync to retrieve subjects for the student
+    SubjectRepository -> Database: Fetch subjects for the student
+    Database --> SubjectRepository: Return subjects for the student
+    SubjectRepository --> SubjectService: Return subjects for the student
+end
+
+SubjectService -> SubjectService: Map subjects to SubjectListDTO
+SubjectService --> SubjectController: Return CommonResult with SubjectListDTO
+SubjectController --> Frontend: 200 OK Response with subject list
+Frontend -> User: Display subjects to the user
+
+@enduml
