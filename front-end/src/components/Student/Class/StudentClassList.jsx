@@ -7,7 +7,7 @@ import { useNavigate } from "react-router-dom";
 import moment from "moment";
 import "../../../styles/studentClassList.css";
 import { baseUrl } from "../../../util/constant";
-import { Box, Typography, Button, IconButton } from "@mui/material";
+import { Box, Typography, IconButton } from "@mui/material";
 import { Visibility } from "@mui/icons-material";
 import "../../../styles/homeStyles.css";
 import Swal from "sweetalert2";
@@ -36,7 +36,12 @@ const StudentClassList = () => {
     } catch (error) {
       console.error("Error fetching classes:", error);
       if (error.response?.status === 401) {
-        alert("Phiên đăng nhập đã kết thúc. Vui lòng đăng nhập lại");
+        Swal.fire({
+          title: "Thất bại",
+          text: 'Phiên đăng nhập đã kết thúc. Vui lòng đăng nhập lại',
+          icon: "warning",
+          confirmButtonText: "OK",
+        });
         window.location.href = "/login"; // Redirect to login page
       }
     } finally {

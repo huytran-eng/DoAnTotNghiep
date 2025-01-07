@@ -7,6 +7,7 @@ import moment from "moment";
 import { Box, Typography, IconButton } from "@mui/material";
 import { baseUrl } from "../../../util/constant";
 import { Visibility } from "@mui/icons-material";
+import Swal from "sweetalert2";
 
 const AdminStudentList = () => {
   const [students, setStudents] = useState([]);
@@ -32,7 +33,12 @@ const AdminStudentList = () => {
     } catch (error) {
       console.error("Error fetching students:", error);
       if (error.response?.status === 401) {
-        alert("Phiên đăng nhập đã kết thúc. Vui lòng đăng nhập lại");
+        Swal.fire({
+          title: "Thất bại",
+          text: 'Phiên đăng nhập đã kết thúc. Vui lòng đăng nhập lại',
+          icon: "warning",
+          confirmButtonText: "OK",
+        });
         window.location.href = "/login"; // Redirect to login page
       }
     } finally {
@@ -55,12 +61,22 @@ const AdminStudentList = () => {
           "Content-Type": "multipart/form-data", // Make sure the content type is multipart
         },
       });
+      Swal.fire({
+        title: "Thành công",
+        text: "Students imported successfully!",
+        icon: "success",
+        confirmButtonText: "OK",
+      })
       console.log(response);
-      alert("Students imported successfully!");
       fetchStudents(); // Re-fetch students after import
     } catch (error) {
+      Swal.fire({
+        title: "Bad Request",
+        text: "Failed to import students",
+        icon: "warning",
+        confirmButtonText: "OK",
+      });
       console.error("Error importing students:", error);
-      alert("Failed to import students.");
     }
   };
 

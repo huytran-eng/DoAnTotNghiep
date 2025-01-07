@@ -43,7 +43,12 @@ const AdminTeacherCreate = () => {
     } catch (error) {
       console.error("Error fetching departments:", error);
       if (error.response?.status === 401) {
-        alert("Please login again");
+        Swal.fire({
+          title: "Thất bại",
+          text: 'Phiên đăng nhập đã kết thúc. Vui lòng đăng nhập lại',
+          icon: "warning",
+          confirmButtonText: "OK",
+        });
         window.location.href = "/login";
       }
     }

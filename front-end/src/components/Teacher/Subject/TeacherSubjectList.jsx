@@ -7,6 +7,7 @@ import "../../../styles/homeStyles.css";
 import { Box, Typography, Button, IconButton } from "@mui/material";
 import { Visibility, Edit } from "@mui/icons-material";
 import { baseUrl } from "../../../util/constant";
+import Swal from "sweetalert2";
 
 const TeacherSubjectList = () => {
   const [subjects, setSubjects] = useState([]);
@@ -34,7 +35,12 @@ const TeacherSubjectList = () => {
     } catch (error) {
       console.error("Error fetching subjects:", error);
       if (error.response?.status === 401) {
-        alert("Phiên đăng nhập đã kết thúc. Vui lòng đăng nhập lại");
+        Swal.fire({
+          title: "Thất bại",
+          text: 'Phiên đăng nhập đã kết thúc. Vui lòng đăng nhập lại',
+          icon: "warning",
+          confirmButtonText: "OK",
+        });
         // Redirect to login page
         window.location.href = "/login";
       }

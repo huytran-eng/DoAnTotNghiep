@@ -8,6 +8,7 @@ import { baseUrl } from "../../../util/constant";
 import { Visibility } from "@mui/icons-material";
 import { Box, Typography, Button } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
+import Swal from "sweetalert2";
 
 const AdminTeacherList = () => {
   const [teachers, setTeachers] = useState([]);
@@ -35,7 +36,12 @@ const AdminTeacherList = () => {
     } catch (error) {
       console.error("Error fetching teachers:", error);
       if (error.response?.status == 401) {
-        alert("Please login again");
+        Swal.fire({
+          title: "Thất bại",
+          text: 'Phiên đăng nhập đã kết thúc. Vui lòng đăng nhập lại',
+          icon: "warning",
+          confirmButtonText: "OK",
+        });
         window.location.href = "/login";
       }
     } finally {

@@ -14,12 +14,7 @@ import {
   AccordionSummary,
   AccordionDetails,
   Switch,
-  IconButton,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  TextField,
+  IconButton
 } from "@mui/material";
 import { useParams, useNavigate } from "react-router-dom";
 import moment from "moment";
@@ -43,10 +38,6 @@ const AdminClassDetail = () => {
   const [expandedTopic, setExpandedTopic] = useState(null);
   const [materials, setMaterials] = useState([]);
   const [openedTopics, setOpenedTopics] = useState([]);
-  const [openDialog, setOpenDialog] = useState(false);
-  const [materialName, setMaterialName] = useState("");
-  const [file, setFile] = useState(null);
-
   // Thêm states mới
   const [showTopicDialog, setShowTopicDialog] = useState(false);
 
@@ -63,9 +54,7 @@ const AdminClassDetail = () => {
       fetchMaterials();
     }
   }, [activeTab]);
-  const handleMaterialNameChange = (e) => {
-    setMaterialName(e.target.value);
-  };
+
   const fetchClassDetails = async () => {
     try {
       const response = await axios.get(baseUrl + `class/${id}`, {
@@ -78,91 +67,7 @@ const AdminClassDetail = () => {
       console.error("Error fetching class details:", error);
     }
   };
-  const handleSubmitStudyMaterial = async () => {
-    if (!materialName || !file) {
-      alert("Please enter all fields.");
-      return;
-    }
 
-    setLoading(true);
-    // Create FormData object to send file and other data
-    const formData = new FormData();
-    console.log(classDetails)
-    formData.append("file", file);
-    formData.append("title", materialName);
-    formData.append("subjectId", classDetails.subjectId);
-    console.log(formData);
-    try {
-      // Replace with your API endpoint for creating study material
-      const response = await axios.post(
-        baseUrl + "studymaterial/create",
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      console.log(response);
-      if (response.status === 200 || response.status === 204) {
-        handleCloseDialog();
-        Swal.fire({
-          title: "Thành công",
-          text: "Tạo tài liệu học tập thành công!",
-          icon: "success",
-          confirmButtonText: "OK",
-        }).then(() => {
-          setMaterialName("");
-          setFile(null);
-          fetchMaterials();
-        });
-      } else {
-        // Handle other non-success statuses
-        Swal.fire({
-          title: "Có lỗi xảy ra!",
-          text: "Không thể tạo tài liệu học tập.",
-          icon: "error",
-          confirmButtonText: "OK",
-        });
-      }
-    } catch (error) {
-      console.error("Error uploading study material", error);
-
-      // Handle API error response and display appropriate message
-      const errorMessage =
-        error.response?.data?.message || // Custom message returned from API
-        "Đã có lỗi xảy ra khi tạo tài liệu học tập.";
-
-      const statusCode = error.response?.status;
-
-      // Show SweetAlert popup with error message based on status code
-      if (statusCode === 400) {
-        Swal.fire({
-          title: "Bad Request",
-          text: errorMessage,
-          icon: "warning",
-          confirmButtonText: "OK",
-        });
-      } else if (statusCode === 401) {
-        Swal.fire({
-          title: "Unauthorized",
-          text: "You are not authorized. Please log in again.",
-          icon: "error",
-          confirmButtonText: "OK",
-        });
-      } else {
-        Swal.fire({
-          title: "Lỗi hệ thống",
-          text: errorMessage,
-          icon: "error",
-          confirmButtonText: "OK",
-        });
-      }
-    } finally {
-      setLoading(false);
-    }
-  };
   const fetchStudents = async () => {
     setLoading(true);
     try {
@@ -211,15 +116,17 @@ const AdminClassDetail = () => {
       setLoading(false);
     }
   };
-  const handleOpenDialog = () => {
-    setOpenDialog(true);
-  };
+
   const handleViewStudent = (studentId) => {
     navigate(`/admin/class/${id}/student/${studentId}`);
   };
 
   const handleExerciseClick = (exerciseId) => {
-     navigate(`/admin/exercise/${exerciseId}`);
+    if (user.position === "Student") {
+      navigate(`/class/${id}/exercise/${exerciseId}`);
+    } else if (user.position === "Admin" || user.position === "Teacher") {
+      navigate(`/class/${id}/exerciseDetail/${exerciseId}`);
+    }
   };
   const handleToggleMaterial = async (materialId) => {
     setLoading(true);
@@ -234,7 +141,7 @@ const AdminClassDetail = () => {
           },
         }
       );
-      fetchMaterials();
+      fetchMaterials(); 
     } catch (error) {
       console.error("Error toggling study material:", error);
       Swal.fire({
@@ -276,9 +183,7 @@ const AdminClassDetail = () => {
   const handleTopicExpand = (topicId) => {
     setExpandedTopic(expandedTopic === topicId ? null : topicId);
   };
-  const handleCloseDialog = () => {
-    setOpenDialog(false);
-  };
+
   const handleSaveTopic = async (topicData) => {
     try {
       const formData = {
@@ -286,51 +191,32 @@ const AdminClassDetail = () => {
         ...topicData,
       };
 
-      const response = await axios.post(baseUrl + "class/opentopic", formData, {
+      await axios.post(baseUrl + "class/opentopic", formData, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
 
-      if (response.status === 200) {
-        // Show success dialog using SweetAlert
-        Swal.fire({
-          icon: "success",
-          title: "Thành công",
-          text: "Chủ đề đã được mở thành công!",
-        });
-        setShowTopicDialog(false);
-        fetchTopics();
-      } else {
-        Swal.fire({
-          icon: "error",
-          title: "Thất bại",
-          text: response.data.message,
-        });
-      }
+      setShowTopicDialog(false);
+      fetchTopics();
     } catch (error) {
-      if (error.response) {
-        const { status, data } = error.response;
-
-        // Show error dialog using SweetAlert
+      if (error.response.status === 400) {
         Swal.fire({
+          title: "Không thành công",
+          text: "Chủ đề đã được mở trong khoảng thời gian được chọn rồi vui lòng khoảng thời gian khác",
           icon: "error",
-          title: "Thất bại",
-          text: data || "Có lỗi xảy ra khi lưu chủ đề",
-        });
-      } else {
-        // Handle unexpected errors (e.g., network issues)
-        Swal.fire({
-          icon: "error",
-          title: "Thât bại",
-          text: "Không thể kết nối tới máy chủ. Vui lòng thử lại.",
+          confirmButtonText: "OK",
         });
       }
+      Swal.fire({
+        title: "Không thành công",
+        text: "Có lỗi xảy ra khi lưu chủ đề",
+        icon: "error",
+        confirmButtonText: "OK",
+      });
     }
   };
-  const handleFileChange = (e) => {
-    setFile(e.target.files[0]);
-  };
+
   const handleDownloadMaterial = async (materialId) => {
     try {
       const response = await axios.get(
@@ -368,6 +254,8 @@ const AdminClassDetail = () => {
     { field: "exercisesDone", headerName: "Số bài tập đã làm", flex: 1.5 },
     { field: "exercisesCorrect", headerName: "Số bài tập làm đúng", flex: 1.5 },
     {
+      field: "action",
+      headerName: "Action",
       flex: 1,
       renderCell: (params) => (
         <IconButton
@@ -375,7 +263,7 @@ const AdminClassDetail = () => {
           onClick={() => handleViewStudent(params.row.id)}
           sx={{ mr: 1 }}
         >
-          <Visibility />
+          <Visibility /> 
         </IconButton>
       ),
     },
@@ -385,16 +273,13 @@ const AdminClassDetail = () => {
     { field: "title", headerName: "Tên bài tập", flex: 1 },
     { field: "difficulty", headerName: "Độ khó", flex: 1 },
     {
+      field: "action",
+      headerName: "Action",
       flex: 1,
       renderCell: (params) => (
-        <IconButton
-          color="primary"
-          onClick={() => handleExerciseClick(params.row.exerciseId)}
-          sx={{ mr: 1 }}
-        >
-          <Visibility />
-        </IconButton>
-        
+        <button onClick={() => handleExerciseClick(params.row.id)}>
+          Xem thông tin bài tập
+        </button>
       ),
     },
   ];
@@ -430,7 +315,9 @@ const AdminClassDetail = () => {
       renderCell: (params) => (
         <Switch
           checked={params.row.isOpen}
-          onChange={() => handleToggleMaterial(params.row.id)}
+          onChange={() =>
+            handleToggleMaterial(params.row.id)
+          }
           color="primary"
         />
       ),
@@ -560,53 +447,13 @@ const AdminClassDetail = () => {
             )}
 
             {activeTab === 2 && (
-              <div>
-                <Button
-                  onClick={handleOpenDialog}
-                  variant="contained"
-                  color="primary"
-                >
-                  Thêm tài liệu cho môn học
-                </Button>
-
-                <DataGrid
-                  rows={materials}
-                  columns={materialColumns}
-                  autoHeight
-                  pageSize={5}
-                  loading={loading}
-                />
-                <Dialog open={openDialog} onClose={handleCloseDialog}>
-                  <DialogTitle>Thêm tài liệu cho môn học</DialogTitle>
-                  <DialogContent>
-                    <TextField
-                      label="Tên tài liệu"
-                      fullWidth
-                      value={materialName}
-                      onChange={handleMaterialNameChange}
-                      margin="normal"
-                    />
-                    <input
-                      type="file"
-                      accept=".pdf"
-                      onChange={handleFileChange}
-                      style={{ width: "100%" }}
-                    />
-                  </DialogContent>
-                  <DialogActions>
-                    <Button onClick={handleCloseDialog} color="secondary">
-                      Hủy
-                    </Button>
-                    <Button
-                      onClick={handleSubmitStudyMaterial}
-                      color="primary"
-                      disabled={loading}
-                    >
-                      {loading ? "Đang tải..." : "Thêm tài liệu"}
-                    </Button>
-                  </DialogActions>
-                </Dialog>
-              </div>
+              <DataGrid
+                rows={materials}
+                columns={materialColumns}
+                autoHeight
+                pageSize={5}
+                loading={loading}
+              />
             )}
           </div>
         </Grid>

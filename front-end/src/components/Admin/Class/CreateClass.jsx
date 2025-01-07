@@ -16,6 +16,7 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import dayjs from "dayjs";
+import Swal from "sweetalert2";
 
 const CreateClass = () => {
   const [formData, setFormData] = useState({
@@ -116,7 +117,12 @@ const CreateClass = () => {
       console.log(formData);
       // Append form data
       if( formData.startDate > formData.endDate){
-        alert("Start date must be before end date");
+        Swal.fire({
+          title: "Lỗi",
+          text: "Ngày bắt đầu phải sau ngày kết thúc",
+          icon: "error",
+          confirmButtonText: "OK",
+        });
         return;
       }
       Object.entries(formData).forEach(([key, value]) => {
@@ -137,12 +143,21 @@ const CreateClass = () => {
           "Content-Type": "multipart/form-data", // Make sure the content type is multipart
         },
       });
-
-      alert("Class created successfully!");
+      Swal.fire({
+        title: "Thành công",
+        text: "Tạo lớp học thành công",
+        icon: "success",
+        confirmButtonText: "OK",
+      });
       navigate("/class");
     } catch (error) {
       console.error("Error creating class:", error);
-      alert("Failed to create class. Please try again.");
+      Swal.fire({
+        title: "Lỗi",
+        text: "Failed to create class. Please try again!",
+        icon: "error",
+        confirmButtonText: "OK",
+      });
     }
   };
 

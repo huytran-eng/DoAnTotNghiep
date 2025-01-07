@@ -11,6 +11,7 @@ import {
   Box,
 } from "@mui/material";
 import { baseUrl } from "../../../util/constant";
+import Swal from "sweetalert2";
 const AdminCreateSubject = () => {
   const [departments, setDepartments] = useState([]);
   const [programmingLanguages, setProgrammingLanguages] = useState([]);
@@ -43,7 +44,12 @@ const AdminCreateSubject = () => {
     } catch (error) {
       console.error("Error fetching departments:", error);
       if (error.response?.status === 401) {
-        alert("Phiên đăng nhập đã kết thúc. Vui lòng đăng nhập lại");
+        Swal.fire({
+          title: "Thất bại",
+          text: 'Phiên đăng nhập đã kết thúc. Vui lòng đăng nhập lại',
+          icon: "warning",
+          confirmButtonText: "OK",
+        });
         window.location.href = "/login";
       }
     }
@@ -60,7 +66,12 @@ const AdminCreateSubject = () => {
     } catch (error) {
       console.error("Error fetching programming languages:", error);
       if (error.response?.status === 401) {
-        alert("Phiên đăng nhập đã kết thúc. Vui lòng đăng nhập lại");
+        Swal.fire({
+          title: "Thất bại",
+          text: 'Phiên đăng nhập đã kết thúc. Vui lòng đăng nhập lại',
+          icon: "warning",
+          confirmButtonText: "OK",
+        });
         window.location.href = "/login";
       }
     }
@@ -110,11 +121,21 @@ const AdminCreateSubject = () => {
           Authorization: `Bearer ${token}`,
         },
       });
-      alert("Subject created successfully!");
+      Swal.fire({
+        title: "Thành công",
+        text: "Tạo chủ đề bài tập thành công!",
+        icon: "success",
+        confirmButtonText: "OK",
+      })
       navigate("/admin/subject");
     } catch (error) {
       console.error("Error creating subject:", error);
-      alert("Failed to create subject.");
+      Swal.fire({
+        title: "Thất bại",
+        text: 'Failed to create subject.',
+        icon: "warning",
+        confirmButtonText: "OK",
+      });
     } finally {
       setLoading(false);
     }

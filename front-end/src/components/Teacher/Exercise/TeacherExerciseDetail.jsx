@@ -18,6 +18,7 @@ import {
   Checkbox,
 } from "@mui/material";
 import { baseUrl } from "../../../util/constant";
+import Swal from "sweetalert2";
 
 const TeacherExerciseDetail = () => {
   const { id } = useParams(); // Get exercise ID from the URL
@@ -40,8 +41,13 @@ const TeacherExerciseDetail = () => {
         console.log(response.data)
         setExercise(response.data);
       } catch (error) {
+        Swal.fire({
+          title: "Thất bại",
+          text: 'Failed to fetch exercise details!',
+          icon: "warning",
+          confirmButtonText: "OK",
+        });
         console.error("Error fetching exercise details:", error);
-        alert("Failed to fetch exercise details.");
       } finally {
         setLoading(false);
       }

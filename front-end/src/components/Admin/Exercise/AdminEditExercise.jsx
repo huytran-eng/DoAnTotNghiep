@@ -15,6 +15,7 @@ import {
   FormControl,
 } from "@mui/material";
 import { baseUrl } from "../../../util/constant";
+import Swal from "sweetalert2";
 
 const AdminEditExercise = () => {
   const [formData, setFormData] = useState({
@@ -49,7 +50,12 @@ const AdminEditExercise = () => {
         setFormData(response.data); // Populate form with existing data
       } catch (error) {
         console.error("Error fetching exercise data:", error);
-        alert("Failed to fetch exercise data. Please try again.");
+        Swal.fire({
+          title: "Bad Request",
+          text: 'Failed to fetch exercise data. Please try again.',
+          icon: "warning",
+          confirmButtonText: "OK",
+        });
       } finally {
         setLoading(false);
       }
@@ -101,12 +107,21 @@ const AdminEditExercise = () => {
       await axios.post(baseUrl + `exercise/edit/${id}`, formData, {
         headers,
       });
-      alert("Exercise updated successfully!");
+      Swal.fire({
+        title: "Thành công",
+        text: "Cập nhập bài tập thành công!",
+        icon: "success",
+        confirmButtonText: "OK",
+      }).
       navigate("/baitap"); // Redirect to the exercise list or detail page
     } catch (error) {
-      console.error("Error updating exercise:", error);
-      alert("Exercise updated successfully!");
-    } finally {
+      Swal.fire({
+        title: "Thất bại",
+        text: "Error updating exercise: "+ error,
+        icon: "error",
+        confirmButtonText: "OK",
+      })
+      } finally {
       setLoading(false);
     }
   };

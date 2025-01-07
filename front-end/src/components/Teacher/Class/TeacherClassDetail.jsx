@@ -80,7 +80,12 @@ const TeacherClassDetail = () => {
   };
   const handleSubmitStudyMaterial = async () => {
     if (!materialName || !file) {
-      alert("Please enter all fields.");
+      Swal.fire({
+        title: "Thất bại",
+        text: 'Please enter all fields',
+        icon: "warning",
+        confirmButtonText: "OK",
+      });
       return;
     }
 

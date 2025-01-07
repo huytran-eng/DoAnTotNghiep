@@ -91,7 +91,12 @@ const AdminEditSubject = () => {
 
   const handleAuthError = (error) => {
     if (error.response?.status === 401) {
-      alert("Phiên đăng nhập đã kết thúc. Vui lòng đăng nhập lại");
+      Swal.fire({
+        title: "Thất bại",
+        text: 'Phiên đăng nhập đã kết thúc. Vui lòng đăng nhập lại',
+        icon: "warning",
+        confirmButtonText: "OK",
+      });
       window.location.href = "/login";
     }
   };

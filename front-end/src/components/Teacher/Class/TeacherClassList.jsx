@@ -7,6 +7,7 @@ import moment from "moment";
 import { Typography, Box, Button } from "@mui/material";
 import { Visibility } from "@mui/icons-material";
 import { baseUrl } from "../../../util/constant";
+import Swal from "sweetalert2";
 
 const TeacherClassList = () => {
   const [classes, setClasses] = useState([]);
@@ -35,7 +36,12 @@ const TeacherClassList = () => {
     } catch (error) {
       console.error("Error fetching classes:", error);
       if (error.response?.status === 401) {
-        alert("Phiên đăng nhập đã kết thúc. Vui lòng đăng nhập lại");
+        Swal.fire({
+          title: "Thất bại",
+          text: 'Phiên đăng nhập đã kết thúc. Vui lòng đăng nhập lại',
+          icon: "warning",
+          confirmButtonText: "OK",
+        });
         window.location.href = "/login"; // Redirect to login page
       }
     } finally {
